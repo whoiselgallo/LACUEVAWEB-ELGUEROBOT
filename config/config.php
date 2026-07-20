@@ -1,13 +1,14 @@
 <?php
 /**
  * ═════════════════════════════════════════════════════════════════════════════════
- * CONFIGURACIÓN GENERAL - LA CUEVA DEL GÜERO
+ * CONFIGURACIÓN GENERAL - LA CUEVA DEL GÜERO (POSTGRESQL / NEON.TECH)
  * ═════════════════════════════════════════════════════════════════════════════════
  * 
  * Archivo centralizado de configuración para:
  * - Credenciales de Dify AI (desde variables de entorno)
- * - Configuración de Base de Datos (desde variables de entorno)
- * - Funciones de conexión
+ * - Configuración de Base de Datos PostgreSQL/Neon (desde variables de entorno)
+ * - Funciones de conexión a BD
+ * - Funciones auxiliares globales
  * 
  * ⚠️ SECURITY: Este archivo está protegido por .htaccess
  * - No es accesible desde web directamente
@@ -34,20 +35,19 @@ define('DIFY_URL', 'https://api.dify.ai/v1/chat-messages');
 define('DIFY_TIMEOUT', 30);
 
 // ═════════════════════════════════════════════════════════════════════════════════
-// BASE DE DATOS - MySQL/MariaDB
+// BASE DE DATOS - PostgreSQL / Neon.tech
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DB_HOST', getEnvVar('DB_HOST', 'localhost'));
-define('DB_NAME', getEnvVar('DB_NAME', 'u115767692_el_guero_bot'));
-define('DB_USER', getEnvVar('DB_USER', 'u115767692_lacueva'));
-define('DB_PASS', getEnvVar('DB_PASS', 'eldesmadredelGuero1'));
-define('DB_CHARSET', 'utf8mb4');
-define('DB_PORT', 3306);
+define('DB_HOST', getEnvVar('DB_HOST', 'ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech'));
+define('DB_NAME', getEnvVar('DB_NAME', 'neondb'));
+define('DB_USER', getEnvVar('DB_USER', 'neondb_owner'));
+define('DB_PASS', getEnvVar('DB_PASS', 'npg_eOUvM7qXj0SZ'));
+define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // APLICACIÓN - Configuración General
 // ═════════════════════════════════════════════════════════════════════════════════
 define('APP_NAME', 'La Cueva del Güero');
-define('APP_VERSION', '2.0.1');
+define('APP_VERSION', '2.0.2');
 define('APP_ENV', 'production');  // development, staging, production
 
 // ═════════════════════════════════════════════════════════════════════════════════
@@ -55,10 +55,10 @@ define('APP_ENV', 'production');  // development, staging, production
 // ═════════════════════════════════════════════════════════════════════════════════
 function db_connect() {
     try {
-        $dsn = 'mysql:host=' . DB_HOST . 
+        $dsn = 'pgsql:host=' . DB_HOST . 
                ';port=' . DB_PORT . 
                ';dbname=' . DB_NAME . 
-               ';charset=' . DB_CHARSET;
+               ';sslmode=require';
         
         $options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -71,7 +71,7 @@ function db_connect() {
         return $pdo;
     } catch (PDOException $e) {
         error_log('Database Connection Error: ' . $e->getMessage());
-        throw new Exception('Error de conexión a la base de datos');
+        throw new Exception('Error de conexión a la base de datos: ' . $e->getMessage());
     }
 }
 
@@ -206,5 +206,4 @@ $logs_dir = __DIR__ . '/../logs';
 if (!is_dir($logs_dir)) {
     @mkdir($logs_dir, 0755, true);
 }
-
 ?>

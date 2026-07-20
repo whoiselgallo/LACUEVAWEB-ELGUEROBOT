@@ -42,13 +42,12 @@ try {
     $stmt = $pdo->prepare("
         INSERT INTO invitados (nombre, ficha, created_at)
         VALUES (:nombre, :ficha, NOW())
-        ON DUPLICATE KEY UPDATE ficha = :ficha2
+        ON CONFLICT (nombre) DO UPDATE SET ficha = EXCLUDED.ficha
     ");
 
     $stmt->execute([
         ":nombre" => $nombre,
-        ":ficha"  => json_encode($ficha, JSON_UNESCAPED_UNICODE),
-        ":ficha2" => json_encode($ficha, JSON_UNESCAPED_UNICODE)
+        ":ficha"  => json_encode($ficha, JSON_UNESCAPED_UNICODE)
     ]);
 
     json_response(["success" => true, "message" => "Ficha guardada correctamente"]);
