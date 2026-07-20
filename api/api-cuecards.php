@@ -21,7 +21,7 @@ if($invitado==='' || !is_array($tarjetas) || empty($tarjetas)){
     exit();
 }
 
-require_once __DIR__.'/config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 $prompt="
 Genera TARJETAS DE CONDUCCIÓN HTML.

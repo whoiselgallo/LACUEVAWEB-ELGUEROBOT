@@ -39,7 +39,7 @@ foreach ($campos as $c) {
     $datos[$c] = htmlspecialchars(trim($input[$c]), ENT_QUOTES, 'UTF-8');
 }
 
-require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 $prompt = "
 Eres Güero Bot. Genera ESCALETA, GUION y CUE CARDS.

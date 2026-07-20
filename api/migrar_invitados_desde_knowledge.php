@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 header('Content-Type: application/json');
 
 // Incluir archivo de configuración desde la raíz
-require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 // CONFIG DB
 $host = DB_HOST;

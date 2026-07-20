@@ -1,8 +1,10 @@
 <?php
-$host = "localhost";
+require_once __DIR__ . '/../config/config.php';
+
+$host = DB_HOST;
 $db   = "u115767692_LCDGSUSCRIPTOR";
-$user = "u115767692_TSolutions";
-$pass = "TU_PASSWORD_DE_MYSQL";
+$user = DB_USER;
+$pass = DB_PASS;
 
 $conn = new mysqli($host, $user, $pass, $db);
 $conn->set_charset("utf8mb4");

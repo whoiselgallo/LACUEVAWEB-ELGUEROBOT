@@ -1,4 +1,9 @@
 <?php
+/**
+ * API - Generador de Guion (El Güero Bot)
+ * Endpoint: /api/api-guion.php
+ * Método: POST
+ */
 
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
@@ -12,9 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Método no permitido']);
+    echo json_encode(['status' => 'error', 'message' => 'Método no permitido. Usa POST.']);
     exit();
 }
+
+// Cargar configuración central
+require_once __DIR__ . '/../config/config.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
@@ -47,53 +55,56 @@ $incomodo      = $ficha["incomodo"]    ?? "Temas incómodos no registrados";
 $gustos        = $ficha["gustos"]      ?? "Gustos no registrados";
 $logros        = $ficha["logros"]      ?? "Logros no registrados";
 
-// ===============================
-// GENERADOR DEL GUION
-// ===============================
+// PROMPT PARA DIFY AI
+$prompt = "
+Eres Güero Bot, el asistente creativo de La Cueva del Güero. Tu tarea es generar el GUION de conducción completo para un episodio del podcast con el siguiente invitado.
 
-$guion = "
-GUION DEL EPISODIO – $nombre
+### PERSONALIDAD Y ESTILO DEL PODCAST:
+- Tono callejero, directo, norteño, sin poses, como platicando con un compa de confianza.
+- Enfoque en la neta, historias crudas, superación, barrio y humor natural.
+- El entrevistador es 'Junior' o 'El Güero'.
 
-🎬 INTRO (0–5 min)
-- Presentación del invitado: $nombre, $ocupacion.
-- Contexto del barrio: $barrio.
-- Frase o vibra inicial.
+### DATOS DEL INVITADO:
+- Nombre: $nombre
+- Ocupación: $ocupacion
+- Barrio: $barrio
+- Herida emocional / Obstáculo fuerte: $herida
+- Momento más decisivo: $momento
+- Trayectoria: $trayectoria
+- Temas incómodos / Límites: $incomodo
+- Gustos / Pasiones: $gustos
+- Logros clave: $logros
 
-🔥 BLOQUE 1 – INFANCIA Y ORIGEN (5–15 min)
-- ¿Cómo era crecer en $barrio?
-- Primeras influencias.
-- Momentos clave de su niñez.
+### ESTRUCTURA REQUERIDA PARA EL GUION:
+1. 🎬 INTRO (0–5 min) - Presentación con estilo y flow.
+2. 🔥 BLOQUE 1 – INFANCIA Y ORIGEN (5–15 min) - Preguntas del barrio y niñez.
+3. 💥 BLOQUE 2 – HERIDA / MOMENTO DURO (15–30 min) - Abordar la herida con empatía pero de frente.
+4. ⚡ BLOQUE 3 – MOMENTO DECISIVO (30–45 min) - El punto de quiebre.
+5. 🎯 BLOQUE 4 – TRAYECTORIA (45–60 min) - Logros y camino.
+6. 🔥 BLOQUE 5 – TEMAS INCÓMODOS (60–70 min) - Preguntas difíciles o cómo tratarlas.
+7. ❤️ BLOQUE 6 – PASIONES Y FUTURO (70–80 min) - Gustos e intereses.
+8. 🎤 CIERRE (80–90 min) - Mensaje final y reflexión.
 
-💥 BLOQUE 2 – HERIDA / MOMENTO DURO (15–30 min)
-- La herida: $herida.
-- ¿Cómo lo marcó?
-- ¿Qué cambió en su vida?
-
-⚡ BLOQUE 3 – MOMENTO DECISIVO (30–45 min)
-- Punto de quiebre: $momento.
-- Decisiones que lo llevaron a donde está.
-
-🎯 BLOQUE 4 – TRAYECTORIA (45–60 min)
-- Historia: $trayectoria.
-- Logros: $logros.
-- Obstáculos superados.
-
-🔥 BLOQUE 5 – TEMAS INCÓMODOS (60–70 min)
-- $incomodo
-
-❤️ BLOQUE 6 – PASIONES Y FUTURO (70–80 min)
-- Gustos e intereses: $gustos
-- Qué sigue para él.
-
-🎤 CIERRE (80–90 min)
-- Mensaje final del invitado.
-- Reflexión.
+Genera diálogos sugeridos para Junior e indicaciones de tono (ej. [Risas], [Tono serio]) que hagan que la conversación fluya con mucho estilo urbano. No agregues etiquetas HTML ni bloques Markdown de código, solo formato de texto plano estructurado.
 ";
+
+// Llamada a la API centralizada de Dify
+$difyResult = call_dify_api($prompt, 'guero-bot-guion', 'team');
+
+if (!$difyResult['success']) {
+    http_response_code(500);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Error al llamar a Dify AI: ' . $difyResult['error']
+    ], JSON_UNESCAPED_UNICODE);
+    exit();
+}
+
+$guion = $difyResult['answer'];
 
 // Respuesta final
 echo json_encode([
     'status' => 'success',
     'guion' => trim($guion)
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-
 exit();
