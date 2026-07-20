@@ -123,7 +123,7 @@ async function generarEscaleta() {
 
         const btnCueCards = document.getElementById("btnCueCardsHTML");
         if (btnCueCards) {
-            btnCueCards.addEventListener("click", () => generarCueCardsHTML(datos.nombre));
+            btnCueCards.addEventListener("click", () => generarCueCardsHTML(datos.nombre, data.cue_cards));
         }
 
         guardarConocimiento(datos.nombre, escaleta, guion, cue);
@@ -141,14 +141,19 @@ async function generarEscaleta() {
 /* ============================================================
    2) GENERAR CUE CARDS HTML (IMPRESIÓN)
    ============================================================ */
-async function generarCueCardsHTML(nombre) {
+async function generarCueCardsHTML(nombre, cueCardsTexto) {
+    // Dividir el texto de las cue cards en un array de líneas limpias
+    const tarjetasArray = cueCardsTexto
+        ? cueCardsTexto.split('\n').map(line => line.trim()).filter(line => line.length > 0)
+        : ["Tarjetas de conducción generales para " + nombre];
+
     try {
         const response = await fetch(API_CUECARDS_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 invitado: nombre,
-                tarjetas: [],
+                tarjetas: tarjetasArray,
                 user: "guero-bot-pro"
             })
         });

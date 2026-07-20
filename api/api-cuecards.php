@@ -15,10 +15,13 @@ $input=json_decode(file_get_contents('php://input'),true);
 $invitado=trim($input['invitado']??'');
 $tarjetas=$input['tarjetas']??[];
 
-if($invitado==='' || !is_array($tarjetas) || empty($tarjetas)){
+if ($invitado === '') {
     http_response_code(400);
-    echo json_encode(['status'=>'error','message'=>'Faltan datos']);
+    echo json_encode(['status'=>'error','message'=>'Falta el nombre del invitado']);
     exit();
+}
+if (!is_array($tarjetas)) {
+    $tarjetas = [];
 }
 
 require_once __DIR__ . '/../config/config.php';
