@@ -1,0 +1,543 @@
+/* ============================================
+   COMPONENTS — LA CUEVA DEL GÜERO (NEÓN URBANO)
+   ============================================ */
+
+/* ===== Upload Box ===== */
+.upload-box {
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  padding: 2.5rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 14px;
+  margin: 1.5rem 0;
+  transition: 0.25s ease;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(4px);
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(0, 246, 255, 0.3),
+    inset 0 0 20px rgba(255, 0, 168, 0.2);
+}
+
+.upload-box:hover {
+  border-color: #ffffff;
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.8),
+    0 0 35px rgba(255, 0, 168, 0.6);
+  transform: scale(1.02);
+}
+
+/* ===== Avatar Preview ===== */
+.avatar-preview {
+  margin-top: 2rem;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.avatar-preview img {
+  max-width: 280px;
+  border-radius: 14px;
+  border: 2px solid #ffffff;
+  background: transparent;
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.6),
+    0 0 40px rgba(255, 0, 168, 0.5);
+
+  animation: neonPulse 2.5s infinite ease-in-out;
+}
+
+.avatar-preview p {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  color: #00F6FF;
+  text-shadow: 0 0 8px rgba(0, 246, 255, 0.6);
+}
+
+/* ===== Loader ===== */
+.loader {
+  margin-top: 1.8rem;
+  padding: 1rem;
+  text-align: center;
+  color: #00F6FF;
+  font-weight: 700;
+  font-size: 1.1rem;
+
+  animation: neonPulse 1.4s infinite ease-in-out;
+}
+
+/* ===== Action Form ===== */
+.action-form {
+  margin-top: 1.5rem;
+}
+
+.action-form input {
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.action-form button {
+  width: 100%;
+  background: #4EFC22;
+  color: #000;
+  font-weight: 900;
+
+  box-shadow:
+    0 0 12px rgba(78, 252, 34, 0.9),
+    0 0 25px rgba(255, 95, 0, 0.6);
+}
+
+.action-form button:hover {
+  background: #6AFF3A;
+  box-shadow:
+    0 0 20px rgba(78, 252, 34, 1),
+    0 0 35px rgba(255, 95, 0, 0.8);
+}
+
+/* ===== Version List ===== */
+ul li {
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.6rem 0.4rem;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+ul li img {
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(0, 246, 255, 0.6),
+    0 0 30px rgba(255, 0, 168, 0.5);
+
+  width: 75px;
+  height: auto;
+}
+
+/* ===== Animaciones ===== */
+@keyframes neonPulse {
+  0% {
+    filter: drop-shadow(0 0 4px #fff);
+  }
+  50% {
+    filter: drop-shadow(0 0 14px #00F6FF)
+            drop-shadow(0 0 22px #FF00A8);
+  }
+  100% {
+    filter: drop-shadow(0 0 4px #fff);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================
+   NAVBAR — LA CUEVA DEL GÜERO
+   ============================ */
+
+.navbar-neon {
+  width: 100%;
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(18, 18, 18, 0.85);
+  backdrop-filter: blur(6px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(0, 246, 255, 0.2),
+    0 0 30px rgba(255, 0, 168, 0.15);
+}
+
+.navbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+
+  text-shadow:
+    0 0 8px #fff,
+    0 0 16px #00F6FF,
+    0 0 28px #FF00A8;
+
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link-neon {
+  color: #00F6FF;
+  font-weight: 700;
+  transition: 0.2s ease;
+
+  text-shadow:
+    0 0 6px rgba(0, 246, 255, 0.6),
+    0 0 12px rgba(255, 0, 168, 0.4);
+}
+
+.nav-link-neon:hover {
+  color: #FF00A8;
+  text-shadow:
+    0 0 10px rgba(255, 0, 168, 0.8),
+    0 0 20px rgba(0, 246, 255, 0.8);
+}
+
+.nav-cta {
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+}
+
+/* ============================
+   FOOTER — LA CUEVA DEL GÜERO
+   ============================ */
+
+.footer-neon {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  text-align: center;
+  background: rgba(18, 18, 18, 0.9);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(0, 246, 255, 0.2),
+    0 0 30px rgba(255, 0, 168, 0.15);
+}
+
+.footer-neon p {
+  margin: 0.3rem 0;
+  color: #fff;
+  opacity: 0.8;
+}
+
+.footer-accent {
+  color: #FF00A8;
+  font-weight: 700;
+  text-shadow:
+    0 0 8px rgba(255, 0, 168, 0.8),
+    0 0 16px rgba(0, 246, 255, 0.6);
+}
+
+/* ============================
+   LOGIN — LA CUEVA DEL GÜERO
+   ============================ */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+
+  background: #121212;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Humo animado */
+.login-page::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: url('/humo.png') center/cover no-repeat;
+  opacity: 0.15;
+  filter: blur(10px);
+  animation: smokeMove 18s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes smokeMove {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(40px) translateY(-20px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+/* Tarjeta principal */
+.login-card-neon {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(8px);
+
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.4),
+    0 0 25px rgba(0, 246, 255, 0.4),
+    0 0 35px rgba(255, 0, 168, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+/* Títulos */
+.login-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.login-subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  opacity: 0.85;
+}
+
+/* Inputs */
+.input-neon {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #0d0d0d;
+  color: #fff;
+
+  transition: 0.25s ease;
+}
+
+.input-neon:focus {
+  border-color: #00F6FF;
+  box-shadow:
+    0 0 10px rgba(0, 246, 255, 0.8),
+    0 0 20px rgba(255, 0, 168, 0.6);
+}
+
+/* Botón */
+.login-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+/* Footer */
+.login-footer-text {
+  margin-top: 1.5rem;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.link-neon {
+  color: #00F6FF;
+  font-weight: 700;
+  text-shadow:
+    0 0 8px rgba(0, 246, 255, 0.8),
+    0 0 16px rgba(255, 0, 168, 0.6);
+}
+
+.link-neon:hover {
+  color: #FF00A8;
+}
+
+/* Registro — ajustes visuales */
+.login-card-neon .login-title {
+  font-size: 1.8rem;
+}
+
+.login-card-neon .login-subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* Forgot Password — ajustes visuales */
+.login-card-neon .login-title {
+  font-size: 1.8rem;
+}
+
+.login-card-neon .login-subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* Reset Password — ajustes visuales */
+.login-card-neon .login-title {
+  font-size: 1.8rem;
+}
+
+.login-card-neon .login-subtitle {
+  font-size: 1rem;
+  opacity: 0.85;
+}
+
+/* ============================
+   DASHBOARD — LA CUEVA DEL GÜERO
+   ============================ */
+
+.dashboard-page {
+  padding: 3rem 2rem;
+  min-height: 100vh;
+  background: #121212;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Humo animado */
+.dashboard-page::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: url('/humo.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: blur(12px);
+  animation: smokeMove 22s infinite linear;
+  pointer-events: none;
+}
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-subtitle {
+  text-align: center;
+  margin-bottom: 3rem;
+  opacity: 0.85;
+}
+
+/* Grid */
+.dashboard-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #0a0a0a;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+
+/* Tarjetas */
+.dashboard-card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(6px);
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.3),
+    0 0 25px rgba(0, 246, 255, 0.3),
+    inset 0 0 20px rgba(255, 0, 168, 0.2);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.8),
+    0 0 30px rgba(0, 246, 255, 0.8),
+    0 0 40px rgba(255, 0, 168, 0.6);
+}
+
+.dashboard-card h3 {
+  margin-top: 1rem;
+  color: #00F6FF;
+  text-shadow:
+    0 0 8px rgba(0, 246, 255, 0.8),
+    0 0 16px rgba(255, 0, 168, 0.6);
+}
+
+.dashboard-card p {
+  margin-top: 0.5rem;
+  opacity: 0.8;
+}
+
+/* Iconos */
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+
+  text-shadow:
+    0 0 10px #fff,
+    0 0 20px #00F6FF,
+    0 0 30px #FF00A8;
+}
+
+.logs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.log-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #00ffff;
+  padding: 15px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  opacity: 0.9;
+}
+
+.loader-neon {
+  width: 55px;
+  height: 55px;
+  border: 4px solid #00ffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  filter: drop-shadow(0 0 8px #00ffff);
+}
+
+.loading-text {
+  margin-top: 15px;
+  font-size: 1.1rem;
+  color: #00ffff;
+  text-shadow: 0 0 6px #00ffff;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

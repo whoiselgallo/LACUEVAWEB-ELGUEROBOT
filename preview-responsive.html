@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preview Responsivo - La Cueva del Güero</title>
+  <style>
+    body{ background:#050505; color:#fff; font-family: Arial, Helvetica, sans-serif; margin:24px; }
+    h1{ font-size:18px; margin-bottom:12px }
+    .grid{ display:flex; gap:18px; flex-wrap:wrap; align-items:flex-start }
+    .device{ background:#0b0b0b; padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); box-shadow:0 10px 30px rgba(0,0,0,0.6); }
+    .devicelabel{ font-size:13px; color:#ddd; margin-bottom:8px; text-align:center }
+    iframe{ display:block; background:#fff; border:1px solid rgba(255,255,255,0.06); }
+    .note{ margin-top:14px; font-size:13px; color:#bbb }
+    @media (max-width:1100px){ .grid{ flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <h1>Vista previa responsiva — abre localmente para revisar</h1>
+  <div class="grid">
+    <div class="device" style="flex:1 1 48%;">
+      <div class="devicelabel">Escritorio — 1200px</div>
+      <iframe src="index.html" width="1200" height="900" title="1200px preview"></iframe>
+    </div>
+
+    <div class="device" style="flex:1 1 48%;">
+      <div class="devicelabel">Tablet — 768px</div>
+      <iframe src="index.html" width="768" height="1100" title="768px preview"></iframe>
+    </div>
+
+    <div class="device" style="flex:1 1 320px;">
+      <div class="devicelabel">Móvil — 375px</div>
+      <iframe src="index.html" width="375" height="1400" title="375px preview"></iframe>
+    </div>
+  </div>
+
+  <p class="note">Si los iframes no cargan por restricciones de "file://" en tu navegador, abre un servidor local desde la carpeta del proyecto:</p>
+  <pre style="background:#0a0a0a;padding:10px;border-radius:6px;color:#9f9;"># Python 3
+python -m http.server 8000
+
+# Luego abre en el navegador:
+http://localhost:8000/preview-responsive.html
+
+# En Windows (cmd):
+start preview-responsive.html</pre>
+</body>
+</html>

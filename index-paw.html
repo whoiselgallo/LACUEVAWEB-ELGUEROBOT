@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Cueva del Güero</title>
+
+  <meta name="description" content="La Cueva del Güero: podcast urbano, invitados reales, historias crudas y reflexión con estilo neon.">
+
+  <link rel="icon" type="image/webp" href="images/logotipo.webp">
+  <link rel="icon" type="image/png" href="images/logotipo.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/paw-agent.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer" />
+</head>
+
+<body>
+  <!-- 🔥 CONTENIDO PRINCIPAL DE LA CUEVA -->
+  <main>
+    <!-- ... todas tus secciones existentes (inicio, sobre, invitados, multimedia, etc.) ... -->
+  </main>
+
+  <!-- 🐾 NUEVO CONTENEDOR DEL PAW AGENT -->
+  <div id="pawAgentContainer" class="paw-container">
+    <div class="paw-main">
+      <button class="paw-minimize-btn" aria-label="Minimizar huella">−</button>
+
+
+      <div id="pawAgentContainer">
+  <div class="paw-main">
+    <div class="paw-minimize-btn">–</div>
+    <!-- resto del contenido del agente -->
+  </div>
+</div>
+
+
+      <picture class="paw-agent-logo-wrapper">
+        <source srcset="images/pewagent.webp" type="image/webp">
+        <img src="images/pewagent.png" alt="PewAgent" class="paw-agent-logo" loading="lazy">
+      </picture>
+
+      <div class="paw-minimized-dialog">El Güero Bot</div>
+
+      <div class="paw-toes">
+        <div class="paw-toe" data-label="Enviar"></div>
+        <div class="paw-toe" data-label="Chat"></div>
+        <div class="paw-toe" data-label="Equipo"></div>
+        <div class="paw-toe" data-label="Invitado"></div>
+        <div class="paw-toe" data-label="Seguidor"></div>
+      </div>
+
+      <div class="paw-chat-area">
+        <div class="paw-chat-header">
+          <h3>Güero Bot Paw</h3>
+          <span class="paw-visit-badge paw-visit-guest">INVITADO</span>
+        </div>
+
+        <div id="pawChatBody" class="paw-chat-body"></div>
+
+        <div class="paw-chat-controls">
+          <select id="pawVisitType">
+            <option value="guest" selected>Invitado</option>
+            <option value="team">Equipo</option>
+            <option value="follower">Seguidor</option>
+          </select>
+
+          <div class="paw-input-row">
+            <input id="pawChatInput" type="text" placeholder="Escribe aquí, perro..." autocomplete="off">
+            <button type="button" class="paw-send-btn">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧠 FOOTER ORIGINAL -->
+  <footer class="footer-smoke">
+    <!-- ... contenido del footer ... -->
+  </footer>
+
+  <!-- ============================
+       CARGA DE MÓDULOS PAW AGENT
+       ============================ -->
+  <script type="module" src="/paw-agent/paw-core.js"></script>
+  <script type="module" src="/paw-agent/paw-chat.js"></script>
+  <script type="module" src="/paw-agent/paw-form.js"></script>
+  <script type="module" src="/paw-agent/paw-modes.js"></script>
+  <script type="module" src="/paw-agent/paw-api.js"></script>
+  <script type="module" src="/paw-agent/paw-minimize.js"></script>
+<script src="/paw-agent/paw-storytelling.js"></script>
+<script src="/paw-agent/storytelling-invitado-page.js"></script>
+  <script type="module" src="/paw-agent/paw-agent.js"></script>
+
+  <!-- Scripts generales -->
+  <script defer src="js/scripts.js"></script>
+  <script defer src="js/blog.js"></script>
+
+  <script>
+    const yearSpan = document.getElementById('year-span');
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
