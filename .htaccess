@@ -1,36 +1,15 @@
-# ═════════════════════════════════════════════════════════════════════════════════
-# .htaccess – LA CUEVA DEL GÜERO
+﻿# ═════════════════════════════════════════════════════════════════════════════════
+# .htaccess - LA CUEVA DEL GÜERO
 # Protección de archivos sensibles y configuración de seguridad
 # ═════════════════════════════════════════════════════════════════════════════════
 
-# ═════════════════════════════════════════════════════════════════════════════════
 # 1. MÓDULO REWRITE
-# ═════════════════════════════════════════════════════════════════════════════════
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
 </IfModule>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 2. BLOQUEAR ACCESO DIRECTO A DIRECTORIOS SENSIBLES
-# ═════════════════════════════════════════════════════════════════════════════════
-
-# Proteger /config/ – NO acceder a config.php directamente
-<Directory "config">
-    Order Allow,Deny
-    Deny from all
-</Directory>
-
-# Proteger /logs/ – NO servir archivos de log
-<Directory "logs">
-    Order Allow,Deny
-    Deny from all
-</Directory>
-
-# ═════════════════════════════════════════════════════════════════════════════════
-# 3. BLOQUEAR ARCHIVOS SENSIBLES
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 2. BLOQUEAR ARCHIVOS SENSIBLES
 # Bloquear acceso directo a archivos de configuración
 <FilesMatch "^(config\.php|\.env|\.env\..*|\.gitignore|\.git)$">
     Order Allow,Deny
@@ -43,10 +22,7 @@
     Deny from all
 </FilesMatch>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 4. HEADERS DE SEGURIDAD
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 3. HEADERS DE SEGURIDAD
 <IfModule mod_headers.c>
     # Prevenir clickjacking
     Header always set X-Frame-Options "SAMEORIGIN"
@@ -64,10 +40,7 @@
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 5. COMPRESIÓN Y CACHING
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 4. COMPRESIÓN Y CACHING
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/plain
@@ -82,10 +55,7 @@
     AddOutputFilterByType DEFLATE application/json
 </IfModule>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 6. EXPIRACIÓN DE CACHÉ
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 5. EXPIRACIÓN DE CACHÉ
 <IfModule mod_expires.c>
     ExpiresActive On
     
@@ -106,35 +76,21 @@
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
     
-    # HTML y PHP – Sin caché
+    # HTML y PHP - Sin caché
     ExpiresByType text/html "access plus 0 seconds"
     ExpiresByType application/php "access plus 0 seconds"
 </IfModule>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 7. PREVENCIÓN DE ACCESO A LISTADO DE DIRECTORIOS
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 6. PREVENCIÓN DE ACCESO A LISTADO DE DIRECTORIOS
 Options -Indexes
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 8. PROTECCIÓN CONTRA ATAQUES COMUNES
-# ═════════════════════════════════════════════════════════════════════════════════
-
-# Bloquear SQL Injection intents
+# 7. PROTECCIÓN CONTRA SQL INJECTION
 <IfModule mod_rewrite.c>
     RewriteCond %{QUERY_STRING} (\%27)|(\-\-)|(\%23)|(;) [NC]
     RewriteRule ^(.*)$ index.php [L]
 </IfModule>
 
-# ═════════════════════════════════════════════════════════════════════════════════
-# 9. ERRORES PERSONALIZADOS
-# ═════════════════════════════════════════════════════════════════════════════════
-
+# 8. ERRORES PERSONALIZADOS
 ErrorDocument 403 "Acceso denegado"
 ErrorDocument 404 "No encontrado"
 ErrorDocument 500 "Error del servidor"
-
-# ═════════════════════════════════════════════════════════════════════════════════
-# FIN – .htaccess
-# ═════════════════════════════════════════════════════════════════════════════════
