@@ -60,17 +60,12 @@ try {
         ":fecha_propuesta" => $input["fecha_propuesta"]
     ]);
 
-    echo json_encode(["success" => true, "message" => "Invitado guardado correctamente"]);
-
-echo json_encode([
-  "success" => true,
-  "uuid" => $uuid,
-  "nombre" => $nombre,
-  "ficha" => $ficha,
-  "message" => "Ficha guardada correctamente"
-]);
+    json_response([
+        "success" => true,
+        "message" => "Invitado guardado correctamente"
+    ]);
 
 
 } catch (Exception $e) {
-    echo json_encode(["error" => "Error al guardar: " . $e->getMessage()]);
+    json_response(["error" => "Error al guardar: " . $e->getMessage()], 500);
 }
