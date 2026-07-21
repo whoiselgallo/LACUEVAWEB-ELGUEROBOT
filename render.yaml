@@ -1,0 +1,34 @@
+# ═════════════════════════════════════════════════════════════════════════════════
+# RENDER BLUEPRINT - LA CUEVA DEL GÜERO
+# Archivo de configuración automática para despliegues en Render.com
+# ═════════════════════════════════════════════════════════════════════════════════
+
+services:
+  - type: web
+    name: lacuevaweb-elguerobot
+    env: docker
+    plan: free
+    region: oregon
+    branch: main
+    envVars:
+      # --- CREDENCIALES DE BASE DE DATOS (NEON.TECH) ---
+      - key: DB_HOST
+        value: ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        value: neondb
+      - key: DB_USER
+        value: neondb_owner
+      - key: DB_PASS
+        value: npg_eOUvM7qXj0SZ
+      
+      # --- CREDENCIALES DE INTELIGENCIA ARTIFICIAL (DIFY.AI) ---
+      - key: DIFY_API_KEY
+        value: app-HFon5L07VUDoe00fMeKudFjT
+      
+      # --- CREDENCIALES DEL DASHBOARD DE ADMINISTRACIÓN ---
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASS
+        value: eldesmadredelGuero1
