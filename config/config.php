@@ -167,7 +167,7 @@ function call_dify_api($prompt, $user_id = 'guest', $visit_type = 'guest') {
         error_log('Dify API Error: ' . $response);
         return [
             'success' => false,
-            'error'   => 'Error de Dify AI',
+            'error'   => 'Error de Dify AI (' . $http_code . '): ' . $response,
             'code'    => 'DIFY_ERROR',
             'http_code' => $http_code
         ];
