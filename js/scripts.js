@@ -121,23 +121,23 @@ function habilitarDropdowns() {
             if (!parent) return;
             const menu = parent.querySelector('.dropdown-menu');
             if (menu) {
-                menu.classList.toggle('active');
+                menu.classList.toggle('dropdown-open');
             }
         });
     });
 
     // Cerrar dropdowns al hacer clic fuera
     document.addEventListener('click', () => {
-        document.querySelectorAll('.dropdown-menu.active').forEach((menu) => {
-            menu.classList.remove('active');
+        document.querySelectorAll('.dropdown-menu.dropdown-open').forEach((menu) => {
+            menu.classList.remove('dropdown-open');
         });
     });
 
     // Cerrar dropdowns con Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            document.querySelectorAll('.dropdown-menu.active').forEach((menu) => {
-                menu.classList.remove('active');
+            document.querySelectorAll('.dropdown-menu.dropdown-open').forEach((menu) => {
+                menu.classList.remove('dropdown-open');
             });
         }
     });
