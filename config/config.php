@@ -51,7 +51,7 @@ if (file_exists($env_path)) {
 // ═════════════════════════════════════════════════════════════════════════════════
 // DIFY AI - Configuración
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DIFY_API_KEY', getEnvVar('DIFY_API_KEY', 'app-HFon5L07VUDoe00fMeKudFjT'));
+define('DIFY_API_KEY', getEnvVar('DIFY_API_KEY', 'app-GXS1gJ5xnclVP3rrCm9QpEsI'));
 define('DIFY_URL', 'https://api.dify.ai/v1/chat-messages');
 define('DIFY_TIMEOUT', 30);
 
