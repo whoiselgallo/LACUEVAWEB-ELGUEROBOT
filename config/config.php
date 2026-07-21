@@ -70,6 +70,8 @@ define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 define('APP_NAME', 'La Cueva del Güero');
 define('APP_VERSION', '2.0.2');
 define('APP_ENV', 'production');  // development, staging, production
+define('ADMIN_USER', getEnvVar('ADMIN_USER', 'admin'));
+define('ADMIN_PASS', getEnvVar('ADMIN_PASS', 'eldesmadredelGuero1'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // FUNCIÓN: Conexión a Base de Datos

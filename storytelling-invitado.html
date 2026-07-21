@@ -80,6 +80,23 @@
   </style>
 </head>
 <body>
+  <script>
+    // Validar acceso exclusivo como invitado identificado por la pata del bot
+    if (localStorage.getItem('paw_guest_access') !== 'true') {
+      document.body.innerHTML = `
+        <div style="background:#0a0a0a; color:#fff; font-family:'Outfit', sans-serif; display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; margin:0; text-align:center;">
+          <div style="background:rgba(15,15,15,0.8); border:1px solid #FF00FF; box-shadow:0 0 20px rgba(255,0,255,0.3); padding:40px; border-radius:12px; max-width:400px; box-sizing:border-box;">
+            <h2 style="color:#FF00FF; text-shadow:0 0 10px #FF00FF; margin-bottom:15px;">🔒 Acceso Restringido</h2>
+            <p style="color:#ddd; margin-bottom:25px; line-height:1.5;">Por seguridad, debes identificarte primero como invitado conversando con el Güero Bot en la página principal.</p>
+            <a href="index.html" style="display:inline-block; padding:12px 20px; background:#00FFFF; border:none; color:#111; font-weight:bold; border-radius:8px; text-decoration:none; box-shadow:0 0 10px rgba(0,255,255,0.3); transition:0.2s;">Volver al Inicio</a>
+          </div>
+        </div>
+      `;
+      document.body.style.padding = "0";
+      window.stop(); // Detener el renderizado del resto del documento
+    }
+  </script>
+
   <a href="index.html" class="back-link">← Volver a La Cueva</a>
 
   <h1>🎙 Storytelling del Invitado</h1>

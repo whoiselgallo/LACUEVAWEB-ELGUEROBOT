@@ -286,19 +286,62 @@ function addPawMessage(text, sender = "user") {
     chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-function sendMessageFromPaw() {
-    const input = document.getElementById('pawChatInput');
-    if (!input || !input.value.trim()) return;
+  async function sendMessageFromPaw() {
+      const input = document.getElementById('pawChatInput');
+      if (!input || !input.value.trim()) return;
+  
+      const message = input.value.trim();
+      addPawMessage(message, "user");
+      input.value = '';
+  
+      const chatArea = document.querySelector('.paw-chat-area');
+      if (!chatArea) return;
 
-    const message = input.value.trim();
-    addPawMessage(message, "user");
-    input.value = '';
+      // Crear un indicador de carga neón en el chat
+      const loader = document.createElement('div');
+      loader.className = 'paw-message paw-msg-bot';
+      loader.innerHTML = '<span style="color:#00FFFF; text-shadow:0 0 5px #00FFFF; animation: pulse 1s infinite;">El Güero está escribiendo...</span>';
+      chatArea.appendChild(loader);
+      chatArea.scrollTop = chatArea.scrollHeight;
 
-    // Simular respuesta del bot
-    setTimeout(() => {
-        addPawMessage("Entendido. ¿Qué necesitas?", "bot");
-    }, 500);
-}
+      try {
+          const response = await fetch(`${window.location.origin}/api/api-el-guero-bot.php`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                  query: message,
+                  visitType: pawAgentState.visitType || 'guest',
+                  user: 'usuario_paw_web'
+              })
+          });
+
+          // Quitar indicador de carga
+          loader.remove();
+
+          if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+          }
+
+          const data = await response.json();
+          if (data.success && data.answer) {
+              addPawMessage(data.answer, "bot");
+
+              // DETECTAR ACTIVACIÓN DE ACCESO DE INVITADO:
+              // Si el bot provee el link para registrarse como invitado, habilitamos el token local.
+              if (data.answer.indexOf('storytelling-invitado.html') !== -1) {
+                  localStorage.setItem('paw_guest_access', 'true');
+                  console.log("🔑 [PAW] Acceso a Storytelling Invitado activado localmente.");
+              }
+          } else {
+              addPawMessage("Ese compa no respondió bien, algo falló en la API.", "bot");
+          }
+
+      } catch (err) {
+          console.error("Error en Paw Agent chat:", err);
+          loader.remove();
+          addPawMessage("Tuvimos una falla al hablar con el Güero Bot. Revisa tu conexión.", "bot");
+      }
+  }
 
 /* ---------------------- MODAL DE BÚSQUEDA ---------------------- */
 
