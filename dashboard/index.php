@@ -516,6 +516,20 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                             <span id="detalleFecha" style="color: #666; font-size: 0.85rem;"></span>
                         </div>
                         
+                        <!-- BANNER DE CURADURÍA Y DECISIÓN DE PRODUCCIÓN -->
+                        <div id="curaduria-banner" style="background: rgba(0,0,0,0.4); border: 1px solid var(--neon-cyan); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+                                    <span id="curaduria-badge" style="font-weight: 800; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; background: rgba(0,255,255,0.1); border: 1px solid var(--neon-cyan); text-transform: uppercase;">🟢 NIVEL ALTO</span>
+                                    <strong id="curaduria-formato" style="color: #fff; font-size: 1rem;">Invitado Principal al Canal</strong>
+                                </div>
+                                <p id="curaduria-razon" style="margin: 0; font-size: 0.85rem; color: #aaa; line-height: 1.4;"></p>
+                            </div>
+                            <div id="curaduria-actions" style="display: flex; gap: 10px;">
+                                <!-- Dynamic production action buttons based on level -->
+                            </div>
+                        </div>
+                        
                         <div class="detalle-scroll" style="flex-grow: 1; overflow-y: auto;">
                             <!-- ESCALETA -->
                             <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">

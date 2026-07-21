@@ -94,9 +94,17 @@ function mostrarRegistros(registros) {
         const fecha = formatDate(reg.created_at || "");
         const id = reg.id;
 
+        // Extraer objeto curaduría si viene en el registro
+        const curaduria = reg.curaduria || { nivel: 'ALTO', badge: '🟢 ALTO', color: '#39FF14' };
+        const badgeTag = curaduria.badge || (curaduria.nivel === 'BAJO' ? '🔴 BAJO' : (curaduria.nivel === 'MEDIO' ? '🟡 MEDIO' : '🟢 ALTO'));
+        const badgeColor = curaduria.color || (curaduria.nivel === 'BAJO' ? '#FF00FF' : (curaduria.nivel === 'MEDIO' ? '#00FFFF' : '#39FF14'));
+
         html += `
             <div class="registro-card" id="card-${id}" onclick="mostrarDetalle(${id})">
-                <h3>${nombre}</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <h3 style="margin:0; font-size:1rem;">${nombre}</h3>
+                    <span style="font-size:0.75rem; font-weight:bold; color:${badgeColor}; border:1px solid ${badgeColor}; padding:2px 6px; border-radius:10px;">${badgeTag}</span>
+                </div>
                 <p><i class="fa-regular fa-calendar-days"></i> ${fecha}</p>
             </div>
         `;
@@ -144,11 +152,52 @@ async function mostrarDetalle(id) {
         document.getElementById("detalleNombre").textContent = escapeHtml(activeNombre);
         document.getElementById("detalleFecha").innerHTML = `<i class="fa-regular fa-clock"></i> Creado: ${formatDate(reg.created_at)}`;
 
+        // RENDERIZAR BANNER DE CURADURÍA
+        const curaduria = reg.curaduria || {
+            nivel: 'ALTO',
+            badge: '🟢 NIVEL ALTO',
+            formato: 'Invitado Principal al Canal',
+            color: '#39FF14',
+            razon: 'Ficha con información destacada. Aprobado para programa completo.'
+        };
+
+        const bannerEl = document.getElementById("curaduria-banner");
+        const badgeEl = document.getElementById("curaduria-badge");
+        const formatoEl = document.getElementById("curaduria-formato");
+        const razonEl = document.getElementById("curaduria-razon");
+        const actionsEl = document.getElementById("curaduria-actions");
+
+        if (bannerEl) bannerEl.style.borderColor = curaduria.color || '#00FFFF';
+        if (badgeEl) {
+            badgeEl.textContent = curaduria.badge;
+            badgeEl.style.color = curaduria.color;
+            badgeEl.style.borderColor = curaduria.color;
+            badgeEl.style.background = `rgba(${curaduria.nivel === 'BAJO' ? '255,0,255' : (curaduria.nivel === 'MEDIO' ? '0,255,255' : '57,255,20')}, 0.1)`;
+        }
+        if (formatoEl) formatoEl.textContent = curaduria.formato;
+        if (razonEl) razonEl.textContent = curaduria.razon;
+
+        if (actionsEl) {
+            if (curaduria.nivel === 'BAJO') {
+                actionsEl.innerHTML = `<button class="btn-neon btn-neon-magenta" onclick="canalizarAMicroContenido('${escapeHtml(activeNombre)}')"><i class="fa-solid fa-bolt"></i> Extraer Hooks & Shorts (30s)</button>`;
+            } else if (curaduria.nivel === 'MEDIO') {
+                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Generando guion para entrevista corta de 10 min...')"><i class="fa-solid fa-stopwatch"></i> Formato Entrevista Corta (10m)</button>`;
+            } else {
+                actionsEl.innerHTML = `<button class="btn-neon" style="border-color:#39FF14; color:#39FF14;" onclick="alert('Programa completo de 40+ min aprobado.')"><i class="fa-solid fa-star"></i> Programa Completo Aprobado</button>`;
+            }
+        }
+
         renderBloquesNormales();
     } catch (error) {
         console.error("Error cargando detalle:", error);
         alert("Error cargando detalle: " + error.message);
     }
+}
+
+function canalizarAMicroContenido(nombre) {
+    document.getElementById("hooks-topic").value = `Historias breves y frases detonadoras de ${nombre}`;
+    switchView('hooks');
+    generarHooksParaRedes();
 }
 
 function renderBloquesNormales() {

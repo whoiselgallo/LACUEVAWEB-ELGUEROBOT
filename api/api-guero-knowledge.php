@@ -99,6 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reg['escaleta'] = $story['escaleta'] ?? '';
                 $reg['guion'] = $story['guion'] ?? '';
                 $reg['cue_cards'] = $story['cue_cards'] ?? '';
+                $reg['curaduria'] = $story['curaduria'] ?? [
+                    'nivel' => 'ALTO',
+                    'badge' => '🟢 NIVEL ALTO',
+                    'formato' => 'Invitado Principal al Canal',
+                    'color' => '#39FF14',
+                    'razon' => 'Ficha histórica guardada previamente. Asignado como invitado al canal.'
+                ];
                 
                 json_response(['registro' => $reg], 200);
             } else {
@@ -165,11 +172,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($input['guion'])) $story_data['guion'] = $input['guion'];
         if (isset($input['cuecards'])) $story_data['cue_cards'] = $input['cuecards'];
         
-        // Si viene directamente envuelto en 'storytelling' (formato alternativo)
-        if (isset($input['storytelling'])) {
-            $story_data = is_array($input['storytelling']) ? $input['storytelling'] : json_decode($input['storytelling'], true);
+        // --- ALGORITMO DE CURADURÍA EN 3 NIVELES ---
+        function evaluarCuraduriaInvitado($story_data) {
+            $textoTotal = json_encode($story_data, JSON_UNESCAPED_UNICODE);
+            $longitud = mb_strlen($textoTotal);
+
+            $palabrasClave = ['herida', 'traición', 'superación', 'logro', 'barrio', 'fracaso', 'momento', 'dolor', 'lucha'];
+            $coincidencias = 0;
+            foreach ($palabrasClave as $kw) {
+                if (mb_stripos($textoTotal, $kw) !== false) {
+                    $coincidencias++;
+                }
+            }
+
+            if ($longitud > 600 || $coincidencias >= 4) {
+                return [
+                    'nivel' => 'ALTO',
+                    'badge' => '🟢 NIVEL ALTO',
+                    'formato' => 'Invitado Principal al Canal',
+                    'color' => '#39FF14',
+                    'razon' => 'Historia profunda con alta carga emocional y trayectoria destacada. Recomendado para entrevista completa de 40+ min en YouTube.'
+                ];
+            } elseif ($longitud > 250 || $coincidencias >= 2) {
+                return [
+                    'nivel' => 'MEDIO',
+                    'badge' => '🟡 NIVEL MEDIO',
+                    'formato' => 'Entrevista Corta / Segmento (10 min)',
+                    'color' => '#00FFFF',
+                    'razon' => 'Anécdota interesante con conflicto moderado. Recomendado para cápsula o segmento especial de 10 min.'
+                ];
+            } else {
+                return [
+                    'nivel' => 'BAJO',
+                    'badge' => '🔴 NIVEL BAJO',
+                    'formato' => 'Micro-Contenido (Shorts / Reels)',
+                    'color' => '#FF00FF',
+                    'razon' => 'Respuestas breves. No dejar fuera al participante: canalizar exclusivamente para extraer 3 hooks y clip de 30 seg.'
+                ];
+            }
         }
 
+        $story_data['curaduria'] = evaluarCuraduriaInvitado($story_data);
         $storytelling_json = json_encode($story_data, JSON_UNESCAPED_UNICODE);
 
         if ($existing) {
