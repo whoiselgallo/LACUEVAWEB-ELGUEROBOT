@@ -27,6 +27,19 @@ $action = sanitize_input($input['action'] ?? 'login');
 try {
     $db = db_connect();
 
+    // Auto-crear tabla de usuarios si no existe aún (Self-healing)
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            nombre VARCHAR(100),
+            role VARCHAR(50) DEFAULT 'admin',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        )
+    ");
+
     // -----------------------------------------------------------------------------
     // ACCIÓN: CHECK SESSION
     // -----------------------------------------------------------------------------

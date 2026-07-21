@@ -19,6 +19,23 @@ if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
 
 $db = db_connect();
 
+// Auto-crear tabla de usuarios si no existe aún (Self-healing)
+try {
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            email VARCHAR(255) UNIQUE NOT NULL,
+            password_hash VARCHAR(255) NOT NULL,
+            nombre VARCHAR(100),
+            role VARCHAR(50) DEFAULT 'admin',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            last_login TIMESTAMP
+        )
+    ");
+} catch (Exception $e) {
+    error_log("Users table auto-create error: " . $e->getMessage());
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? 'login';
 
