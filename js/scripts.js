@@ -112,17 +112,17 @@ function habilitarMenuMovil() {
 }
 
 function habilitarDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown');
+    const toggles = document.querySelectorAll('.dropdown-toggle');
 
-    dropdowns.forEach((dropdown) => {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
-        const menu = dropdown.querySelector('.dropdown-menu');
-
-        if (!toggle || !menu) return;
-
+    toggles.forEach((toggle) => {
         toggle.addEventListener('click', (e) => {
             e.stopPropagation();
-            menu.classList.toggle('active');
+            const parent = toggle.closest('.dropdown, .nav-item');
+            if (!parent) return;
+            const menu = parent.querySelector('.dropdown-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
         });
     });
 
