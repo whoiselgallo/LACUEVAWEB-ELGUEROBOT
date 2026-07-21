@@ -50,15 +50,37 @@ a:hover {
 }
 
 p {
-    font-size: 1.6rem;
+    font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+    line-height: 1.65;
+    max-width: 75ch;
+    margin-bottom: 1.1rem;
 }
 
 h1 {
-    font-size: 4.3rem;
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
 
 h2 {
-    font-size: 4rem;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
+h3 {
+    font-size: clamp(1.3rem, 3.8vw, 2.2rem);
+    line-height: 1.25;
+}
+
+h4 {
+    font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+}
+
+img, picture, video, iframe {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
 header.primary,
@@ -1874,4 +1896,76 @@ section h3,
   .btn-herramienta {
     width: 100%;
   }
+}
+
+/* ==========================================================================
+   ENTORNO FLUIDO MOBILE-FIRST & CARDS MAGNÉTICAS CON GLOW INTENSO
+   ========================================================================== */
+
+.contenedor-episodio,
+.contenedor-promocion,
+.contenedor-red-social,
+.blog-post-card,
+.formulario-evaluacion,
+.custom-cueva-form,
+.registro-card,
+.card-cueva,
+.invitado-card,
+.multimedia-card,
+.feature-card {
+    background: var(--fondo-card);
+    border: 1px solid rgba(0, 255, 255, 0.18);
+    border-radius: 20px;
+    padding: clamp(16px, 4vw, 28px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease,
+                background 0.35s ease;
+    will-change: transform, box-shadow;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 255, 0.08);
+}
+
+.contenedor-episodio:hover,
+.contenedor-promocion:hover,
+.contenedor-red-social:hover,
+.blog-post-card:hover,
+.formulario-evaluacion:hover,
+.custom-cueva-form:hover,
+.registro-card:hover,
+.card-cueva:hover,
+.invitado-card:hover,
+.multimedia-card:hover,
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--cian-neon);
+    background: rgba(14, 14, 20, 0.95);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75),
+                0 0 35px rgba(0, 255, 255, 0.5),
+                0 0 70px rgba(255, 0, 255, 0.3);
+    z-index: 10;
+}
+
+@media (max-width: 768px) {
+    header.secondary {
+        padding: 6px 12px;
+    }
+
+    .nav-titulo-cueva {
+        font-size: clamp(1.6rem, 5vw, 2.4rem);
+    }
+
+    .nav-actions {
+        gap: 5px;
+    }
+
+    .nav-action-button {
+        padding: 5px 8px;
+        font-size: 0.75rem;
+    }
+
+    .section-center {
+        padding: 30px 14px;
+    }
 }
