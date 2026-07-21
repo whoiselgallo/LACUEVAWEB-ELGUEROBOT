@@ -495,7 +495,10 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <div class="main-content">
         <header>
             <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
-            <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <button class="btn-neon" style="font-size:0.8rem; padding:6px 14px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto a Galería</button>
+                <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
+            </div>
         </header>
 
         <!-- VIEW 1: EPISODIOS Y FICHAS -->
@@ -910,6 +913,36 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <input type="file" id="import-pdf" accept=".pdf" class="form-input" required>
                 </div>
                 <button type="submit" class="btn-neon btn-neon-magenta" style="width:100%;"><i class="fa-solid fa-cloud-arrow-up"></i> Registrar Avatar & Sincronizar con Dify</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SUBIR FOTOS A LA GALERÍA -->
+    <div id="modalSubirFotoGaleria" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-cyan); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(0,255,255,0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0; color:#00FFFF;"><i class="fa-solid fa-camera"></i> Subir Foto a la Galería</h3>
+                <button onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <form onsubmit="guardarFotoGaleriaDashboard(event)">
+                <div class="form-group">
+                    <label>Título de la Fotografía *</label>
+                    <input type="text" id="galeria-titulo" class="form-input" placeholder="Ej: Grabación en vivo del Episodio 10" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select id="galeria-categoria" class="form-input">
+                        <option value="La Cueva">La Cueva</option>
+                        <option value="Invitados">Invitados</option>
+                        <option value="Detrás de Cámara">Detrás de Cámara</option>
+                        <option value="Eventos">Eventos</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Seleccionar Imagen (JPG / PNG / WEBP) *</label>
+                    <input type="file" id="galeria-archivo" accept="image/*" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-neon" style="width:100%;"><i class="fa-solid fa-cloud-arrow-up"></i> Publicar Fotografía en la Galería Pública</button>
             </form>
         </div>
     </div>

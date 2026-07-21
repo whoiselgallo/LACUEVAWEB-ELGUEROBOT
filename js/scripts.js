@@ -194,4 +194,86 @@ document.addEventListener('DOMContentLoaded', () => {
     habilitarSmoothScroll();
     habilitarMenuMovil();
     habilitarDropdowns();
+
+    // Cargar Auto-Sync de YouTube/Spotify y Galería Pública
+    cargarEpisodiosAutoSync();
+    cargarGaleriaPublica();
 });
+
+/* ============================================================
+   SINCRONIZACIÓN AUTOMÁTICA DE CANALES (YOUTUBE & SPOTIFY) & GALERÍA
+   ============================================================ */
+
+async function cargarEpisodiosAutoSync() {
+    try {
+        const resp = await fetch('/api/api-episodes-sync.php');
+        const data = await resp.json();
+
+        if (!data.success) return;
+
+        // 1. CONTENEDOR YOUTUBE: VIDEO COMPLETO
+        const ytBox = document.querySelector('.contenedor-youtube-video');
+        if (ytBox && data.youtube && data.youtube.embed_id) {
+            ytBox.innerHTML = `
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px; box-shadow:0 0 20px rgba(0,255,255,0.2);">
+                    <iframe src="https://www.youtube.com/embed/${data.youtube.embed_id}?autoplay=0&rel=0" 
+                            title="${data.youtube.titulo || 'Episodio Completo'}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen 
+                            style="position:absolute; top:0; left:0; width:100%; height:100%; border-radius:12px;">
+                    </iframe>
+                </div>
+                <h4 style="margin:12px 0 0; color:#00FFFF; font-size:1rem;"><i class="fab fa-youtube"></i> ${data.youtube.titulo}</h4>
+            `;
+        }
+
+        // 2. CONTENEDOR SPOTIFY: AUDIO & PORTADA DEL CAPÍTULO
+        const spBox = document.querySelector('.contenedor-spotify-capitulo');
+        if (spBox && data.spotify) {
+            const portada = data.spotify.portada_url || 'https://img.youtube.com/vi/ScMzIvxBSi4/maxresdefault.jpg';
+            const audioSrc = data.spotify.audio_url || 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+
+            spBox.innerHTML = `
+                <div style="background:rgba(10,10,18,0.8); border:1px solid var(--neon-magenta); border-radius:16px; padding:18px; display:flex; flex-direction:column; gap:12px;">
+                    <img src="${portada}" alt="Portada del Capítulo" style="width:100%; max-height:220px; object-fit:cover; border-radius:12px; box-shadow:0 0 15px rgba(255,0,255,0.3);">
+                    <h4 style="margin:0; color:#FF00FF; font-size:1rem;"><i class="fab fa-spotify"></i> ${data.spotify.titulo || 'Audio & Portada Oficial'}</h4>
+                    <audio controls style="width:100%; border-radius:30px; filter:invert(1) hue-rotate(90deg);">
+                        <source src="${audioSrc}" type="audio/mpeg">
+                        Tu navegador no soporta el reproductor de audio.
+                    </audio>
+                </div>
+            `;
+        }
+    } catch (e) {
+        console.error("Error cargando auto-sync de canales:", e);
+    }
+}
+
+async function cargarGaleriaPublica() {
+    try {
+        const resp = await fetch('/api/api-galeria.php');
+        const data = await resp.json();
+        const galleryGrid = document.querySelector('.gallery');
+
+        if (!data.success || !data.fotos || !galleryGrid) return;
+
+        if (data.fotos.length > 0) {
+            let html = "";
+            data.fotos.forEach((f) => {
+                html += `
+                    <div class="card-cueva" style="overflow:hidden; border-radius:16px;">
+                        <img src="${f.imagen_url}" alt="${f.titulo}" style="width:100%; height:200px; object-fit:cover;">
+                        <div style="padding:10px; text-align:center;">
+                            <h4 style="margin:0; font-size:0.9rem; color:#00FFFF;">${f.titulo}</h4>
+                            <span style="font-size:0.75rem; color:#aaa;">${f.categoria}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            galleryGrid.innerHTML = html;
+        }
+    } catch (e) {
+        console.error("Error cargando galería:", e);
+    }
+}

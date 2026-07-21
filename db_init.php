@@ -99,6 +99,30 @@ try {
         )
     ");
 
+    // 7. Crear tabla galeria
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS galeria (
+            id SERIAL PRIMARY KEY,
+            titulo VARCHAR(255),
+            categoria VARCHAR(100) DEFAULT 'La Cueva',
+            imagen_url TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
+
+    // 8. Crear tabla episodes_sync (Auto-Sync YouTube & Spotify)
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS episodes_sync (
+            id SERIAL PRIMARY KEY,
+            plataforma VARCHAR(50) UNIQUE NOT NULL,
+            titulo VARCHAR(255),
+            embed_id VARCHAR(255) NOT NULL,
+            portada_url TEXT,
+            audio_url TEXT,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
+
     echo json_encode([
         "success" => true,
         "message" => "Tablas creadas e inicializadas correctamente en Neon.tech (PostgreSQL)"
