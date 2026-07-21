@@ -81,13 +81,24 @@ function habilitarSmoothScroll() {
    ============================================================ */
 
 function habilitarMenuMovil() {
-    const btnMenu = document.getElementById('btnMenuMovil');
-    const menu = document.getElementById('menuMovil');
+    const btnMenu = document.querySelector('.nav-toggle');
+    const menu = document.querySelector('.nav-links');
 
     if (!btnMenu || !menu) return;
 
-    btnMenu.addEventListener('click', () => {
+    btnMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const expanded = btnMenu.getAttribute('aria-expanded') === 'true';
+        btnMenu.setAttribute('aria-expanded', !expanded);
         menu.classList.toggle('active');
+    });
+
+    // Cerrar menú al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !btnMenu.contains(e.target)) {
+            menu.classList.remove('active');
+            btnMenu.setAttribute('aria-expanded', 'false');
+        }
     });
 
     // Cerrar menú al hacer clic en un enlace
@@ -95,6 +106,7 @@ function habilitarMenuMovil() {
     enlaces.forEach((enlace) => {
         enlace.addEventListener('click', () => {
             menu.classList.remove('active');
+            btnMenu.setAttribute('aria-expanded', 'false');
         });
     });
 }
