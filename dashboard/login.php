@@ -77,10 +77,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'register') {
         $email = trim(sanitize_input($_POST['email'] ?? ''));
         $password = trim($_POST['new_password'] ?? '');
+        $confirm = trim($_POST['confirm_password'] ?? '');
         $nombre = trim(sanitize_input($_POST['nombre'] ?? ''));
 
-        if (empty($email) || empty($password)) {
-            $error = 'El correo corporativo y la nueva contraseña son obligatorios.';
+        if (empty($email) || empty($password) || empty($confirm)) {
+            $error = 'Todos los campos son obligatorios.';
+            $show_onboarding = true;
+        } elseif ($password !== $confirm) {
+            $error = 'Las contraseñas no coinciden. Por favor coloca ambas contraseñas iguales.';
             $show_onboarding = true;
         } elseif (!preg_match('/@(lacuevadelguero\.com|tsolutionsipidd\.com)$/i', $email)) {
             $error = 'Dominio no autorizado. Solo se permiten correos corporativos @lacuevadelguero.com y @tsolutionsipidd.com';
@@ -290,6 +294,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="new_password">Nueva Contraseña Personal</label>
                     <input type="password" id="new_password" name="new_password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirmar Contraseña</label>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Repite tu contraseña" required minlength="6">
                 </div>
                 <button type="submit" class="btn-login" style="background:#00FFFF; color:#000;">Registrar Cuenta e Ingresar</button>
             </form>

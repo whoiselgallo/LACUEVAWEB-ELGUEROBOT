@@ -477,6 +477,12 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             <li class="menu-item" id="menu-video" onclick="switchView('video')">
                 <i class="fa-solid fa-video"></i> Editor de Video
             </li>
+            <li class="menu-item" id="menu-canva" onclick="switchView('canva')">
+                <i class="fa-solid fa-palette"></i> Editor Canva PRO
+            </li>
+            <li class="menu-item" id="menu-avatar" onclick="switchView('avatar')">
+                <i class="fa-solid fa-masks-theater"></i> Avatar Engine
+            </li>
         </ul>
         <div class="sidebar-footer">
             <form action="logout.php" method="POST" style="margin: 0;">
@@ -726,6 +732,186 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 </div>
             </div>
         </section>
+
+        <!-- VIEW 5: EDITOR CANVA PRO -->
+        <section class="view-section" id="view-canva">
+            <h2 class="section-title"><i class="fa-solid fa-palette"></i> Editor de Fotos & Posters estilo Canva PRO</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Sube tus fotos de produccion, elimina fondos, ajusta colores y exporta posters o miniaturas en PNG transparente, JPEG o WEBP.</p>
+
+            <div style="display: grid; grid-template-columns: 320px 1fr; gap: 25px; align-items: start;">
+                <!-- CONTROLES -->
+                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 20px;">
+                    <h3 style="color:#00FFFF; margin-top:0;">🛠️ Herramientas</h3>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label>Subir Foto / Material</label>
+                        <input type="file" id="canvaFileInput" accept="image/*" class="form-input">
+                    </div>
+                    <button class="btn-neon btn-neon-magenta" style="width:100%; margin-bottom:15px;" onclick="removerFondoCanva()"><i class="fa-solid fa-scissors"></i> Eliminar Fondo / Transparente</button>
+
+                    <h4 style="color:#fff; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">🎨 Ajuste de Color</h4>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:0.8rem; color:#aaa;">Brillo:</label>
+                        <input type="range" id="canva-brightness" min="0" max="200" value="100" style="width:100%;">
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:0.8rem; color:#aaa;">Contraste:</label>
+                        <input type="range" id="canva-contrast" min="0" max="200" value="100" style="width:100%;">
+                    </div>
+                    <div style="margin-bottom:10px;">
+                        <label style="font-size:0.8rem; color:#aaa;">Saturación:</label>
+                        <input type="range" id="canva-saturate" min="0" max="200" value="100" style="width:100%;">
+                    </div>
+                    <div style="margin-bottom:15px;">
+                        <label style="font-size:0.8rem; color:#aaa;">Sepia:</label>
+                        <input type="range" id="canva-sepia" min="0" max="100" value="0" style="width:100%;">
+                    </div>
+
+                    <h4 style="color:#fff; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">✍️ Texto de Poster</h4>
+                    <input type="text" id="canva-text" class="form-input" placeholder="Ej: LA CUEVA PODCAST" oninput="applyCanvaFilters()" style="margin-bottom:15px;">
+
+                    <h4 style="color:#fff; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">💾 Descargar Resultado</h4>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" style="flex:1; font-size:0.75rem;" onclick="exportarImagenCanva('png')">PNG (Transp)</button>
+                        <button class="btn-neon" style="flex:1; font-size:0.75rem;" onclick="exportarImagenCanva('jpeg')">JPEG</button>
+                        <button class="btn-neon" style="flex:1; font-size:0.75rem;" onclick="exportarImagenCanva('webp')">WEBP</button>
+                    </div>
+                </div>
+
+                <!-- LIENZO HTML5 -->
+                <div style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(0,255,255,0.3); border-radius: 16px; padding: 20px; text-align: center; min-height: 450px; display: flex; justify-content: center; align-items: center;">
+                    <canvas id="canvaCanvas" style="max-width:100%; max-height:550px; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 6: AVATAR ENGINE -->
+        <section class="view-section" id="view-avatar">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div>
+                    <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-masks-theater"></i> Avatar-Engine: Creador de Personajes</h2>
+                    <p style="color: var(--text-muted); margin:5px 0 0;">Genera humanoide aislado estilo Comic Neón (fondo transparente, sin muebles) e importa avatares pre-existentes.</p>
+                </div>
+                <button class="btn-neon btn-neon-magenta" onclick="abrirModalImportarExistente()"><i class="fa-solid fa-file-import"></i> Importar Avatar Pre-Existente (Oculto)</button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px;">
+                <!-- PANEL 1: REGISTRO DE NUEVO PERSONAJE (3 FOTOS + CONSENTIMIENTO) -->
+                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 20px;">
+                    <h3 style="color:#00FFFF; margin-top:0;">👤 1. Nuevo Personaje (3 Fotos + Consentimiento)</h3>
+                    <form onsubmit="registrarNuevoAvatar(event)">
+                        <div class="form-group">
+                            <label>Nombre del Personaje *</label>
+                            <input type="text" id="avatar-nombre" class="form-input" placeholder="Ej: El Junior" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Rasgos Faciales & Estilo</label>
+                            <textarea id="avatar-rasgos" class="form-input" placeholder="Ej: Cejas pobladas, barba ligera, estilo norteño urbano..." style="min-height:70px;"></textarea>
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; margin-bottom:15px;">
+                            <div>
+                                <label style="font-size:0.75rem;">Foto Frente *</label>
+                                <input type="file" id="avatar-frente" accept="image/*" class="form-input" required>
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;">Perfil Izq (Cuerpo)</label>
+                                <input type="file" id="avatar-izq" accept="image/*" class="form-input">
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;">Perfil Der (Cuerpo)</label>
+                                <input type="file" id="avatar-der" accept="image/*" class="form-input">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label style="color:#FF00FF;">⚖️ Documento Firmado de Consentimiento (PDF) *</label>
+                            <input type="file" id="avatar-pdf" accept=".pdf" class="form-input" required>
+                        </div>
+                        <button type="submit" class="btn-neon" style="width:100%;"><i class="fa-solid fa-save"></i> Guardar Ficha & Crear Personaje Base</button>
+                    </form>
+                </div>
+
+                <!-- PANEL 2: GENERADOR DE HUMANOIDE AISLADO -->
+                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px;">
+                    <h3 style="color:#FF00FF; margin-top:0;">⚡ 2. Generar Humanoide Aislado</h3>
+                    <div class="form-group">
+                        <label>Selecciona Personaje Guardado *</label>
+                        <select id="avatarCharacterSelect" class="form-input">
+                            <option value="">-- Cargar de BD --</option>
+                        </select>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                        <div>
+                            <label>Actividad / Pose</label>
+                            <select id="avatarActividadSelect" class="form-input">
+                                <option value="sentado">Sentado</option>
+                                <option value="parado">Parado / De pie</option>
+                                <option value="corriendo">Corriendo</option>
+                                <option value="cantando">Cantando</option>
+                                <option value="conduciendo al aire con micro">Conduciendo Podcast</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Estilo de Ropa</label>
+                            <select id="avatarRopaSelect" class="form-input">
+                                <option value="deportivo 👟">Deportivo 👟</option>
+                                <option value="casual 👕">Casual 👕</option>
+                                <option value="formal 👔">Formal 👔</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn-neon btn-neon-magenta" style="width:100%; margin-bottom:15px;" onclick="generarHumanoideAislado()"><i class="fa-solid fa-wand-magic-sparkles"></i> Generar Humanoide Aislado (Transparente)</button>
+
+                    <div id="avatarResultOutput"></div>
+                </div>
+            </div>
+
+            <!-- PANEL 3: GENERADOR SEPARADO DE OBJETOS / PROPS -->
+            <div style="background: rgba(10,10,18,0.8); border: 1px solid rgba(0,255,255,0.2); border-radius: 16px; padding: 20px; margin-bottom:30px;">
+                <h3 style="color:#00FFFF; margin-top:0;">🛋️ Generador Separado de Utilería & Objetos (Comic Neón)</h3>
+                <div style="display:flex; gap:15px; margin-bottom:15px;">
+                    <select id="propSelect" class="form-input" style="flex:1;">
+                        <option value="Sofá Neón de La Cueva">Sofá Neón</option>
+                        <option value="Silla Conductor de Podcast">Silla de Conducción</option>
+                        <option value="Guitarra Eléctrica Neón">Guitarra Eléctrica</option>
+                        <option value="Micrófono de Pie Retro">Micrófono Vintage</option>
+                    </select>
+                    <button class="btn-neon" onclick="generarPropObjeto()"><i class="fa-solid fa-cube"></i> Generar Objeto Transparente</button>
+                </div>
+                <div id="propResultOutput"></div>
+            </div>
+
+            <!-- GALERÍA DE PERSONAJES -->
+            <h3 style="color:#fff; margin-bottom:15px;">👥 Personajes & Avatares Registrados</h3>
+            <div id="avatarGallery" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:15px;"></div>
+        </section>
+    </div>
+
+    <!-- MODAL OCULTO: IMPORTAR AVATAR PRE-EXISTENTE -->
+    <div id="modalImportarAvatarExistente" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
+        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-magenta); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(255,0,255,0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="margin:0; color:#FF00FF;"><i class="fa-solid fa-file-import"></i> Importar Avatar Existente</h3>
+                <button onclick="cerrarModalImportarExistente()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <form onsubmit="guardarAvatarPreExistente(event)">
+                <div class="form-group">
+                    <label>Nombre del Personaje *</label>
+                    <input type="text" id="import-nombre" class="form-input" placeholder="Ej: El Junior" required>
+                </div>
+                <div class="form-group">
+                    <label>Número de Capítulo / Episodio *</label>
+                    <input type="text" id="import-episodio" class="form-input" placeholder="Ej: Episodio 12" required>
+                </div>
+                <div class="form-group">
+                    <label>Imagen Limpia sin Fondo (PNG Transparente) *</label>
+                    <input type="file" id="import-imagen" accept="image/png" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label style="color:#FF00FF;">⚖️ Documento Firmado de Consentimiento (PDF) *</label>
+                    <input type="file" id="import-pdf" accept=".pdf" class="form-input" required>
+                </div>
+                <button type="submit" class="btn-neon btn-neon-magenta" style="width:100%;"><i class="fa-solid fa-cloud-arrow-up"></i> Registrar Avatar & Sincronizar con Dify</button>
+            </form>
+        </div>
     </div>
 
     <!-- Cargar PDF.js para lectura de documentos -->
@@ -735,5 +921,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     </script>
     <script src="../js/dashboard-pro.js"></script>
+    <script src="../js/editor-canva.js"></script>
+    <script src="../js/avatar-engine.js"></script>
 </body>
 </html>

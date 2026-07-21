@@ -80,6 +80,25 @@ try {
         )
     ");
 
+    // 6. Crear tabla avatars (Avatar-Engine & Personajes)
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS avatars (
+            id SERIAL PRIMARY KEY,
+            nombre VARCHAR(100) UNIQUE NOT NULL,
+            episodio VARCHAR(100),
+            foto_frente TEXT,
+            foto_perfil_izq TEXT,
+            foto_perfil_der TEXT,
+            imagen_limpia TEXT,
+            consentimiento_pdf TEXT,
+            rasgos_faciales TEXT,
+            estilo_casual TEXT,
+            estilo_deportivo TEXT,
+            estilo_formal TEXT,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ");
+
     echo json_encode([
         "success" => true,
         "message" => "Tablas creadas e inicializadas correctamente en Neon.tech (PostgreSQL)"
