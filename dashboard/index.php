@@ -749,7 +749,8 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <label>Subir Foto / Material</label>
                         <input type="file" id="canvaFileInput" accept="image/*" class="form-input">
                     </div>
-                    <button class="btn-neon btn-neon-magenta" style="width:100%; margin-bottom:15px;" onclick="removerFondoCanva()"><i class="fa-solid fa-scissors"></i> Eliminar Fondo / Transparente</button>
+                    <button class="btn-neon btn-neon-magenta" style="width:100%; margin-bottom:12px;" onclick="removerFondoCanva()"><i class="fa-solid fa-scissors"></i> Eliminar Fondo / Transparente</button>
+                    <button class="btn-neon" style="width:100%; margin-bottom:15px; border-color:#ff4d4d; color:#ff4d4d;" onclick="limpiarAreaPoster()"><i class="fa-solid fa-trash-can"></i> Limpiar Área de Poster</button>
 
                     <h4 style="color:#fff; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:5px;">🎨 Ajuste de Color</h4>
                     <div style="margin-bottom:10px;">
