@@ -141,7 +141,7 @@ Si pide escaleta o guion, usa formato completo.
     error_log('Database Error: ' . $e->getMessage());
     http_response_code(500);
     json_response([
-        'error' => 'Error de base de datos',
+        'error' => 'Error de base de datos: ' . $e->getMessage(),
         'code'  => 'DB_ERROR'
     ], 500);
 
