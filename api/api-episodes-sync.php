@@ -88,9 +88,9 @@ try {
         if (!$sp) {
             $sp = [
                 'plataforma'  => 'spotify',
-                'titulo'      => 'Audio & Portada Oficial - La Cueva del Güero',
-                'embed_id'    => '4kIy0j2',
-                'portada_url' => 'https://img.youtube.com/vi/dxEoV_H8flA/maxresdefault.jpg',
+                'titulo'      => 'JeyB: ¿De las burlas al éxito? - El poder de nunca detenerse -',
+                'embed_id'    => '5k0nrPMOPwQPcgScjuH6L8',
+                'portada_url' => 'images/imagendeportadapodcast.webp',
                 'audio_url'   => 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
             ];
         }
