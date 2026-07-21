@@ -59,7 +59,7 @@ try {
     }
 
     // MEMORIA
-    $kb = $db->query("SELECT content FROM knowledge_base ORDER BY id DESC LIMIT 10")
+    $kb = $db->query("SELECT storytelling FROM knowledge_base WHERE storytelling IS NOT NULL ORDER BY id DESC LIMIT 10")
              ->fetchAll(PDO::FETCH_COLUMN);
 
     $conv = $db->query("SELECT user_message, bot_answer FROM conversations ORDER BY id DESC LIMIT 5")
