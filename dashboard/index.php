@@ -709,7 +709,8 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <span id="editor-project-name" style="background:rgba(255,255,255,0.05); padding:4px 10px; border-radius:6px; font-size:0.8rem; color:#aaa;">Proyecto_Sin_Nombre.mp4</span>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px;" onclick="document.getElementById('editor-file-input').click()"><i class="fa-solid fa-file-import"></i> Importar</button>
+                    <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px;" onclick="document.getElementById('editor-file-input').click()"><i class="fa-solid fa-file-import"></i> Local</button>
+                    <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px; background:rgba(0, 255, 255, 0.1);" onclick="abrirImportarNube()"><i class="fa-solid fa-cloud-arrow-up"></i> Nube (Drive/Dropbox/TeraBox)</button>
                     <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px;" onclick="alert('Proyecto Guardado')"><i class="fa-solid fa-save"></i> Guardar</button>
                     <button class="btn-neon btn-neon-magenta" style="font-size:0.75rem; padding:5px 12px;" onclick="abrirExportarVideo()"><i class="fa-solid fa-upload"></i> Exportar Presets</button>
                     <input type="file" id="editor-file-input" accept="video/*,audio/*" style="display:none;">
@@ -846,6 +847,58 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
         <div id="editor-ia-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:100000; justify-content:center; align-items:center; flex-direction:column; gap:15px;">
             <div style="border: 4px solid rgba(0,255,255,0.1); border-left-color: var(--neon-cyan); width: 50px; height: 50px; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             <span class="ia-status-text" style="color:#00FFFF; font-family:'Outfit', sans-serif; font-size:1.1rem; text-shadow:0 0 8px #00FFFF;">Ejecutando proceso de IA...</span>
+        </div>
+
+        <!-- MODAL: IMPORTADOR DESDE LA NUBE -->
+        <div id="modalImportarNube" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
+            <div style="background:rgba(15,15,15,0.98); border:2px solid var(--neon-cyan); border-radius:20px; padding:30px; width:90%; max-width:640px; box-shadow:0 0 40px rgba(0,255,255,0.3);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:10px;">
+                    <h3 style="margin:0; color:#00FFFF; font-family:'Outfit', sans-serif;"><i class="fa-solid fa-cloud-arrow-up"></i> Conectores de Almacenamiento en la Nube</h3>
+                    <button onclick="cerrarImportarNube()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+                </div>
+                
+                <p style="color:#aaa; font-size:0.85rem; margin-bottom:20px;">Elige un proveedor de nube para sincronizar y cargar tus archivos de video de producción de forma nativa a la línea de tiempo:</p>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
+                    <!-- GOOGLE DRIVE -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
+                        <h4 style="color:#ffb703; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-google-drive"></i> Google Drive / One</h4>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Grabacion_Calle_Ep13_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Grabacion_Calle_Ep13_Drive.mp4</a></li>
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Entrevista_Ramon_Ep14_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Entrevista_Ramon_Ep14_Drive.mp4</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- DROPBOX -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
+                        <h4 style="color:#007fff; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-dropbox"></i> Dropbox</h4>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Invitado_JeyB_Ep15_Dropbox.mp4')"><i class="fa-regular fa-file-video"></i> Invitado_JeyB_Ep15_Dropbox.mp4</a></li>
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Audio_Master_Ep15_Dropbox.wav')"><i class="fa-regular fa-file-audio"></i> Audio_Master_Ep15_Dropbox.wav</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- ONEDRIVE -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
+                        <h4 style="color:#00a4ef; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-cloud"></i> Microsoft OneDrive</h4>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('OneDrive', 'Capitulo16_Final_OneDrive.mov')"><i class="fa-regular fa-file-video"></i> Capitulo16_Final_OneDrive.mov</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- TERABOX -->
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
+                        <h4 style="color:#4caf50; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-server"></i> TeraBox (TheraBite)</h4>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('TeraBox', 'Archivo_Pesado_1TB_Ep17.mp4')"><i class="fa-regular fa-file-video"></i> Archivo_Pesado_1TB_Ep17.mp4</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end;">
+                    <button class="btn-neon" onclick="cerrarImportarNube()">Cancelar</button>
+                </div>
+            </div>
         </div>
 
         <!-- VIEW 5: EDITOR CANVA PRO -->

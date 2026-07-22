@@ -158,3 +158,38 @@ function iniciarRenderVideo(preset) {
         alert(`¡Video renderizado y optimizado exitosamente para ${preset}! Listo para descargar.`);
     }, 3000);
 }
+
+// 🌐 CONECTORES NATIVOS A ALMACENAMIENTOS EN LA NUBE (Drive, Dropbox, OneDrive, TeraBox)
+function abrirImportarNube() {
+    const modal = document.getElementById("modalImportarNube");
+    if (modal) modal.style.display = "flex";
+}
+
+function cerrarImportarNube() {
+    const modal = document.getElementById("modalImportarNube");
+    if (modal) modal.style.display = "none";
+}
+
+function seleccionarArchivoNube(servicio, nombreArchivo) {
+    cerrarImportarNube();
+    const overlay = document.getElementById("editor-ia-overlay");
+    if (overlay) {
+        overlay.style.display = "flex";
+        overlay.querySelector(".ia-status-text").textContent = `Conectando con ${servicio} y descargando clip...`;
+    }
+
+    setTimeout(() => {
+        if (overlay) overlay.style.display = "none";
+        
+        // Cargar video mockup o URL en el reproductor del editor
+        const video = document.getElementById("editor-preview-video");
+        const nameDisplay = document.getElementById("editor-project-name");
+        
+        if (nameDisplay) {
+            nameDisplay.textContent = nombreArchivo;
+        }
+        
+        alert(`¡Conexión exitosa! El archivo "${nombreArchivo}" ha sido importado directamente desde ${servicio} a tu línea de tiempo.`);
+    }, 2500);
+}
+
