@@ -417,10 +417,13 @@
     display: flex;
     flex-direction: column;
     gap: 2px;
-    padding: 6px 8px;
+    padding: 8px 12px;
     border-radius: 8px;
     font-size: 0.85rem;
     animation: paw-chat-slide-in 0.3s ease;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .paw-message-user {
@@ -458,8 +461,27 @@
 
 .paw-message-text {
     color: #ffffff;
-    line-height: 1.3;
+    line-height: 1.4;
     word-wrap: break-word;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.paw-message-text p {
+    margin: 4px 0;
+}
+
+.paw-message-text pre, .paw-message-text code {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.75rem;
+    padding: 2px 4px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: inline-block;
+    max-width: 100%;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
