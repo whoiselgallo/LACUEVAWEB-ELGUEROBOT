@@ -30,6 +30,12 @@ function switchView(view) {
     const activeSec = document.getElementById(`view-${view}`);
     if (activeSec) activeSec.classList.add("active");
 
+    // Ocultar la barra lateral en celular después de elegir una sección
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) {
+        sidebar.classList.remove("active");
+    }
+
     // Actualizar título del header
     const titleEl = document.getElementById("view-header-title");
     if (titleEl) {

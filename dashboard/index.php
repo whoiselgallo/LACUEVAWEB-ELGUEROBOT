@@ -455,6 +455,85 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
         .hidden {
             display: none !important;
         }
+
+        /* MOBILE FIRST & RESPONSIVE DASHBOARD */
+        .btn-toggle-sidebar {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            margin-right: 15px;
+            transition: color 0.2s;
+        }
+        
+        .btn-toggle-sidebar:hover {
+            color: var(--neon-cyan);
+        }
+
+        @media (max-width: 768px) {
+            .btn-toggle-sidebar {
+                display: block;
+            }
+            body {
+                overflow-x: hidden;
+            }
+            .sidebar {
+                transform: translateX(-260px);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            header {
+                padding: 15px 20px;
+            }
+            .view-section {
+                padding: 20px 15px;
+                height: calc(100vh - 71px);
+            }
+            /* Episodios View mobile list */
+            .episodios-layout {
+                flex-direction: column;
+                height: auto;
+                gap: 15px;
+            }
+            .subpanel-lista, .subpanel-detalle {
+                width: 100% !important;
+                height: auto !important;
+            }
+            /* Canva Editor mobile grid */
+            #view-canva > div {
+                grid-template-columns: 1fr !important;
+                gap: 15px !important;
+            }
+            /* Video Editor Workspace mobile layout */
+            #view-video > div:nth-of-type(2) {
+                grid-template-columns: 1fr !important;
+                height: auto !important;
+                gap: 15px !important;
+            }
+            #view-video > div:nth-of-type(2) > div {
+                height: auto !important;
+                min-height: 200px;
+            }
+            /* Topbar of video editor wraps */
+            #view-video > div:nth-of-type(1) {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px;
+            }
+            #view-video > div:nth-of-type(1) > div {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -494,7 +573,10 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <!-- ÁREA PRINCIPAL -->
     <div class="main-content">
         <header>
-            <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
+            <div style="display:flex; align-items:center;">
+                <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+                <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
+            </div>
             <div style="display:flex; gap:12px; align-items:center;">
                 <button class="btn-neon" style="font-size:0.8rem; padding:6px 14px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto a Galería</button>
                 <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
@@ -1117,6 +1199,14 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <script>
         // Configurar worker de PDF.js
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Alternar barra lateral en pantallas celulares
+        function toggleSidebar() {
+            const sidebar = document.querySelector(".sidebar");
+            if (sidebar) {
+                sidebar.classList.toggle("active");
+            }
+        }
     </script>
     <script src="../js/dashboard-pro.js"></script>
     <script src="../js/editor-canva.js"></script>
