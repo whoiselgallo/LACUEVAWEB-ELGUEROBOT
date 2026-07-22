@@ -292,3 +292,30 @@ function exportarImagenCanva(formato) {
     a.click();
     document.body.removeChild(a);
 }
+
+// 🎨 CARGAR AVATAR GENERADO EN EL LIENZO CANVA DIRECTAMENTE
+function cargarImagenDesdeUrl(url) {
+    const canvas = document.getElementById("canvaCanvas");
+    if (!canvas) return;
+    
+    // Cambiar a la vista del editor Canva
+    switchView('canva');
+    
+    const img = new Image();
+    img.onload = () => {
+        currentImage = img;
+        canvas.width = 600; // Ancho estándar
+        canvas.height = 600; // Alto estándar
+        
+        state.imgX = 0;
+        state.imgY = 0;
+        state.imgScale = 1;
+        state.textX = canvas.width / 2;
+        state.textY = canvas.height * 0.85;
+        state.bgRemoved = true; // El avatar ya es transparente sin fondo
+        
+        dibujarLienzo();
+        alert("¡Avatar cargado exitosamente en el Editor Canva PRO! Puedes arrastrarlo y agregarle textos.");
+    };
+    img.src = url;
+}

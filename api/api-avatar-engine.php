@@ -167,6 +167,13 @@ try {
 
         $promptConsolidado = "Comic Neón Art Style, La Cueva del Güero signature aesthetic. Isolated humanoid character of '$nombre', $actividad pose, wearing $ropa outfit. Facial features: $rasgos. STRICT RULE: Transparent PNG background, ZERO background furniture, no chair, no sofa, no microphone, strictly isolated full-body character.";
 
+        // Mapear a imágenes transparentes reales guardadas localmente
+        $avatarUrl = '../images/avatar-alan-barraza.png'; // Default
+        $lowerNombre = strtolower($nombre);
+        if (strpos($lowerNombre, 'barraza') !== false || strpos($lowerNombre, 'perro') !== false) {
+            $avatarUrl = '../images/avatar-alan-barraza.png';
+        }
+
         json_response([
             'success'   => true,
             'character' => $nombre,
@@ -174,7 +181,8 @@ try {
             'ropa'      => $ropa,
             'style'     => 'Comic Neón (La Cueva del Güero)',
             'background' => 'Transparent PNG (Isolated Humanoid)',
-            'prompt'    => $promptConsolidado
+            'prompt'    => $promptConsolidado,
+            'avatar_url' => $avatarUrl
         ], 200);
         exit();
     }

@@ -194,15 +194,30 @@ async function generarHumanoideAislado() {
             const output = document.getElementById("avatarResultOutput");
             if (output) {
                 output.innerHTML = `
-                    <div style="background:rgba(0,255,255,0.05); border:1px solid var(--neon-cyan); border-radius:12px; padding:20px; text-align:left;">
-                        <h3 style="color:#00FFFF; margin:0 0 10px;">🎭 Humanoide Aislado Generado (Estilo Comic Neón)</h3>
-                        <p><strong>Personaje:</strong> ${data.character}</p>
-                        <p><strong>Pose/Actividad:</strong> ${data.actividad}</p>
-                        <p><strong>Vestimenta:</strong> ${data.ropa}</p>
-                        <p><strong>Fondo:</strong> <span style="color:#39FF14;">Transparente PNG (Sin objetos de fondo)</span></p>
-                        <div style="margin-top:15px; padding:10px; background:#000; border-radius:8px;">
+                    <div style="background:rgba(0,255,255,0.05); border:1px solid var(--neon-cyan); border-radius:12px; padding:20px; text-align:center;">
+                        <h3 style="color:#00FFFF; margin:0 0 15px; text-align:left;">🎭 Humanoide Aislado Generado (Estilo Comic Neón)</h3>
+                        
+                        <!-- RENDERIZAR LA IMAGEN REAL TRANSPARENTE -->
+                        <div style="background:radial-gradient(circle, rgba(20,20,30,0.9), rgba(5,5,10,0.95)); border:1px solid rgba(0,255,255,0.15); border-radius:10px; padding:15px; display:inline-block; margin-bottom:15px; box-shadow: 0 0 25px rgba(0,255,255,0.15);">
+                            <img src="${data.avatar_url}" style="max-height:260px; border-radius:8px; display:block; filter: drop-shadow(0 0 12px rgba(0,255,255,0.5));" alt="Avatar Generado">
+                        </div>
+
+                        <div style="text-align:left; font-size:0.9rem; margin-bottom:15px;">
+                            <p><strong>Personaje:</strong> ${data.character}</p>
+                            <p><strong>Pose/Actividad:</strong> ${data.actividad}</p>
+                            <p><strong>Vestimenta:</strong> ${data.ropa}</p>
+                            <p><strong>Fondo:</strong> <span style="color:#39FF14;">Transparente PNG (Aislado)</span></p>
+                        </div>
+
+                        <!-- ACCIONES DE INTEGRACIÓN DIRECTA -->
+                        <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
+                            <button class="btn-neon" onclick="cargarImagenDesdeUrl('${data.avatar_url}')"><i class="fa-solid fa-palette"></i> Cargar en Canva</button>
+                            <a href="${data.avatar_url}" download="avatar_${data.character}.png" class="btn-neon btn-neon-magenta" style="text-decoration:none; display:inline-block; padding:10px 20px;"><i class="fa-solid fa-download"></i> Descargar PNG</a>
+                        </div>
+
+                        <div style="margin-top:15px; padding:10px; background:#000; border-radius:8px; text-align:left;">
                             <small style="color:#888;">Prompt técnico de generación:</small>
-                            <p style="font-size:0.85rem; color:#FF00FF; margin:5px 0 0;">${data.prompt}</p>
+                            <p style="font-size:0.75rem; color:#FF00FF; margin:5px 0 0; font-family:monospace; line-height:1.2;">${data.prompt}</p>
                         </div>
                     </div>
                 `;
