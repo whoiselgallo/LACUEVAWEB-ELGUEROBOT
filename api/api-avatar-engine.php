@@ -165,13 +165,20 @@ try {
 
         $rasgos = $profile['rasgos_faciales'] ?? "Personaje icónico de La Cueva del Güero";
 
-        $promptConsolidado = "Comic Neón Art Style, La Cueva del Güero signature aesthetic. Isolated humanoid character of '$nombre', $actividad pose, wearing $ropa outfit. Facial features: $rasgos. STRICT RULE: Transparent PNG background, ZERO background furniture, no chair, no sofa, no microphone, strictly isolated full-body character.";
+        $promptConsolidado = "Comic Neon Art Style, La Cueva del Guero aesthetic. Isolated humanoid character of '$nombre', $actividad pose, wearing $ropa outfit. Facial features: $rasgos. STRICT RULE: Transparent background, png, zero background furniture, no background objects, strictly isolated full-body character.";
 
-        // Mapear a imágenes transparentes reales guardadas localmente
-        $avatarUrl = '../images/avatar-alan-barraza.png'; // Default
+        // Mapear a imágenes locales si existe coincidencia exacta
+        $avatarUrl = '';
         $lowerNombre = strtolower($nombre);
-        if (strpos($lowerNombre, 'barraza') !== false || strpos($lowerNombre, 'perro') !== false) {
+        $lowerActividad = strtolower($actividad);
+
+        if ((strpos($lowerNombre, 'barraza') !== false || strpos($lowerNombre, 'perro') !== false) && strpos($lowerActividad, 'pie') !== false) {
+            // Devuelve la imagen pre-procesada de pie
             $avatarUrl = '../images/avatar-alan-barraza.png';
+        } else {
+            // Genera una imagen dinámica mediante Pollinations.ai
+            $encodedPrompt = urlencode($promptConsolidado);
+            $avatarUrl = "https://image.pollinations.ai/prompt/{$encodedPrompt}?width=600&height=600&nologo=true&private=true&enhance=true";
         }
 
         json_response([
