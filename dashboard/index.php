@@ -943,37 +943,49 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
                     <!-- GOOGLE DRIVE -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
-                        <h4 style="color:#ffb703; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-google-drive"></i> Google Drive / One</h4>
-                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Grabacion_Calle_Ep13_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Grabacion_Calle_Ep13_Drive.mp4</a></li>
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Entrevista_Ramon_Ep14_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Entrevista_Ramon_Ep14_Drive.mp4</a></li>
-                        </ul>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h4 style="color:#ffb703; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-google-drive"></i> Google Drive / One</h4>
+                            <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Grabacion_Calle_Ep13_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Grabacion_Calle_Ep13_Drive.mp4</a></li>
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Google Drive', 'Entrevista_Ramon_Ep14_Drive.mp4')"><i class="fa-regular fa-file-video"></i> Entrevista_Ramon_Ep14_Drive.mp4</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; margin-top:12px; padding:5px 8px;" onclick="conectarGoogleDrive()"><i class="fab fa-google-drive"></i> Abrir Drive Picker</button>
                     </div>
 
                     <!-- DROPBOX -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
-                        <h4 style="color:#007fff; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-dropbox"></i> Dropbox</h4>
-                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Invitado_JeyB_Ep15_Dropbox.mp4')"><i class="fa-regular fa-file-video"></i> Invitado_JeyB_Ep15_Dropbox.mp4</a></li>
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Audio_Master_Ep15_Dropbox.wav')"><i class="fa-regular fa-file-audio"></i> Audio_Master_Ep15_Dropbox.wav</a></li>
-                        </ul>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h4 style="color:#007fff; margin:0 0 10px 0; font-size:0.9rem;"><i class="fab fa-dropbox"></i> Dropbox</h4>
+                            <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Invitado_JeyB_Ep15_Dropbox.mp4')"><i class="fa-regular fa-file-video"></i> Invitado_JeyB_Ep15_Dropbox.mp4</a></li>
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('Dropbox', 'Audio_Master_Ep15_Dropbox.wav')"><i class="fa-regular fa-file-audio"></i> Audio_Master_Ep15_Dropbox.wav</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; margin-top:12px; padding:5px 8px;" onclick="conectarDropbox()"><i class="fab fa-dropbox"></i> Abrir Dropbox Chooser</button>
                     </div>
 
                     <!-- ONEDRIVE -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
-                        <h4 style="color:#00a4ef; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-cloud"></i> Microsoft OneDrive</h4>
-                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('OneDrive', 'Capitulo16_Final_OneDrive.mov')"><i class="fa-regular fa-file-video"></i> Capitulo16_Final_OneDrive.mov</a></li>
-                        </ul>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h4 style="color:#00a4ef; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-cloud"></i> Microsoft OneDrive</h4>
+                            <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('OneDrive', 'Capitulo16_Final_OneDrive.mov')"><i class="fa-regular fa-file-video"></i> Capitulo16_Final_OneDrive.mov</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; margin-top:12px; padding:5px 8px;" onclick="conectarOneDrive()"><i class="fa-solid fa-cloud"></i> Abrir OneDrive Picker</button>
                     </div>
 
                     <!-- TERABOX -->
-                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px;">
-                        <h4 style="color:#4caf50; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-server"></i> TeraBox (TheraBite)</h4>
-                        <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
-                            <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('TeraBox', 'Archivo_Pesado_1TB_Ep17.mp4')"><i class="fa-regular fa-file-video"></i> Archivo_Pesado_1TB_Ep17.mp4</a></li>
-                        </ul>
+                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <h4 style="color:#4caf50; margin:0 0 10px 0; font-size:0.9rem;"><i class="fa-solid fa-server"></i> TeraBox (TheraBite)</h4>
+                            <ul style="list-style:none; padding:0; margin:0; font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+                                <li><a href="#" style="color:#fff; text-decoration:none;" onclick="seleccionarArchivoNube('TeraBox', 'Archivo_Pesado_1TB_Ep17.mp4')"><i class="fa-regular fa-file-video"></i> Archivo_Pesado_1TB_Ep17.mp4</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; margin-top:12px; padding:5px 8px;" onclick="conectarTeraBox()"><i class="fa-solid fa-server"></i> Conectar TeraBox API</button>
                     </div>
                 </div>
 
