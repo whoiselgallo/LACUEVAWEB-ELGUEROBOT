@@ -700,45 +700,156 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             </div>
         </section>
 
-        <!-- VIEW 4: EDITOR DE VIDEO -->
-        <section class="view-section" id="view-video">
-            <h2 class="section-title"><i class="fa-solid fa-clapperboard"></i> Editor y Previsualizador de Clips</h2>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">Carga tus archivos locales para visualizarlos, cortar fragmentos y preparar el material de reproducción.</p>
-            
-            <div class="video-editor-card">
-                <div class="upload-dashed" onclick="document.getElementById('video-file-input').click()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i>
-                    <h3>Arrastra un video o audio de producción aquí</h3>
-                    <p>Soporta formatos .mp4, .mov, .mp3, .wav (Haz clic para seleccionar)</p>
-                    <input type="file" id="video-file-input" accept="video/*,audio/*" style="display: none;" onchange="handleVideoUpload(event)">
+        <!-- VIEW 4: EDITOR DE VIDEO (LA CUEVA VIDEO EDITOR PRO) -->
+        <section class="view-section" id="view-video" style="padding: 15px 25px;">
+            <!-- TOP BAR -->
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#0f0f18; border:1px solid rgba(0,255,255,0.2); border-radius:12px; padding:10px 20px; margin-bottom:15px; box-shadow:0 0 15px rgba(0,255,255,0.1);">
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span style="font-family:'Outfit', sans-serif; font-weight:800; color:#FF00FF; font-size:1.1rem; text-shadow:0 0 8px #FF00FF;"><i class="fa-solid fa-clapperboard"></i> LA CUEVA VIDEO EDITOR PRO</span>
+                    <span id="editor-project-name" style="background:rgba(255,255,255,0.05); padding:4px 10px; border-radius:6px; font-size:0.8rem; color:#aaa;">Proyecto_Sin_Nombre.mp4</span>
                 </div>
-
-                <!-- CARGADOR Y PROGRESO -->
-                <div id="video-progress-container" class="hidden" style="margin-bottom: 20px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem;">
-                        <span>Cargando archivo...</span>
-                        <span id="video-progress-pct">0%</span>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                        <div id="video-progress-bar" style="background: var(--neon-cyan); height: 100%; width: 0%; box-shadow: 0 0 10px var(--neon-cyan); transition: width 0.1s;"></div>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px;" onclick="document.getElementById('editor-file-input').click()"><i class="fa-solid fa-file-import"></i> Importar</button>
+                    <button class="btn-neon" style="font-size:0.75rem; padding:5px 10px;" onclick="alert('Proyecto Guardado')"><i class="fa-solid fa-save"></i> Guardar</button>
+                    <button class="btn-neon btn-neon-magenta" style="font-size:0.75rem; padding:5px 12px;" onclick="abrirExportarVideo()"><i class="fa-solid fa-upload"></i> Exportar Presets</button>
+                    <input type="file" id="editor-file-input" accept="video/*,audio/*" style="display:none;">
+                    <div style="font-size:0.75rem; color:#666; border-left:1px solid rgba(255,255,255,0.1); padding-left:15px; display:flex; gap:10px;">
+                        <span>CPU: <strong style="color:#00FFFF;">12%</strong></span>
+                        <span>GPU: <strong style="color:#FF00FF;">44%</strong></span>
                     </div>
                 </div>
+            </div>
 
-                <!-- REPRODUCTOR -->
-                <div class="video-player-container hidden" id="video-preview-box">
-                    <h4 id="video-loaded-name" style="margin: 0 0 10px 0; color: var(--neon-cyan);"></h4>
-                    <video id="dashboard-player" controls></video>
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button class="btn-neon" onclick="alert('Marcando entrada de clip...')"><i class="fa-solid fa-scissors"></i> Recortar Entrada</button>
-                        <button class="btn-neon btn-neon-magenta" onclick="alert('Exportando clip recortado...')"><i class="fa-solid fa-wand-magic-sparkles"></i> Exportar Hook</button>
+            <!-- WORKSPACE GRID (LEFT, CENTER, RIGHT PANELS) -->
+            <div style="display:grid; grid-template-columns: 240px 1fr 280px; gap:15px; height:380px; align-items:stretch; margin-bottom:15px;">
+                <!-- PANEL IZQUIERDO: BIBLIOTECA & MODELOS IA -->
+                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
+                    <h4 style="color:#00FFFF; margin:0 0 5px 0; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-folder"></i> Recursos e IA</h4>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
+                        <span style="color:#aaa; font-weight:bold;">🚀 Modelos de IA Directa</span>
+                        <button class="btn-neon" style="width:100%; text-align:left; font-size:0.75rem;" onclick="ejecutarIAVideo('Subtítulos Automáticos')"><i class="fa-solid fa-closed-captioning"></i> Subtítulos Auto IA</button>
+                        <button class="btn-neon" style="width:100%; text-align:left; font-size:0.75rem;" onclick="ejecutarIAVideo('Corrección de Color IA')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Color IA</button>
+                        <button class="btn-neon" style="width:100%; text-align:left; font-size:0.75rem;" onclick="ejecutarIAVideo('Quitar Fondo')"><i class="fa-solid fa-user-minus"></i> Quitar Fondo IA</button>
+                        <button class="btn-neon" style="width:100%; text-align:left; font-size:0.75rem;" onclick="ejecutarIAVideo('Mejora de Voz IA')"><i class="fa-solid fa-microphone-lines"></i> Reducir Ruido IA</button>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                        <span style="color:#aaa; font-weight:bold;">🎨 Biblioteca stock</span>
+                        <span style="color:#666; cursor:pointer;" onclick="alert('Cargando plantillas Filmora...')"><i class="fa-solid fa-cubes"></i> Plantillas CapCut</span>
+                        <span style="color:#666; cursor:pointer;" onclick="alert('Cargando LUTs profesionales...')"><i class="fa-solid fa-droplet"></i> LUTs & Filtros</span>
+                        <span style="color:#666; cursor:pointer;" onclick="alert('Cargando música sin derechos...')"><i class="fa-solid fa-music"></i> Audio Libres</span>
+                    </div>
+                </div>
+
+                <!-- PANEL CENTRAL: VISTA PREVIA -->
+                <div style="background:#050508; border:1px solid rgba(255,255,255,0.05); border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; padding:15px; position:relative; overflow:hidden;">
+                    <div id="preview-wrapper-box" style="flex-grow:1; display:flex; justify-content:center; align-items:center; overflow:hidden; transition: all 0.3s ease;">
+                        <video id="editor-preview-video" style="max-height:100%; max-width:100%; border-radius:8px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></video>
+                    </div>
+                    <!-- CONTROLES PREVIEW -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <button id="editor-play-btn" class="btn-neon" style="padding:6px 12px; font-size:0.8rem;"><i class="fa-solid fa-play"></i></button>
+                            <span id="timecode-display" style="font-family:monospace; font-size:0.8rem; color:#aaa;">00:00:00</span>
+                        </div>
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn-neon" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleCompareFilters()"><i class="fa-solid fa-right-left"></i> Antes/Después</button>
+                            <button class="btn-neon btn-neon-magenta" style="font-size:0.75rem; padding:4px 8px;" onclick="toggleMobileView()"><i class="fa-solid fa-mobile-screen-button"></i> Vista 9:16</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL DERECHO: PROPIEDADES & AUDIO/VIDEO -->
+                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; font-size:0.8rem;">
+                    <h4 style="color:#FF00FF; margin:0; border-bottom:1px solid rgba(255,0,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-sliders"></i> Ajustes del Clip</h4>
+                    <div>
+                        <span style="color:#aaa; font-weight:bold;">Transformación</span>
+                        <div style="margin-top:5px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.7rem; color:#666;">Escala:</label>
+                                <input type="range" min="50" max="150" value="100" style="width:100%;">
+                            </div>
+                            <div>
+                                <label style="font-size:0.7rem; color:#666;">Rotación:</label>
+                                <input type="range" min="0" max="360" value="0" style="width:100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                        <span style="color:#aaa; font-weight:bold;">Audio y Voz</span>
+                        <div style="margin-top:5px;">
+                            <label style="font-size:0.7rem; color:#666;">Volumen del Clip:</label>
+                            <input type="range" min="0" max="100" value="80" style="width:100%;">
+                        </div>
+                    </div>
+                    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                        <span style="color:#aaa; font-weight:bold;">Subtítulos IA</span>
+                        <textarea class="form-input" style="min-height:60px; font-size:0.75rem; margin-top:5px;" placeholder="Los subtítulos generados por IA aparecerán aquí..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TIMELINE (BOTTOM PANEL) -->
+            <div style="background:#0f0f15; border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; position:relative;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px;">
+                    <div style="display:flex; gap:10px; align-items:center; font-size:0.8rem; color:#aaa;">
+                        <button class="btn-neon" style="font-size:0.7rem; padding:2px 8px;" onclick="ejecutarIAVideo('Edición Rápida TikTok')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Edición IA</button>
+                        <span><i class="fa-solid fa-scissors"></i> Herramientas:</span>
+                        <span style="cursor:pointer; color:#00FFFF;"><i class="fa-solid fa-cut"></i> Dividir</span>
+                        <span style="cursor:pointer;"><i class="fa-solid fa-clock"></i> Velocidad</span>
+                    </div>
+                    <span style="font-size:0.75rem; color:#666;"> Snapping Activo | 60 FPS</span>
+                </div>
+                <!-- MULTI-TRACK WINDOW -->
+                <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; position:relative; min-height:110px;">
+                    <!-- Cabezal de reproducción rojo -->
+                    <div id="timeline-progress" style="position:absolute; top:0; bottom:0; left:0; width:2px; background:#ff4d4d; z-index:10; box-shadow:0 0 8px #ff4d4d;">
+                        <div style="width:10px; height:10px; background:#ff4d4d; border-radius:50%; margin-left:-4px; margin-top:-4px;"></div>
+                    </div>
+
+                    <!-- PISTA SUBTÍTULOS -->
+                    <div id="subtitles-track" style="display:none; height:24px; background:rgba(0,255,255,0.1); border:1px solid var(--neon-cyan); border-radius:4px; font-size:0.7rem; color:#00FFFF; padding-left:10px; line-height:22px; position:relative;">
+                        <i class="fa-solid fa-closed-captioning"></i> [IA Subtítulos Generados] "A los 10 años, mi papá me mandó a la calle..."
+                    </div>
+
+                    <!-- PISTA VIDEO -->
+                    <div style="height:32px; background:rgba(255,0,255,0.1); border:1px solid var(--neon-magenta); border-radius:4px; font-size:0.75rem; color:#FF00FF; padding-left:10px; line-height:30px; position:relative; overflow:hidden;">
+                        <i class="fa-solid fa-video"></i> Video_Principal_Capitulo.mp4 (Premiere Multicapa Layer)
+                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(255,0,255,0.2); border-left:1px solid #FF00FF; cursor:ew-resize;"></div>
+                    </div>
+
+                    <!-- PISTA AUDIO -->
+                    <div style="height:28px; background:rgba(78,252,34,0.1); border:1px solid #4EFC22; border-radius:4px; font-size:0.75rem; color:#4EFC22; padding-left:10px; line-height:26px; position:relative; overflow:hidden;">
+                        <i class="fa-solid fa-music"></i> Audio_Episodio_Mejorado.wav (Filmora Sync Auto)
+                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(78,252,34,0.2); border-left:1px solid #4EFC22; cursor:ew-resize;"></div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- MODAL: EXPORTAR VIDEO CON PRESETS -->
+        <div id="modalExportarVideo" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
+            <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-magenta); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(255,0,255,0.4);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <h3 style="margin:0; color:#FF00FF;"><i class="fa-solid fa-upload"></i> Exportación Directa con GPU</h3>
+                    <button onclick="cerrarExportarVideo()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <button class="btn-neon" style="text-align:left; padding:12px 20px;" onclick="iniciarRenderVideo('TikTok (9:16 Vert)')"><i class="fab fa-tiktok"></i> Exportar para TikTok (Vertical 1080p)</button>
+                    <button class="btn-neon" style="text-align:left; padding:12px 20px;" onclick="iniciarRenderVideo('Instagram Reels')"><i class="fab fa-instagram"></i> Exportar para Instagram Reels (Vertical 1080p)</button>
+                    <button class="btn-neon" style="text-align:left; padding:12px 20px;" onclick="iniciarRenderVideo('YouTube Shorts')"><i class="fab fa-youtube"></i> Exportar para YouTube Shorts (1080p)</button>
+                    <button class="btn-neon btn-neon-magenta" style="text-align:left; padding:12px 20px;" onclick="iniciarRenderVideo('YouTube HD (Horizontal 16:9)')"><i class="fab fa-youtube"></i> Exportar para YouTube Canal (4K / 1080p HD)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- OVERLAY DE CARGA / ESTADO IA -->
+        <div id="editor-ia-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:100000; justify-content:center; align-items:center; flex-direction:column; gap:15px;">
+            <div style="border: 4px solid rgba(0,255,255,0.1); border-left-color: var(--neon-cyan); width: 50px; height: 50px; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <span class="ia-status-text" style="color:#00FFFF; font-family:'Outfit', sans-serif; font-size:1.1rem; text-shadow:0 0 8px #00FFFF;">Ejecutando proceso de IA...</span>
+        </div>
+
         <!-- VIEW 5: EDITOR CANVA PRO -->
         <section class="view-section" id="view-canva">
-            <h2 class="section-title"><i class="fa-solid fa-palette"></i> Editor de Fotos & Posters estilo Canva PRO</h2>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Sube tus fotos de produccion, elimina fondos, ajusta colores y exporta posters o miniaturas en PNG transparente, JPEG o WEBP.</p>
 
             <div style="display: grid; grid-template-columns: 320px 1fr; gap: 25px; align-items: start;">
@@ -957,5 +1068,6 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <script src="../js/dashboard-pro.js"></script>
     <script src="../js/editor-canva.js"></script>
     <script src="../js/avatar-engine.js"></script>
+    <script src="../js/video-editor.js"></script>
 </body>
 </html>
