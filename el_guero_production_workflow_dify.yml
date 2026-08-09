@@ -1,0 +1,81 @@
+# Dify Workflow DSL - Motor de Producción de Assets
+# Importar directamente desde el panel de Dify -> Crear desde DSL
+app:
+  name: "Motor de Producción de Assets"
+  mode: workflow
+  icon: "⚙️"
+  icon_background: "#FF00FF"
+  description: "Workflow de IA estructurado para generar Escaleta, Guion y Cue Cards de los invitados."
+workflow:
+  nodes:
+    - id: start_node
+      type: start
+      title: "Inicio: Ficha de Onboarding"
+      variables:
+        - name: "nombre"
+          type: string
+          required: true
+        - name: "ocupacion"
+          type: string
+          required: true
+        - name: "barrio"
+          type: string
+          required: true
+        - name: "herida"
+          type: string
+          required: true
+        - name: "momento"
+          type: string
+          required: true
+        - name: "trayectoria"
+          type: string
+          required: true
+        - name: "incomodo"
+          type: string
+          required: true
+        - name: "gustos"
+          type: string
+          required: true
+        - name: "logros"
+          type: string
+          required: true
+    - id: llm_escaleta
+      type: llm
+      title: "Generador de Escaleta"
+      prompt_template: |
+        Eres el productor creativo de La Cueva del Güero. Diseña una escaleta de tiempos y bloques temáticos para entrevistar a {{nombre}}. 
+        Su profesión es {{ocupacion}} y proviene del barrio de {{barrio}}. El tema central debe rondar su momento decisivo: {{momento}} y cómo superó su herida: {{herida}}.
+        Entrega la escaleta en texto plano con tiempos sugeridos por bloques.
+    - id: llm_guion
+      type: llm
+      title: "Escritor de Guion"
+      prompt_template: |
+        Genera diálogos específicos y preguntas picantes para Junior (el conductor del show) basados en la trayectoria de {{nombre}}: {{trayectoria}}.
+        Asegura meter temas interesantes sobre sus gustos: {{gustos}}, pero respeta estrictamente sus límites sobre temas incómodos a evitar: {{incomodo}}.
+        Usa indicaciones de tono [Risas], [Serio] y mantén el estilo callejero y norteño del show.
+    - id: llm_cuecards
+      type: llm
+      title: "Generador de Cue Cards"
+      prompt_template: |
+        Crea una lista de 8 tarjetas de conducción rápidas (Cue Cards) en formato de viñetas para que el conductor las tenga impresas o en mano durante el show.
+        Cada tarjeta debe resumir un logro clave: {{logros}} o una frase detonadora basada en su barrio: {{barrio}}.
+    - id: code_merge
+      type: code
+      title: "Consolidador JSON"
+      code_language: javascript
+      code: |
+        function main({escaleta, guion, cuecards}) {
+            return {
+                result: {
+                    escaleta: escaleta.trim(),
+                    guion: guion.trim(),
+                    cue_cards: cuecards.trim()
+                }
+            };
+        }
+    - id: end_node
+      type: end
+      title: "Fin del Proceso"
+      outputs:
+        - name: "result"
+          type: object

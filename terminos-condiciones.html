@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos, Condiciones y Privacidad - La Cueva del Güero</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-black: #050508;
+            --card-gray: #0f0f15;
+            --neon-cyan: #00ffff;
+            --neon-magenta: #ff00ff;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-gray);
+            border: 2px solid rgba(0, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 45px;
+            box-shadow: 0 0 35px rgba(0, 255, 255, 0.05);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 0, 255, 0.15);
+            padding-bottom: 25px;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--neon-magenta);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            color: #fff;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+            background: rgba(0, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            border-color: var(--neon-magenta);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.2);
+        }
+
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            color: var(--neon-cyan);
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--neon-magenta);
+            padding-left: 12px;
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 25px;
+            padding-left: 5px;
+        }
+
+        ul li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        ul li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--neon-magenta);
+            text-shadow: 0 0 8px var(--neon-magenta);
+        }
+
+        .alert-box {
+            background: rgba(0, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .alert-box p {
+            color: var(--text-main);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 30px;
+        }
+
+        .btn-back {
+            display: inline-block;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(135deg, var(--neon-cyan), #00a3a3);
+            color: #000;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.25);
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.45);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-icon"><i class="fa-solid fa-gavel"></i></div>
+        <h1>Términos, Condiciones y Privacidad</h1>
+        <div class="subtitle">La Cueva del Güero</div>
+    </header>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('terminos')">Términos de Uso</button>
+        <button class="tab-btn" onclick="switchTab('privacidad')">Manejo de Datos</button>
+    </div>
+
+    <!-- TÉRMINOS Y CONDICIONES -->
+    <div id="terminos" class="section-content active">
+        <p>Bienvenido a <strong>La Cueva del Güero</strong>. Al acceder a nuestro sitio web, realizar compras en nuestra tienda en línea, o interactuar con el Güero Bot, estás aceptando obligatoriamente los siguientes términos y condiciones de servicio. Si no estás de acuerdo con alguno de ellos, te pedimos abstenerte de utilizar nuestros recursos.</p>
+
+        <h2>💻 1. Propiedad Intelectual y Uso del Contenido</h2>
+        <p>Todo el material visual, auditivo, gráfico, de código de programación, logotipos y contenidos de audio del podcast expuestos en este sitio son propiedad exclusiva de La Cueva del Güero.</p>
+        <ul>
+            <li>Queda estrictamente prohibida la redistribución, copia o edición del contenido audiovisual sin consentimiento por escrito.</li>
+            <li>Puedes compartir los fragmentos multimedia del podcast exclusivamente mediante enlaces compartidos o funciones de incrustación provistas por las redes oficiales del show.</li>
+        </ul>
+
+        <h2>🛒 2. Compras y Tienda en Línea</h2>
+        <p>Los precios, promociones y disponibilidad de los productos dentro de la sección de la Tienda de La Cueva del Güero están sujetos a modificaciones sin previo aviso.</p>
+        <ul>
+            <li>Los pagos se procesan de manera segura mediante proveedores externos cifrados.</li>
+            <li>Una vez realizada una orden, recibirás una confirmación en tu correo registrado con los detalles logísticos del envío.</li>
+        </ul>
+
+        <h2>🤖 3. Interacción con el Güero Bot</h2>
+        <p>El chatbot "Güero Bot" utiliza inteligencia artificial basada en modelos LLM y Dify para responder y orientar a los fans.</p>
+        <ul>
+            <li>El bot está diseñado para entretenimiento e información promocional del podcast.</li>
+            <li>No se tolerarán insultos sistemáticos ni intentos de inyección de prompts perjudiciales a través de la caja del chat.</li>
+        </ul>
+    </div>
+
+    <!-- MANEJO DE DATOS Y PRIVACIDAD -->
+    <div id="privacidad" class="section-content">
+        <p>Esta política detalla cómo recopilamos, procesamos y protegemos la información personal que compartes con nosotros, ya sea como fan, comprador, suscriptor, o invitado en la ficha de storytelling.</p>
+
+        <h2>🛡️ 1. Recopilación de Datos y Finalidad</h2>
+        <p>Recopilamos información exclusivamente para mejorar la interacción con nuestro show y gestionar los servicios requeridos:</p>
+        <ul>
+            <li><strong>Formularios de Invitados (Storytelling):</strong> Registramos nombres, trayectorias, vivencias de superación y límites personales para que el conductor pueda diseñar las escaletas de entrevista.</li>
+            <li><strong>Tienda en línea:</strong> Solicitamos dirección de envío, nombre y contacto de entrega para procesar las compras.</li>
+            <li><strong>Logs de Chatbot:</strong> Almacenamos temporalmente los textos de conversación en nuestra base de datos para afinar la personalidad y respuestas del Güero Bot.</li>
+        </ul>
+
+        <h2>🔒 2. Seguridad e Infraestructura Cifrada</h2>
+        <p>La protección de tus datos es nuestra prioridad número uno:</p>
+        <ul>
+            <li>Toda nuestra información se almacena de forma estructurada en un servidor PostgreSQL hospedado bajo el proveedor Neon.tech mediante conexiones seguras cifradas con SSL forzado.</li>
+            <li>No vendemos ni alquilamos tus datos personales a marcas publicitarias o terceros bajo ninguna circunstancia.</li>
+        </ul>
+
+        <div class="alert-box">
+            <p><i class="fa-solid fa-user-shield" style="color:var(--neon-cyan); margin-right:8px;"></i> <strong>Tus Derechos ARCO:</strong> Puedes solicitar de forma gratuita el acceso, rectificación, cancelación u oposición al tratamiento de tus datos personales directamente escribiendo al equipo administrativo de La Cueva del Güero.</p>
+        </div>
+
+        <h2>🧠 3. Tratamiento Automatizado e IA</h2>
+        <p>El procesamiento automático para el diseño de escaletas e historias personales de los invitados utiliza llamadas a las APIs privadas de Dify.ai, asegurando que tus datos no entrenen algoritmos públicos comerciales.</p>
+    </div>
+
+    <footer>
+        <a href="index.html" class="btn-back"><i class="fa-solid fa-house"></i> Ir al Inicio</a>
+    </footer>
+</div>
+
+<script>
+    function switchTab(tabId) {
+        // Remover clase activa de todos los botones y contenidos
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.section-content').forEach(content => content.classList.remove('active'));
+        
+        // Agregar clase activa al botón y contenido seleccionado
+        const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => btn.textContent.includes(tabId === 'terminos' ? 'Términos' : 'Manejo'));
+        if (targetBtn) targetBtn.classList.add('active');
+        
+        const targetContent = document.getElementById(tabId);
+        if (targetContent) targetContent.classList.add('active');
+    }
+</script>
+
+</body>
+</html>

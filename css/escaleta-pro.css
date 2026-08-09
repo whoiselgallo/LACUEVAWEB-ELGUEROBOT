@@ -1,0 +1,152 @@
+/* ============================
+   ESTILO GENERAL – NEÓN URBANO
+   ============================ */
+
+body {
+    background: #0a0a0a;
+    color: #e6e6e6;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #FF00FF;
+    text-shadow: 0 0 12px #FF00FF;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+}
+
+/* ============================
+   FORMULARIO
+   ============================ */
+
+#formularioEscaleta {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #111;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #222;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
+}
+
+#formularioEscaleta label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #00FFFF;
+    text-shadow: 0 0 8px #00FFFF;
+}
+
+#formularioEscaleta input,
+#formularioEscaleta textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #0f0f0f;
+    color: #e6e6e6;
+    font-size: 1rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+#formularioEscaleta input:focus,
+#formularioEscaleta textarea:focus {
+    border-color: #FF00FF;
+    box-shadow: 0 0 10px #FF00FF;
+}
+
+/* ============================
+   BOTONES
+   ============================ */
+
+.botones {
+    margin-top: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+button {
+    flex: 1;
+    padding: 12px;
+    background: #111;
+    border: 1px solid #FF00FF;
+    color: #FF00FF;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #FF00FF;
+    color: #111;
+    box-shadow: 0 0 15px #FF00FF;
+}
+
+/* ============================
+   RESULTADO
+   ============================ */
+
+#resultado {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #0f0f0f;
+    border-radius: 12px;
+    border: 1px solid #222;
+    display: none;
+}
+
+#resultado.active {
+    display: block;
+}
+
+#resultado pre {
+    background: #111;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    color: #00FFFF;
+    text-shadow: 0 0 6px #00FFFF;
+    white-space: pre-wrap;
+    font-size: 0.95rem;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 768px) {
+    #formularioEscaleta {
+        padding: 20px;
+    }
+
+    button {
+        flex: 100%;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #formularioEscaleta label {
+        font-size: 0.9rem;
+    }
+
+    #formularioEscaleta input,
+    #formularioEscaleta textarea {
+        font-size: 0.9rem;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+}

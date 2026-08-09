@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>La Cueva del Güero</title>
+  <meta name="description" content="La Cueva del Güero: podcast urbano, invitados reales, historias crudas y reflexión con estilo neon.">
+  <link rel="icon" type="image/webp" href="images/logotipo.webp">
+  <link rel="icon" type="image/png" href="images/logotipo.png">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/paw-agent.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6.5.1 (CDN oficial) -->
+  <link rel="stylesheet" 
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
+        crossorigin="anonymous" 
+        referrerpolicy="no-referrer" />
+
+  <style>
+    /* Navbar custom overrides to keep layout inline and responsive */
+    header.secondary nav {
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: nowrap !important;
+      padding: 10px 20px !important;
+    }
+    .nav-toggle {
+      display: none !important;
+    }
+    .nav-links {
+      display: flex !important;
+      opacity: 1 !important;
+      transform: none !important;
+      width: auto !important;
+      position: relative !important;
+    }
+    .nav-actions {
+      display: flex !important;
+      width: auto !important;
+      order: 0 !important;
+      padding: 0 !important;
+      overflow: visible !important;
+    }
+    .dropdown-toggle:hover {
+      box-shadow: 0 0 15px var(--cian-neon) !important;
+      background: rgba(0, 255, 255, 0.12) !important;
+    }
+    @media (max-width: 580px) {
+      .nav-logo-circular {
+        height: 38px !important;
+        width: 38px !important;
+      }
+      .nav-brand-logo-img {
+        height: 28px !important;
+        max-width: 110px !important;
+      }
+      header.secondary nav {
+        padding: 8px 12px !important;
+        gap: 6px !important;
+      }
+      .nav-right-container {
+        gap: 6px !important;
+      }
+      .dropdown-menu {
+        min-width: 220px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="secondary">
+    <nav style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: nowrap; position: relative; min-height: 160px; padding: 0 20px;">
+      
+      <!-- LEFT: Circular Logo -->
+      <div class="nav-brand-container" style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; z-index: 10;">
+        <a href="#inicio" class="nav-logo-link" style="display: inline-flex; align-items: center;">
+          <picture>
+            <source srcset="images/logotipo.webp" type="image/webp">
+            <img src="images/logotipo.png" alt="Logo La Cueva" class="nav-logo-circular" style="height: 70px; width: 70px; border-radius: 50%; border: 2px solid var(--cian-neon); box-shadow: 0 0 15px rgba(0,255,255,0.5); object-fit: cover;">
+          </picture>
+        </a>
+      </div>
+
+      <!-- CENTER: Graffiti Logo (Enlarged by 400% - centered absolutely) -->
+      <div class="nav-center-logo" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: auto;">
+        <a href="#inicio" class="nav-brand-logo-link" style="display: inline-flex; align-items: center;">
+          <picture>
+            <source srcset="images/LACUEVADELGUERO-TRANSPARENTE.webp" type="image/webp">
+            <img src="images/LACUEVADELGUERO-TRANSPARENTE.png" alt="La Cueva del Güero" class="nav-brand-logo-img" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 12px var(--magenta-neon)); transition: all 0.3s ease;">
+          </picture>
+        </a>
+      </div>
+
+      <!-- RIGHT: Social Links + Hamburger menu -->
+      <div class="nav-right-container" style="display: flex; align-items: center; gap: 16px; margin-left: auto; z-index: 10;">
+        
+        <!-- SOCIAL ACTIONS -->
+        <div class="nav-actions" style="display: flex; align-items: center; gap: 8px; overflow: visible;">
+          <a href="https://www.facebook.com/lacuevadelguero" target="_blank" rel="noreferrer noopener" class="nav-action-button social-icon facebook-link" aria-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="https://www.instagram.com/lacuevadelguero/" target="_blank" rel="noreferrer noopener" class="nav-action-button social-icon instagram-link" aria-label="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://www.tiktok.com/@la.cueva.del.guer0" target="_blank" rel="noreferrer noopener" class="nav-action-button social-icon tiktok-link" aria-label="TikTok">
+            <i class="fab fa-tiktok"></i>
+          </a>
+        </div>
+
+        <!-- HAMBURGER MENU DROPDOWN -->
+        <div class="nav-links" style="display: flex !important; opacity: 1 !important; transform: none !important; width: auto !important; position: relative !important;">
+          <div class="nav-item">
+            <button class="dropdown-toggle" aria-expanded="false" style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: var(--cian-neon); border-radius: 50%; width: 45px; height: 45px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.25s ease; box-shadow: 0 0 10px rgba(0,255,255,0.2);">
+              <i class="fas fa-bars" style="font-size: 1.2rem;"></i>
+            </button>
+            <div class="dropdown-menu" style="right: 0; left: auto; min-width: 260px;">
+              <a href="#inicio" class="nav-link">Inicio</a>
+              <a href="#sobre" class="nav-link">La Cueva</a>
+              <a href="#invitados" class="nav-link">Invitados</a>
+              <a href="#multimedia" class="nav-link">Multimedia</a>
+              <a href="#blog" class="nav-link">Blog</a>
+              <a href="#contacto" class="nav-link">Contacto</a>
+              <a href="#evaluacion">Evalúa la Cueva</a>
+              <a href="#guero-bot">El Güero Bot</a>
+              <div class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 8px 0;"></div>
+              <a href="#" class="btn-menu-tienda" style="color: #ff5f5f; display: flex; align-items: center; gap: 8px;"><i class="fas fa-store"></i> Tienda</a>
+              <a href="#" class="btn-menu-carrito" style="color: #ffffff; display: flex; align-items: center; gap: 8px;"><i class="fas fa-shopping-cart"></i> Carrito</a>
+              <a href="#" class="btn-ask-guero-mode" data-mode="guest" style="color: #00ffff; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-user"></i> ASK EL GÜERO (Guest)</a>
+              <a href="#" class="btn-ask-guero-mode" data-mode="team" style="color: #ff00ff; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-users"></i> ASK EL GÜERO (Team)</a>
+              <a href="#" class="btn-ask-guero-mode" data-mode="follower" style="color: #00ff00; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-heart"></i> ASK EL GÜERO (Follower)</a>
+              <a href="dashboard/index.php" style="color:#FF00FF; font-weight:bold; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-gauge"></i> Dashboard PRO</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="section-center">
+      <!-- HERO INTRO NEON 7 LINES SYSTEM -->
+      <!-- HERO INTRO NEON 7 LINES SYSTEM & CINEMATIC ANIME -->
+      <div id="hero-intro-stage" style="position: relative; width: 100%; height: 600px; background: #000; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 12px; margin-bottom: 25px; border: 2px solid #00ffff; box-shadow: 0 0 20px rgba(0,255,255,0.2);">
+        
+        <!-- Live Particle Engine Canvas -->
+        <canvas id="hero-particle-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 2s ease;"></canvas>
+
+        <!-- Studio Background (Initially Black, fades in) -->
+        <div id="hero-studio-bg" style="position: absolute; inset: 0; background: url('images/cueva_hero_video_bg.jpg?v=2') no-repeat center center; background-size: cover; z-index: 1; opacity: 0; transition: opacity 3s ease;"></div>
+
+        <!-- Character Walks & Sitting: Avatars walking in and sitting -->
+        <div id="char-guero-walk" style="position: absolute; bottom: 80px; left: -300px; width: 240px; height: 320px; background: url('images/hero-guero-dog.png?v=3') no-repeat center center; background-size: contain; z-index: 3; opacity: 0; transform: scale(1); filter: brightness(0) drop-shadow(0 0 8px var(--cian-neon)); transition: all 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
+        <div id="char-junior-walk" style="position: absolute; bottom: 80px; right: -300px; width: 240px; height: 320px; background: url('images/hero-junior-sitting.png?v=3') no-repeat center center; background-size: contain; z-index: 3; opacity: 0; transform: scale(1); filter: brightness(0) drop-shadow(0 0 8px var(--magenta-neon)); transition: all 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);"></div>
+
+        <!-- Circular Logo & Graffiti Title Header (Fades in in front) -->
+        <div id="intro-logos-wrapper" style="position: absolute; top: 12%; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: 15px; opacity: 0; transform: scale(0.6); transition: all 2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+          <picture>
+            <source srcset="images/logotipo.webp" type="image/webp">
+            <img src="images/logotipo.png" alt="Logotipo" style="height: 110px; border-radius: 50%; border: 3px solid var(--cian-neon); box-shadow: 0 0 20px rgba(0, 255, 255, 0.6); object-fit: cover;">
+          </picture>
+          <picture>
+            <source srcset="images/LACUEVADELGUERO-TRANSPARENTE.webp" type="image/webp">
+            <img src="images/LACUEVADELGUERO-TRANSPARENTE.png" alt="La Cueva del Güero" style="height: 90px; object-fit: contain; filter: drop-shadow(0 0 15px var(--magenta-neon)); animation: neon-glow-pulse 2s infinite alternate;">
+          </picture>
+        </div>
+
+        <!-- Black Curtain Overlay for Initial Black Screen -->
+        <div id="black-curtain" style="position: absolute; inset: 0; background: #000; z-index: 99; opacity: 1; transition: opacity 2s ease; pointer-events: none;"></div>
+
+        <!-- 4 Glowing Action Buttons (Clean labels without 'ASK EL GÜERO') -->
+        <div id="intro-action-buttons" style="position: absolute; bottom: 35px; z-index: 10; display: flex; gap: 15px; opacity: 0; transition: opacity 1.5s ease; flex-wrap: wrap; justify-content: center;">
+            <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="guest" style="--c: #00ffff;">Invitado</a>
+            <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="team" style="--c: #ff00ff;">Producción</a>
+            <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="follower" style="--c: #00ff00;">Fandom</a>
+            <a href="dashboard/index.php" class="btn-glowing" style="--c: #ffa500;">Dashboard PRO</a>
+        </div>
+      </div>
+      
+      <style>
+        @keyframes neon-glow-pulse {
+          from { filter: drop-shadow(0 0 10px var(--magenta-neon)); }
+          to { filter: drop-shadow(0 0 22px var(--magenta-neon)) drop-shadow(0 0 8px var(--cian-neon)); }
+        }
+        .btn-glowing {
+          padding: 10px 22px;
+          border: 2px solid var(--c);
+          color: #fff;
+          text-decoration: none;
+          font-weight: bold;
+          text-transform: uppercase;
+          border-radius: 8px;
+          box-shadow: 0 0 10px var(--c), inset 0 0 10px var(--c);
+          background: rgba(0,0,0,0.85);
+          transition: all 0.3s ease;
+          font-size: 0.9rem;
+          letter-spacing: 0.5px;
+        }
+        .btn-glowing:hover {
+          background: var(--c);
+          color: #000;
+          box-shadow: 0 0 20px var(--c), inset 0 0 20px var(--c);
+        }
+      </style>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          // --- ANIME SEQUENCE CONTROLLERS ---
+          const curtain = document.getElementById('black-curtain');
+          const studioBg = document.getElementById('hero-studio-bg');
+          const canvas = document.getElementById('hero-particle-canvas');
+          const charGuero = document.getElementById('char-guero-walk');
+          const charJunior = document.getElementById('char-junior-walk');
+          const logoWrapper = document.getElementById('intro-logos-wrapper');
+          const buttons = document.getElementById('intro-action-buttons');
+
+          // Paso 1: Levantar telón negro y activar partículas
+          setTimeout(() => {
+            curtain.style.opacity = '0';
+            canvas.style.opacity = '1';
+            initParticles();
+          }, 800);
+
+          // Paso 2: Fundido del estudio de fondo
+          setTimeout(() => {
+            studioBg.style.opacity = '1';
+          }, 1800);
+
+          // Paso 3: Entran caminando los avatares (como siluetas neón)
+          setTimeout(() => {
+            charGuero.style.opacity = '1';
+            charGuero.style.left = '18%';
+            charJunior.style.opacity = '1';
+            charJunior.style.right = '18%';
+          }, 2800);
+
+          // Paso 4: Llegada al sofá -> Se sientan (se revelan a color y se acomodan en los cojines)
+          setTimeout(() => {
+             // Acelerar la transición de acomodo a 1.5 segundos
+             charGuero.style.transition = 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+             charJunior.style.transition = 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+             // Quitar filtro de silueta negra neón para revelar avatares a color
+             charGuero.style.filter = 'none';
+             charJunior.style.filter = 'none';
+             
+             // Posicionarlos en los cojines del sofá (El Güero perro reducido un 30% para armonía natural)
+             charGuero.style.bottom = '42px';
+             charGuero.style.left = '28%';
+             charGuero.style.transform = 'scale(0.7)';
+             
+             charJunior.style.bottom = '45px';
+             charJunior.style.right = '23%';
+             charJunior.style.transform = 'scale(1)';
+            
+            // Aparecen los logotipos
+            logoWrapper.style.opacity = '1';
+            logoWrapper.style.transform = 'scale(1)';
+          }, 7000);
+
+          // Paso 5: Mostrar botonera inferior
+          setTimeout(() => {
+            buttons.style.opacity = '1';
+          }, 8500);
+
+          // --- ENGINE DE PARTÍCULAS NEÓN ---
+          function initParticles() {
+            const ctx = canvas.getContext('2d');
+            let animationFrameId;
+
+            function resizeCanvas() {
+              canvas.width = canvas.parentElement.clientWidth;
+              canvas.height = canvas.parentElement.clientHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            const particles = [];
+            const colors = ['#00ffff', '#ff00ff', '#00ff00', '#ffff00'];
+
+            for (let i = 0; i < 40; i++) {
+              particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2.5 + 0.5,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                vx: Math.random() * 0.8 - 0.4,
+                vy: Math.random() * 0.8 - 0.4,
+                alpha: Math.random() * 0.8 + 0.2
+              });
+            }
+
+            function draw() {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              particles.forEach(p => {
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = p.color;
+                ctx.fill();
+                ctx.restore();
+
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+              });
+              animationFrameId = requestAnimationFrame(draw);
+            }
+            draw();
+          }
+        });
+      </script>
+
+
+      <div class="banner-caption-cueva">
+        <picture>
+          <source srcset="images/LACUEVADELGUERO-TRANSPARENTE.webp" type="image/webp">
+          <img src="images/LACUEVADELGUERO-TRANSPARENTE.png" alt="Logotipo La Cueva del Güero" class="img-responsive-caption-cueva" loading="lazy">
+        </picture>
+      </div>
+      <h2 class="titulo-grande-inicio">La verdad cruda, pero con estilo neon</h2>
+      <p class="subtitulo-destacado-flow">Historias reales, calle, conflicto, humor y reflexión desde la Cueva. Si vienes, vienes a decir la neta.</p>
+      <a href="https://open.spotify.com/user/31vzxyqiwc73euz55v7yrxetqena?si=e2ca668f53b14768" class="btn-naranja">Escuchanos en Spotify</a>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="sobre" class="section-center">
+      <h2>La Cueva del Güero</h2>
+      <div class="about-container-main">
+        <div class="about-flex-wrapper">
+          <div class="about-text">
+            <h3>¿Qué es La Cueva del Güero?</h3>
+            <p>La Cueva del Güero es un espacio donde la calle, la mente y el corazón se sientan a la misma mesa. Aquí no venimos a aparentar, venimos a hablar claro.</p>
+            <p>Es un espacio donde las historias reales encuentran un lugar para sonar fuerte, sin filtros y sin poses.</p>  
+            <p>Un proyecto que mezcla conversación honesta, narrativa cruda y un estilo visual urbano‑neón que ya se volvió parte de su ADN. 
+              Aquí no se viene a presumir: se viene a contar lo que te formó, lo que te quebró y lo que te levantó.</p>
+            <p>La Cueva es:</p>
+            <p>Un podcast donde se sientan personas con procesos pesados, trayectorias auténticas y aprendizajes que no aparecen en ningún manual.</p>
+            <p>Una plataforma de inspiración, especialmente para quienes están en la lucha, en la creación o en la reconstrucción personal.</p>
+            <p>Pero sobre todo, La Cueva del Güero es una conversación que se siente real.</p>
+            <p>Un lugar donde la gente se reconoce en las historias de otros y donde cada capítulo busca dejar algo: una reflexión, una risa, 
+            una herida abierta o una chispa para seguir.</p>
+            <p>Es cultura, es barrio, es proceso, es identidad.
+              Es un proyecto que crece con cada invitado y con cada persona que se conecta a escucharlo.</p>
+            <p>Si entras a la Cueva, entras a un lugar donde la vulnerabilidad es poder y la risa es terapia.</p>
+            <a href="https://www.youtube.com/@LacuevadelGueroPodcast" class="btn-youtube-capitulo">CAPÍTULO EN YOUTUBE</a>
+          </div>
+          <div>
+            <picture>
+              <source srcset="images/imagendeportadapodcast.webp" type="image/webp">
+              <img src="images/imagendeportadapodcast.png" alt="Tunel urbano con graffiti representando la Cueva" class="about-photo" loading="lazy">
+            </picture>
+          </div>
+        </div>
+      </div>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="invitados" class="section-center">
+      <h2>Invitados de la Cueva</h2>
+      <p class="subtitulo-invitados">Gente real, historias pesadas y procesos que no se cuentan en cualquier lado. Aquí se sientan los que han vivido, los que han caído y se han levantado, los que traen cicatrices que enseñan más que cualquier libro. Cada invitado llega con su verdad, su flow y su camino —y en la Cueva lo desarmamos todo para entender de dónde vienen, qué los formó y hacia dónde van.</p>
+
+      <div class="hero-banner-container-cueva" style="margin-bottom:30px;">
+        <picture>
+          <source srcset="images/tunelgraffiti.webp" type="image/webp">
+          <img src="images/tunelgraffiti.png" alt="Banner de invitados de La Cueva del Güero" class="hero-banner-cueva" loading="lazy">
+        </picture>
+      </div>
+      <hr class="divisor-electrico">
+      <div class="contenedores-promocion">
+        <div class="contenedor-promocion">
+          <h3 class="titulo-promocion">Ariel Ayala: "El Guero" una muestra de lealtad y compromiso</h3>
+          <div class="placeholder-video">
+            <picture>
+              <source srcset="images/junioryelguero.webp" type="image/webp">
+              <img src="images/junioryelguero.png" alt="Invitado Alan el Perro en La Cueva del Güero" loading="lazy">
+            </picture>
+            <p>La lealtad no se dice, se demuestra.</p>
+            <p>
+              <a href="https://youtu.be/LacuevadelGueroPodcast" target="_blank" rel="noreferrer noopener" class="btn-youtube-capitulo">VER EN YOUTUBE</a>
+            </p>
+          </div>
+        </div>
+        <div class="contenedor-promocion">
+          <h3 class="titulo-promocion">Ramon Ayala "El Lic"- ¿Angel o Demonio?</h3>
+          <div class="placeholder-video">
+            <picture>
+              <source srcset="images/Ramon_Ayala.webp" type="image/webp">
+              <img src="images/Ramon_Ayala.png" alt="Invitado Ramon Ayala en La Cueva del Güero" loading="lazy">
+            </picture>
+            <p>Demostrando que no es lo mismo Juzgar, que ser tu propio Juez</p>
+            <p>
+              <a href="https://youtu.be/gYyCpN8IGN4?si=D_rbnJzt-rPas2XU" target="_blank" rel="noreferrer noopener" class="btn-youtube-capitulo">VER EN YOUTUBE</a>
+            </p>
+          </div>
+        </div>
+        <div class="contenedor-promocion">
+          <h3 class="titulo-promocion">Alan Barraza "El Perro" - Lealtad y calle</h3>
+          <div class="placeholder-video">
+            <picture>
+              <source srcset="images/AlanelPerro.webp" type="image/webp">
+              <img src="images/AlanelPerro.png" alt="Invitado Alan el Perro en La Cueva del Güero" loading="lazy">
+            </picture>
+            <p>La historia de un compa que aprendió a ladrar fuerte sin perder el corazón.</p>
+            <p>
+              <a href="https://youtu.be/C3E588al0To?si=i3nxNMDFoWB3mPiW" target="_blank" rel="noreferrer noopener" class="btn-youtube-capitulo">VER YOUTUBE</a>
+            </p>
+          </div>
+        </div>
+        <div class="contenedor-promocion">
+          <h3 class="titulo-promocion">Javier Dominguez "JeyB" - El precio se paga por adelantado</h3>
+          <div class="placeholder-video">
+            <picture>
+              <source srcset="images/JayB.webp" type="image/webp">
+              <img src="images/JayB.png" alt="Invitado JayB en La Cueva del Güero" loading="lazy">
+            </picture>
+            <p>Historia de cómo la incertidumbre se convierte en visión y proyecto.</p>
+            <p>
+              <a href="https://youtu.be/dxEoV_H8flA?si=15pGjWy6dizN34fv" target="_blank" rel="noreferrer noopener" class="btn-youtube-capitulo">VER EN YOUTUBE</a>
+            </p>
+          </div>
+        </div>
+        <div class="contenedor-promocion">
+          <h3 class="titulo-promocion">Guillermina Ayala "La Mamá" - Especial Día de las Madres</h3>
+          <div class="placeholder-video">
+            <picture>
+              <source srcset="images/guillermina.webp" type="image/webp">
+              <img src="images/guillermina.png" alt="Especial Día de las Madres en La Cueva del Güero" loading="lazy">
+            </picture>
+            <p>Un episodio para honrar a las jefas que nos sostienen incluso cuando andamos perdidos.</p>
+            <p>
+              <a href="https://www.youtube.com/@LacuevadelGueroPodcast" target="_blank" rel="noreferrer noopener" class="btn-youtube-capitulo">PROXIMAMENTE</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="multimedia" class="section-center">
+      <h1>Último capítulo</h1>
+      <p class="subtitulo-destacado-flow">Cada episodio de la Cueva vive en dos mundos: el visual y el sonoro.  
+En esta sección puedes ver el capítulo completo en YouTube o escucharlo directo desde Spotify, según el flow que traigas. El contenedor de YouTube te muestra el episodio en video, con toda la vibra, las expresiones y el ambiente real de la Cueva. El contenedor de Spotify te deja escucharlo en modo libre, mientras manejas, chambeas o te relajas.
+Aquí eliges cómo quieres vivir cada historia:
+¿Con la mirada? ¿Con el oído? ¿O con los dos?</p>
+
+        <div class="contenedor-multimedia-principal">
+          <div class="contenedor-episodio">
+            <h3 class="episodio-titulo">Capítulo en Spotify</h3>
+            <a href="https://open.spotify.com" target="_blank" rel="noreferrer noopener" class="contenedor-enlace-spotify">
+              <div class="contenedor-spotify-capitulo"></div>
+            </a>
+          </div>
+          <div class="contenedor-episodio">
+            <h3 class="episodio-titulo">Versión en YouTube</h3>
+            <div class="contenedor-youtube-video-embed" style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 2px solid var(--magenta-neon); box-shadow: 0 0 15px rgba(255,0,255,0.25);">
+              <iframe id="youtube-embed-frame" src="https://www.youtube.com/embed/e5AQri7Yz_4?si=VvnDYcrJmQgJGLbL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+            </div>
+          </div>
+        </div>
+
+        <!-- MURO SOCIAL INTEGRADOR (FACEBOOK, INSTAGRAM, TIKTOK) -->
+        <h2 style="margin-top: 50px; color: var(--neon-magenta); text-shadow: 0 0 10px var(--neon-magenta);"><i class="fa-solid fa-share-nodes"></i> Muro Social de La Cueva</h2>
+        <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.95rem;">Sigue nuestras publicaciones, reels y videos virales en tiempo real desde nuestras redes oficiales.</p>
+        
+        <div class="muro-social-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 20px;">
+            <!-- FACEBOOK EMBED -->
+            <div style="background: rgba(10,10,18,0.8); border: 1px solid rgba(0,255,255,0.2); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 0 15px rgba(0,255,255,0.1);">
+                <h4 style="color:#00FFFF; margin-top:0; margin-bottom:15px;"><i class="fab fa-facebook"></i> Facebook Oficial</h4>
+                <div style="width:100%; height:400px; overflow:hidden; border-radius:10px;">
+                    <iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Flacuevadelguero&tabs=timeline&width=340&height=400&small_header=true&adapt_container_width=true&hide_cover=true&show_facepile=false&appId" 
+                            width="100%" height="400" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- INSTAGRAM FEED EMBED -->
+            <div style="background: rgba(10,10,18,0.8); border: 1px solid rgba(255,0,255,0.2); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
+                <h4 style="color:#FF00FF; margin-top:0; margin-bottom:15px;"><i class="fab fa-instagram"></i> Instagram Feed</h4>
+                <div style="width:100%; height:400px; overflow:hidden; border-radius:10px;">
+                    <iframe src="https://www.instagram.com/lacuevadelguero/embed" 
+                            width="100%" height="400" frameborder="0" scrolling="no" allowtransparency="true" style="border:none;">
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- TIKTOK VIRAL FEED -->
+            <div style="background: rgba(10,10,18,0.8); border: 1px solid rgba(78,252,34,0.2); border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 0 15px rgba(78,252,34,0.1);">
+                <h4 style="color:#4EFC22; margin-top:0; margin-bottom:15px;"><i class="fab fa-tiktok"></i> TikTok Virales</h4>
+                <div style="width:100%; height:400px; overflow:hidden; border-radius:10px;">
+                    <iframe src="https://www.tiktok.com/embed/v2/@la.cueva.del.guer0" 
+                            width="100%" height="400" frameborder="0" style="border:none;">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="evaluacion" class="section-center">
+      <h2>Evalúa la Cueva</h2>
+      <p class="footer-form-text">Tu opinión nos ayuda a afinar el flow, el contenido y la experiencia dentro de la Cueva. Cada comentario, cada estrella y cada sugerencia nos sirve para crecer, pulir el estilo y seguir construyendo este espacio auténtico donde las historias se cuentan sin filtros. Evalúa los capítulos, dinos qué te vibra, qué te falta y qué te gustaría ver. Aquí tu voz también forma parte del movimiento.</p>
+      <form class="formulario-evaluacion">
+        <h4>¿Cómo sentiste el episodio?</h4>
+        <div class="form-group">
+          <label for="evaluacion-episodio">Selecciona una opción</label>
+          <select id="evaluacion-episodio" name="evaluacion-episodio">
+            <option value="">Elige una opción</option>
+            <option value="brutal">Brutal, perro 🔥</option>
+            <option value="bueno">Bueno, pero puede subir más</option>
+            <option value="meh">Meh, le faltó calle</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="comentarios-episodio">Cuéntanos qué te gustó o qué cambiarías</label>
+          <textarea id="comentarios-episodio" name="comentarios-episodio" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn-enviar-evaluacion">Enviar evaluación</button>
+      </form>
+
+      <div class="formulario-evaluacion custom-cueva-form">
+        <h4>¿Qué tal el flow?</h4>
+        <form class="form-evaluacion-spotify">
+          <div class="rating-grid">
+            <label class="rating-option"><input type="radio" name="rating" value="5" required><span>🔥</span></label>
+            <label class="rating-option"><input type="radio" name="rating" value="4"><span>👍</span></label>
+            <label class="rating-option"><input type="radio" name="rating" value="3"><span>😐</span></label>
+            <label class="rating-option"><input type="radio" name="rating" value="2"><span>👎</span></label>
+            <label class="rating-option"><input type="radio" name="rating" value="1"><span>❌</span></label>
+          </div>
+          <textarea name="comentario" placeholder="Tira línea aquí..." maxlength="500"></textarea>
+          <button type="submit" class="btn-enviar-cueva">Enviar voto</button>
+        </form>
+      </div>
+
+      <section class="contenedores-promocion section-center">
+        <div class="contenedor-promocion facebook">
+          <h3 class="titulo-promocion">📘 Facebook</h3>
+          <div class="contenedor-video-promocion facebook-video">
+            <iframe src="https://www.facebook.com/lacuevadelguero/" width="100%" height="400" style="border:none;overflow:hidden;border-radius: 12px;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+          </div>
+        </div>
+        <div class="contenedor-promocion instagram">
+          <h3 class="titulo-promocion">📷 Instagram</h3>
+          <div class="contenedor-video-promocion instagram-video">
+            <iframe src="https://www.instagram.com/lacuevadelguero/embed" width="100%" height="400" style="border:none;overflow:auto;border-radius: 12px; max-width: 100%;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+          </div>
+        </div>
+        <div class="contenedor-promocion tiktok">
+          <h3 class="titulo-promocion">🎵 TikTok</h3>
+          <div class="contenedor-video-promocion tiktok-video">
+            <iframe src="https://www.tiktok.com/embed/v2/@la.cueva.del.guer0" width="100%" height="400" style="border:none;overflow:hidden;border-radius: 12px;" scrolling="no" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" loading="lazy"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <hr class="divisor-electrico">
+    </section>
+
+    <section class="section-center">
+      <h2>Galería de la Cueva</h2>
+      <p class="subtitulo-destacado-flow">Momentos y historias visuales desde adentro de la Cueva.</p>
+      <div class="gallery" style="margin-top:40px;">
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/foto1.webp" type="image/webp">
+            <img src="images/foto1.png" alt="Escena 1 dentro de La Cueva del Güero" loading="lazy">
+          </picture>
+          <p class="descripcion">La mesa donde se sueltan las verdades.</p>
+        </div>
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/foto2.webp" type="image/webp">
+            <img src="images/foto2.png" alt="Escena 2 del podcast La Cueva del Güero" loading="lazy">
+          </picture>
+          <p class="descripcion">Luces neon, mente encendida.</p>
+        </div>
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/foto3.webp" type="image/webp">
+            <img src="images/foto3.png" alt="Escena 3 con invitados en la Cueva" loading="lazy">
+          </picture>
+          <p class="descripcion">Invitados tirando línea sin filtro.</p>
+        </div>
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/foto4.webp" type="image/webp">
+            <img src="images/foto4.png" alt="Escena 4 del set de grabación" loading="lazy">
+          </picture>
+          <p class="descripcion">Producción casera, corazón profesional.</p>
+        </div>
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/foto5.webp" type="image/webp">
+            <img src="images/foto5.png" alt="Escena 5 del equipo en acción" loading="lazy">
+          </picture>
+          <p class="descripcion">La crew detrás del micrófono.</p>
+        </div>
+        <div class="gallery-item">
+          <picture>
+            <source srcset="images/miniatura_capitulo_1.webp" type="image/webp">
+            <img src="images/miniatura_capitulo_1.png" alt="Miniatura del capítulo 1 de La Cueva del Güero" loading="lazy">
+          </picture>
+          <p class="descripcion">El inicio de la Cueva.</p>
+        </div>
+      </div>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="blog" class="section-center">
+      <h2>Blog de La Cueva del Güero</h2>
+      <p class="subtitulo-destacado-flow">Reflexiones desde la cueva, Temas inconclusos, propuestas de la manada, Textos cortos, ideas pesadas, frases que se quedan dando vueltas en la cabeza y mucho mas en esta sección, porque no nos gusta quedarnos con la duda.</p>
+      
+      <div id="posts-container"></div>
+      <hr class="divisor-electrico">
+    </section>
+
+    <section id="contacto" class="section-center">
+      <h2>Contacto</h2>
+      <p class="footer-form-text">¿Quieres caerle a la Cueva, proponer un tema o armar una colaboración? Tira línea.</p>
+      <form class="custom-cueva-form">
+        <h4>Escríbenos</h4>
+        <div class="form-group">
+          <label for="nombre-contacto">Nombre</label>
+          <textarea id="nombre-contacto" name="nombre-contacto" rows="1"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="mensaje-contacto">Mensaje</label>
+          <textarea id="mensaje-contacto" name="mensaje-contacto" rows="4"></textarea>
+        </div>
+        <button type="submit" class="btn-enviar-cueva">Enviar mensaje</button>
+      </form>
+      <hr class="divisor-electrico">
+    </section>
+    <section id="mapa" class="section-center" style="margin-top: 40px;">
+      <h2 style="color: var(--cian-neon); text-shadow: 0 0 10px var(--cian-neon);">Mapa de la Manada</h2>
+      <p class="subtitulo-destacado-flow">Únete al movimiento y deja tu marca en el mundo.</p>
+      
+      <div style="position: relative; width: 100%; max-width: 900px; margin: 0 auto; height: 500px; background: #000; border: 2px solid var(--magenta-neon); border-radius: 12px; overflow: hidden; box-shadow: 0 0 20px rgba(255,0,255,0.4);">
+        <!-- Placeholder for Interactive SVG Map -->
+        <svg id="interactive-world-map" viewBox="0 0 1000 500" style="width:100%; height:100%; cursor: grab;" fill="#111" stroke="var(--cian-neon)" stroke-width="1">
+          <!-- Simplified Map Path (Just a placeholder representation, real SVG map would have detailed paths) -->
+          <rect width="100%" height="100%" fill="#000"></rect>
+          <path d="M 200 150 Q 250 100 300 150 T 400 200 T 500 150 T 600 200 T 700 150" fill="none" stroke="var(--cian-neon)" stroke-width="2"/>
+          <text x="50%" y="50%" fill="var(--cian-neon)" font-size="24" text-anchor="middle" dominant-baseline="middle">Map Integration Ready (Zoom & Pan active)</text>
+          
+          <g id="map-pins-layer"></g>
+        </svg>
+
+        <div id="map-controls" style="position: absolute; bottom: 20px; right: 20px; display: flex; gap: 10px;">
+          <button id="btn-zoom-in" style="background: rgba(0,0,0,0.7); color: #0f0; border: 1px solid #0f0; padding: 5px 15px; border-radius: 5px; cursor: pointer;">+</button>
+          <button id="btn-zoom-out" style="background: rgba(0,0,0,0.7); color: #0f0; border: 1px solid #0f0; padding: 5px 15px; border-radius: 5px; cursor: pointer;">-</button>
+        </div>
+      </div>
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          let scale = 1;
+          let isPanning = false;
+          let startX = 0, startY = 0;
+          let translateX = 0, translateY = 0;
+          const map = document.getElementById('interactive-world-map');
+          const layer = document.getElementById('map-pins-layer');
+
+          document.getElementById('btn-zoom-in').addEventListener('click', () => {
+            scale = Math.min(scale + 0.2, 3);
+            updateMapTransform();
+          });
+          document.getElementById('btn-zoom-out').addEventListener('click', () => {
+            scale = Math.max(scale - 0.2, 1);
+            if (scale === 1) { translateX = 0; translateY = 0; }
+            updateMapTransform();
+          });
+
+          map.addEventListener('mousedown', (e) => {
+            if (scale > 1) {
+              isPanning = true;
+              startX = e.clientX - translateX;
+              startY = e.clientY - translateY;
+              map.style.cursor = 'grabbing';
+            }
+          });
+          window.addEventListener('mouseup', () => {
+            isPanning = false;
+            map.style.cursor = 'grab';
+          });
+          window.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            translateX = e.clientX - startX;
+            translateY = e.clientY - startY;
+            updateMapTransform();
+          });
+          
+          function updateMapTransform() {
+             const svgElements = map.querySelectorAll('path, text, g');
+             svgElements.forEach(el => {
+                 el.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+                 el.style.transformOrigin = 'center';
+             });
+          }
+          
+          window.addMapPin = function(x, y, name) {
+            const pin = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            pin.setAttribute('cx', x);
+            pin.setAttribute('cy', y);
+            pin.setAttribute('r', '5');
+            pin.setAttribute('fill', 'var(--magenta-neon)');
+            pin.setAttribute('filter', 'drop-shadow(0 0 5px var(--magenta-neon))');
+            
+            const tooltip = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            tooltip.setAttribute('x', x);
+            tooltip.setAttribute('y', y - 10);
+            tooltip.setAttribute('fill', '#fff');
+            tooltip.setAttribute('font-size', '12');
+            tooltip.setAttribute('text-anchor', 'middle');
+            tooltip.textContent = name;
+            
+            layer.appendChild(pin);
+            layer.appendChild(tooltip);
+          };
+        });
+      </script>
+    </section>
+
+  </main>
+
+  <!-- PAW Agent (Bot) - Un solo contenedor -->
+  <div id="pawAgentContainer" style="display:none;">
+    <div class="paw-main">
+      <button class="paw-minimize-btn" aria-label="Minimizar huella">–</button>
+      <picture class="paw-agent-logo-wrapper">
+        <source srcset="images/pewagent.webp" type="image/webp">
+        <img src="images/pewagent.png" alt="PewAgent" class="paw-agent-logo" loading="lazy">
+      </picture>
+      <div class="paw-minimized-dialog">El Güero Bot</div>
+      <div class="paw-toes">
+        <div class="paw-toe" data-label="Suscribirse"></div>
+        <div class="paw-toe" data-label="Crear Avatar"></div>
+        <div class="paw-toe" data-label="Colocar en el Mapa"></div>
+        <div class="paw-toe" data-label="Invitado"></div>
+        <div class="paw-toe" data-label="Seguidor"></div>
+      </div>
+      <div class="paw-chat-area">
+        <div class="paw-chat-header">
+          <h3>Güero Bot Paw</h3>
+          <span class="paw-visit-badge paw-visit-guest">👤 INVITADO</span>
+        </div>
+        <div id="pawChatBody" class="paw-chat-body"></div>
+        <div class="paw-chat-controls">
+          <select id="pawVisitType">
+            <option value="guest" selected>Invitado</option>
+            <option value="team">Equipo</option>
+            <option value="follower">Seguidor</option>
+          </select>
+          <div class="paw-input-row">
+            <input id="pawChatInput" type="text" placeholder="Escribe aquí, perro..." autocomplete="off">
+            <button type="button" class="paw-send-btn">Enviar</button>
+          </div>
+          <!-- Botón de Contacto Directo WhatsApp al Junior -->
+          <a href="https://wa.me/526862124372" target="_blank" class="paw-wa-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; background: #25D366; color: #fff; text-decoration: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; text-shadow: 0 1px 2px rgba(0,0,0,0.3); transition: background 0.3s ease; box-shadow: 0 4px 10px rgba(37,211,102,0.25);">
+            <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> Contacto WhatsApp Junior
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer-smoke">
+    <div class="footer-content">
+      <div class="footer-section">
+        <picture>
+          <source srcset="images/logotipo.webp" type="image/webp">
+          <img src="images/logotipo.png" alt="Logotipo La Cueva del Güero" loading="lazy">
+        </picture>
+        <p>Podcast urbano desde la Cueva, donde la verdad se dice con estilo.</p>
+      </div>
+      <div class="footer-section">
+        <h3 class="link-naranja">Síguenos</h3>
+        <ul class="social-links-horizontal">
+          <li>
+            <a href="https://www.facebook.com/lacuevadelguero" target="_blank" rel="noreferrer noopener" class="facebook-link" aria-label="Facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.instagram.com/lacuevadelguero/" target="_blank" rel="noreferrer noopener" class="instagram-link" aria-label="Instagram">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.tiktok.com/@la.cueva.del.guer0" target="_blank" rel="noreferrer noopener" class="tiktok-link" aria-label="TikTok">
+              <i class="fab fa-tiktok"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://open.spotify.com" target="_blank" rel="noreferrer noopener" class="spotify-link" aria-label="Spotify">
+              <i class="fab fa-spotify"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.youtube.com/@LacuevadelGueroPodcast" target="_blank" rel="noreferrer noopener" class="youtube-link" aria-label="YouTube">
+              <i class="fab fa-youtube"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Créditos</h3>
+        <p>Proyecto creado en la Cueva, con mente de barrio y visión de futuro.</p>
+      </div>
+    <div class="footer-bottom">
+      <span class="link-magenta">© <span id="year-span">2026</span> La Cueva del Güero. Todos los derechos reservados.</span>
+      <span> | <a href="terminos-condiciones.html" target="_blank" style="color:var(--text-muted); text-decoration:none; margin:0 8px; border-bottom:1px dashed var(--text-muted);">Términos y Privacidad</a> | </span>
+      <span>Desarrollado con flow por <span class="link-cian">TSolutions</span>.</span>
+    </div>
+  </footer>
+
+  <script defer src="js/scripts.js"></script>
+  <script defer src="js/paw-agent.js"></script>
+  <script defer src="js/blog.js"></script>
+
+  <script>
+    // Año dinámico en footer
+    const yearSpan = document.getElementById('year-span');
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+    // Autocarga del último video subido a YouTube desde la API de caché
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/api-youtube-latest.php')
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success' && data.videoId) {
+            const frame = document.getElementById('youtube-embed-frame');
+            if (frame) {
+              frame.src = `https://www.youtube.com/embed/${data.videoId}?si=VvnDYcrJmQgJGLbL`;
+            }
+          }
+        })
+        .catch(err => console.error("Error al sincronizar con YouTube:", err));
+    });
+
+    // Función para activar modo desde herramientas (si el bot está cargado)
+    function abrirPawModo(modo) {
+      if (typeof pawAgentState !== 'undefined') {
+        pawAgentState.visitType = 'team';
+        if (typeof updatePawVisitTypeUI === 'function') updatePawVisitTypeUI('team');
+        if (typeof restorePawAgent === 'function') restorePawAgent();
+        if (typeof showPawNotification === 'function') showPawNotification(`Modo ${modo.toUpperCase()} activado 🔥`);
+      } else {
+        window.location.href = '/escaleta/index.html';
+      }
+    }
+  </script>
+
+  <script>
+   document.addEventListener('DOMContentLoaded', () => {
+     const modeBtns = document.querySelectorAll('.btn-ask-guero-mode');
+     modeBtns.forEach(btn => {
+       btn.addEventListener('click', (e) => {
+         e.preventDefault();
+         const mode = e.currentTarget.getAttribute('data-mode');
+         const pawContainer = document.getElementById('pawAgentContainer');
+         if(pawContainer) {
+           pawContainer.style.display = 'block';
+           if(typeof restorePawAgent === 'function') {
+             restorePawAgent();
+           } else {
+             pawContainer.classList.remove('paw-minimized');
+           }
+           if(typeof changeVisitType === 'function') {
+             changeVisitType(mode);
+             
+             // Check if user is subscribed to say Hello Name
+             const subName = localStorage.getItem('paw_sub_name');
+             if(subName && typeof addPawMessage === 'function') {
+               addPawMessage(`¡Hola de nuevo, ${subName}! Modo: ${mode}`, 'bot');
+             }
+           }
+         }
+       });
+     });
+   });
+  </script>
+  <style>
+    /* Ocultamos el botón flotante por defecto de Dify para que solo se acceda desde el navbar */
+    #dify-chatbot-bubble-button {
+      display: none !important;
+    }
+    #dify-chatbot-bubble-window {
+      width: 24rem !important;
+      height: 40rem !important;
+      border: 2px solid #00ffff !important;
+      box-shadow: 0 0 25px rgba(0,255,255,0.3) !important;
+      border-radius: 16px !important;
+    }
+    /* Estilo neón verde para el badge de Fandom */
+    .paw-visit-follower {
+      background: rgba(0, 255, 0, 0.15) !important;
+      color: #00ff00 !important;
+      border: 1px solid #00ff00 !important;
+      text-shadow: 0 0 5px #00ff00;
+    }
+  </style>
+</body>
+</html>

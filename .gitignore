@@ -1,0 +1,76 @@
+# ═════════════════════════════════════════════════════════════════════════════════
+# .gitignore - La Cueva del Güero
+# Archivos y directorios que NO deben subirse a Git
+# ═════════════════════════════════════════════════════════════════════════════════
+
+# Configuración sensible
+config/config.php
+config/.env
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+error.log
+access.log
+
+# Uploads (si los hay)
+uploads/
+!uploads/.gitkeep
+
+# Node modules (si usas Node)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Dependencias PHP
+vendor/
+composer.lock
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.LSOverride
+Thumbs.db
+
+# Sistema operativo
+.AppleDouble
+.AppleDB
+._*
+.TemporaryItems
+
+# Base de datos
+*.sql
+*.sql.gz
+database/backups/
+
+# Caché
+.cache/
+*.cache
+
+# Temp
+tmp/
+temp/
+
+# Variables de entorno (ejemplo)
+# .env.example (SÍ debe subirse)
+
+# Archivos compilados
+*.min.js
+*.min.css
+
+# Backups
+*.bak
+*.backup
+*.swp
+*~
+
+# IDE
+.env.dusk.local
+.env.testing
+.phpunit.result.cache

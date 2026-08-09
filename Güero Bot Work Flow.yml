@@ -1,0 +1,182 @@
+kind: app
+version: 0.1.2
+app:
+  name: "Güero Bot Production & Avatar Workflow"
+  mode: workflow
+  icon: "🤖"
+  icon_background: "#FF00FF"
+  description: "Workflow unificado de producción para generar Escaleta, Guion, Cue Cards y el Avatar oficial."
+workflow:
+  features:
+    opening_statement: ""
+    retriever_resource:
+      enabled: true
+  graph:
+    nodes:
+      - id: "start_node"
+        type: "start"
+        position:
+          x: 100
+          y: 300
+        data:
+          title: "Inicio: Ficha de Onboarding"
+          variables:
+            - name: "nombre"
+              type: "text-input"
+              required: true
+              label: "nombre"
+            - name: "ocupacion"
+              type: "text-input"
+              required: true
+              label: "ocupacion"
+            - name: "barrio"
+              type: "text-input"
+              required: true
+              label: "barrio"
+            - name: "herida"
+              type: "text-input"
+              required: true
+              label: "herida"
+            - name: "momento"
+              type: "text-input"
+              required: true
+              label: "momento"
+            - name: "trayectoria"
+              type: "text-input"
+              required: true
+              label: "trayectoria"
+            - name: "incomodo"
+              type: "text-input"
+              required: true
+              label: "incomodo"
+            - name: "gustos"
+              type: "text-input"
+              required: true
+              label: "gustos"
+            - name: "logros"
+              type: "text-input"
+              required: true
+              label: "logros"
+      - id: "llm_escaleta"
+        type: "llm"
+        position:
+          x: 350
+          y: 100
+        data:
+          title: "Generador de Escaleta"
+          prompt_template: |
+            Eres el productor creativo de La Cueva del Güero. Diseña una escaleta de tiempos y bloques temáticos para entrevistar a {{start_node.nombre}}. 
+            Su profesión es {{start_node.ocupacion}} y proviene del barrio de {{start_node.barrio}}. El tema central debe rondar su momento decisivo: {{start_node.momento}} y cómo superó su herida: {{start_node.herida}}.
+            Entrega la escaleta en texto plano con tiempos sugeridos por bloques.
+      - id: "llm_guion"
+        type: "llm"
+        position:
+          x: 350
+          y: 250
+        data:
+          title: "Escritor de Guion"
+          prompt_template: |
+            Genera diálogos específicos y preguntas picantes para Junior (el conductor del show) basados en la trayectoria de {{start_node.nombre}}: {{start_node.trayectoria}}.
+            Asegura meter temas interesantes sobre sus gustos: {{start_node.gustos}}, pero respeta estrictamente sus límites sobre temas incómodos a evitar: {{start_node.incomodo}}.
+            Usa indicaciones de tono [Risas], [Serio] y mantén el estilo callejero y norteño del show.
+      - id: "llm_cuecards"
+        type: "llm"
+        position:
+          x: 350
+          y: 400
+        data:
+          title: "Generador de Cue Cards"
+          prompt_template: |
+            Crea una lista de 8 tarjetas de conducción rápidas (Cue Cards) en formato de viñetas para que el conductor las tenga impresas o en mano durante el show.
+            Cada tarjeta debe resumir un logro clave: {{start_node.logros}} o una frase detonadora basada en su barrio: {{start_node.barrio}}.
+      - id: "http_avatar_engine"
+        type: "http-request"
+        position:
+          x: 350
+          y: 550
+        data:
+          title: "Generador de Avatar"
+          method: "post"
+          url: "https://www.lacuevadelguero.com/api/api-avatar-engine.php"
+          headers:
+            - key: "Content-Type"
+              value: "application/json"
+          body:
+            type: "json"
+            content: |
+              {
+                "action": "generate",
+                "nombre": "{{start_node.nombre}}",
+                "actividad": "sentado en el set del podcast en actitud de barrio",
+                "ropa": "ropa estilo casual urbano con gorra"
+              }
+      - id: "code_merge"
+        type: "code"
+        position:
+          x: 650
+          y: 300
+        data:
+          title: "Consolidador JSON"
+          code_language: "javascript"
+          code: |
+            function main({escaleta, guion, cuecards, avatar_success, avatar_url}) {
+                return {
+                    result: {
+                        escaleta: escaleta.trim(),
+                        guion: guion.trim(),
+                        cue_cards: cuecards.trim(),
+                        avatar_generated: avatar_success,
+                        avatar_url: avatar_url ? avatar_url : ""
+                    }
+                };
+            }
+          inputs:
+            - name: "escaleta"
+              value: "{{llm_escaleta.text}}"
+            - name: "guion"
+              value: "{{llm_guion.text}}"
+            - name: "cuecards"
+              value: "{{llm_cuecards.text}}"
+            - name: "avatar_success"
+              value: "{{http_avatar_engine.body.success}}"
+            - name: "avatar_url"
+              value: "https://www.lacuevadelguero.com/{{http_avatar_engine.body.avatar_url}}"
+      - id: "end_node"
+        type: "end"
+        position:
+          x: 900
+          y: 300
+        data:
+          title: "Fin del Proceso"
+          outputs:
+            - name: "result"
+              value: "{{code_merge.result}}"
+              type: "object"
+    edges:
+      - id: "e1"
+        source: "start_node"
+        target: "llm_escaleta"
+      - id: "e2"
+        source: "start_node"
+        target: "llm_guion"
+      - id: "e3"
+        source: "start_node"
+        target: "llm_cuecards"
+      - id: "e4"
+        source: "start_node"
+        target: "http_avatar_engine"
+      - id: "e5"
+        source: "llm_escaleta"
+        target: "code_merge"
+      - id: "e6"
+        source: "llm_guion"
+        target: "code_merge"
+      - id: "e7"
+        source: "llm_cuecards"
+        target: "code_merge"
+      - id: "e8"
+        source: "http_avatar_engine"
+        target: "code_merge"
+      - id: "e9"
+        source: "code_merge"
+        target: "end_node"

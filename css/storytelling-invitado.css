@@ -1,0 +1,82 @@
+/* =========================================================
+   CSS – Adaptado al neón urbano
+   Archivo: storytelling-invitado.css
+   (Se apoya en escaleta-pro.css y dashboard-pro.css)
+========================================================= */
+
+#contenedorStorytelling {
+  max-width: 900px;
+  margin: 0 auto 30px auto;
+  background: #111;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #222;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.15);
+}
+
+#formStorytelling h2 {
+  color: #FF00FF;
+  text-shadow: 0 0 10px #FF00FF;
+  margin-top: 20px;
+}
+
+#formStorytelling label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #00FFFF;
+  text-shadow: 0 0 8px #00FFFF;
+}
+
+#formStorytelling input,
+#formStorytelling textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #0f0f0f;
+  color: #e6e6e6;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s;
+}
+
+#formStorytelling input:focus,
+#formStorytelling textarea:focus {
+  border-color: #FF00FF;
+  box-shadow: 0 0 10px #FF00FF;
+}
+
+#st_resultado {
+  max-width: 900px;
+  margin: 30px auto;
+}
+
+#st_bloques .bloque {
+  margin-bottom: 20px;
+}
+
+#st_bloques h3 {
+  color: #FF00FF;
+  text-shadow: 0 0 10px #FF00FF;
+  margin-bottom: 8px;
+}
+
+#st_bloques pre {
+  background: #111;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #333;
+  white-space: pre-wrap;
+  color: #00FFFF;
+  text-shadow: 0 0 5px #00FFFF;
+  font-size: 0.95rem;
+}
+
+/* Responsive simple */
+@media (max-width: 768px) {
+  #contenedorStorytelling {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,632 @@
+/*!*******************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/global.css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************/
+/* ============================================
+   GLOBALS.CSS — BASE DEL SISTEMA
+   (Minimalista, complementa neon.css)
+============================================ */
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Configuración general */
+html, body {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #121212;
+  color: #f5f5f5;
+}
+
+/* Contenedor principal */
+main {
+  width: 100%;
+  display: block;
+}
+
+/* Imágenes */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+
+/* Enlaces */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Listas */
+ul, ol {
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Botones */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+/* Inputs */
+input, textarea, select {
+  font-family: inherit;
+  outline: none;
+}
+
+/* Layout general */
+.page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Utilidades */
+.hidden {
+  display: none !important;
+}
+
+.center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+/*!*****************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/styles/neon.css ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************/
+/* ============================================
+   LA CUEVA DEL GÜERO — NEÓN URBANO COMPLETO
+   (components.css + global.css fusionados)
+============================================ */
+
+/* ============================
+   RESET GLOBAL
+============================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  background: #121212;
+  color: #f5f5f5;
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Humo global */
+body::before {
+  content: "";
+  position: fixed;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: url('/humo.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================
+   CONTENEDORES
+============================ */
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* ============================
+   TIPOGRAFÍA NEÓN
+============================ */
+h1, h2, h3 {
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.8),
+    0 0 16px rgba(0, 246, 255, 0.6),
+    0 0 32px rgba(255, 0, 168, 0.4);
+}
+
+a {
+  color: #00F6FF;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+a:hover {
+  color: #FF00A8;
+  text-shadow:
+    0 0 10px rgba(0, 246, 255, 0.8),
+    0 0 20px rgba(255, 0, 168, 0.8);
+}
+
+/* ============================
+   INPUTS
+============================ */
+input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  border: 2px solid #333;
+  background: #0d0d0d;
+  color: #fff;
+  margin-bottom: 1rem;
+  outline: none;
+  font-size: 1rem;
+  transition: 0.2s ease;
+}
+
+input:focus {
+  border-color: #00F6FF;
+  box-shadow:
+    0 0 10px rgba(0, 246, 255, 0.6),
+    0 0 20px rgba(255, 0, 168, 0.4);
+}
+
+/* ============================
+   BOTONES
+============================ */
+button {
+  background: #4EFC22;
+  color: #000;
+  border: none;
+  padding: 0.9rem 1.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1rem;
+  transition: 0.2s ease;
+  box-shadow:
+    0 0 10px rgba(78, 252, 34, 0.8),
+    0 0 20px rgba(78, 252, 34, 0.6);
+}
+
+button:hover {
+  background: #6AFF3A;
+  box-shadow:
+    0 0 15px rgba(78, 252, 34, 1),
+    0 0 30px rgba(255, 95, 0, 0.6);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================
+   SEPARADORES
+============================ */
+hr {
+  border: none;
+  height: 2px;
+  margin: 2rem 0;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 246, 255, 0) 0%,
+    rgba(0, 246, 255, 1) 50%,
+    rgba(255, 0, 168, 1) 100%
+  );
+  box-shadow:
+    0 0 10px rgba(0, 246, 255, 0.8),
+    0 0 20px rgba(255, 0, 168, 0.8);
+}
+
+/* ============================
+   UPLOAD BOX
+============================ */
+.upload-box {
+  border: 2px dashed rgba(255, 255, 255, 0.4);
+  padding: 2.5rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 14px;
+  margin: 1.5rem 0;
+  transition: 0.25s ease;
+  background: rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(0, 246, 255, 0.3),
+    inset 0 0 20px rgba(255, 0, 168, 0.2);
+}
+
+.upload-box:hover {
+  border-color: #ffffff;
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.8),
+    0 0 35px rgba(255, 0, 168, 0.6);
+  transform: scale(1.02);
+}
+
+/* ============================
+   AVATAR PREVIEW
+============================ */
+.avatar-preview {
+  margin-top: 2rem;
+  text-align: center;
+  animation: fadeIn 0.4s ease;
+}
+
+.avatar-preview img {
+  max-width: 280px;
+  border-radius: 14px;
+  border: 2px solid #ffffff;
+  background: transparent;
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 25px rgba(0, 246, 255, 0.6),
+    0 0 40px rgba(255, 0, 168, 0.5);
+  animation: neonPulse 2.5s infinite ease-in-out;
+}
+
+.avatar-preview p {
+  margin-top: 0.7rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+  color: #00F6FF;
+  text-shadow: 0 0 8px rgba(0, 246, 255, 0.6);
+}
+
+/* ============================
+   LOADER
+============================ */
+.loader {
+  margin-top: 1.8rem;
+  padding: 1rem;
+  text-align: center;
+  color: #00F6FF;
+  font-weight: 700;
+  font-size: 1.1rem;
+  animation: neonPulse 1.4s infinite ease-in-out;
+}
+
+/* ============================
+   VERSION LIST
+============================ */
+ul li {
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 0.6rem 0.4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+ul li img {
+  border-radius: 10px;
+  border: 2px solid #ffffff;
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(0, 246, 255, 0.6),
+    0 0 30px rgba(255, 0, 168, 0.5);
+  width: 75px;
+}
+
+/* ============================
+   NAVBAR
+============================ */
+.navbar-neon {
+  width: 100%;
+  padding: 1rem 0;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(18, 18, 18, 0.85);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(0, 246, 255, 0.2),
+    0 0 30px rgba(255, 0, 168, 0.15);
+}
+
+.navbar-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 0 8px #fff,
+    0 0 16px #00F6FF,
+    0 0 28px #FF00A8;
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link-neon {
+  color: #00F6FF;
+  font-weight: 700;
+  transition: 0.2s ease;
+  text-shadow:
+    0 0 6px rgba(0, 246, 255, 0.6),
+    0 0 12px rgba(255, 0, 168, 0.4);
+}
+
+.nav-link-neon:hover {
+  color: #FF00A8;
+  text-shadow:
+    0 0 10px rgba(255, 0, 168, 0.8),
+    0 0 20px rgba(0, 246, 255, 0.8);
+}
+
+/* ============================
+   FOOTER
+============================ */
+.footer-neon {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  text-align: center;
+  background: rgba(18, 18, 18, 0.9);
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.2),
+    0 0 20px rgba(0, 246, 255, 0.2),
+    0 0 30px rgba(255, 0, 168, 0.15);
+}
+
+.footer-neon p {
+  margin: 0.3rem 0;
+  color: #fff;
+  opacity: 0.8;
+}
+
+.footer-accent {
+  color: #FF00A8;
+  font-weight: 700;
+  text-shadow:
+    0 0 8px rgba(255, 0, 168, 0.8),
+    0 0 16px rgba(0, 246, 255, 0.6);
+}
+
+/* ============================
+   LOGIN / REGISTER / RESET
+============================ */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: #121212;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-page::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: url('/humo.png') center/cover no-repeat;
+  opacity: 0.15;
+  filter: blur(10px);
+  animation: smokeMove 18s infinite linear;
+  pointer-events: none;
+}
+
+@keyframes smokeMove {
+  0% { transform: translateX(0) translateY(0); }
+  50% { transform: translateX(40px) translateY(-20px); }
+  100% { transform: translateX(0) translateY(0); }
+}
+
+.login-card-neon {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(8px);
+          backdrop-filter: blur(8px);
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.4),
+    0 0 25px rgba(0, 246, 255, 0.4),
+    0 0 35px rgba(255, 0, 168, 0.3),
+    inset 0 0 20px rgba(255, 255, 255, 0.1);
+  animation: neonPulse 3s infinite ease-in-out;
+}
+
+.input-neon {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #0d0d0d;
+  color: #fff;
+  transition: 0.25s ease;
+}
+
+.input-neon:focus {
+  border-color: #00F6FF;
+  box-shadow:
+    0 0 10px rgba(0, 246, 255, 0.8),
+    0 0 20px rgba(255, 0, 168, 0.6);
+}
+
+.login-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.link-neon {
+  color: #00F6FF;
+  font-weight: 700;
+  text-shadow:
+    0 0 8px rgba(0, 246, 255, 0.8),
+    0 0 16px rgba(255, 0, 168, 0.6);
+}
+
+.link-neon:hover {
+  color: #FF00A8;
+}
+
+/* ============================
+   DASHBOARD
+============================ */
+.dashboard-page {
+  padding: 3rem 2rem;
+  min-height: 100vh;
+  background: #121212;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-page::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: url('/humo.png') center/cover no-repeat;
+  opacity: 0.12;
+  filter: blur(12px);
+  animation: smokeMove 22s infinite linear;
+  pointer-events: none;
+}
+
+.dashboard-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-gap: 2rem;
+  gap: 2rem;
+}
+
+.dashboard-card {
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(6px);
+          backdrop-filter: blur(6px);
+  text-align: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow:
+    0 0 12px rgba(255, 255, 255, 0.3),
+    0 0 25px rgba(0, 246, 255, 0.3),
+    inset 0 0 20px rgba(255, 0, 168, 0.2);
+}
+
+.dashboard-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.8),
+    0 0 30px rgba(0, 246, 255, 0.8),
+    0 0 40px rgba(255, 0, 168, 0.6);
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  text-shadow:
+    0 0 10px #fff,
+    0 0 20px #00F6FF,
+    0 0 30px #FF00A8;
+}
+
+/* ============================
+   LOGS
+============================ */
+.logs-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.log-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 4px solid #00ffff;
+  padding: 15px;
+  border-radius: 6px;
+  -webkit-backdrop-filter: blur(4px);
+          backdrop-filter: blur(4px);
+}
+
+/* ============================
+   LOADING SCREEN
+============================ */
+.loading-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  opacity: 0.9;
+}
+
+.loader-neon {
+  width: 55px;
+  height: 55px;
+  border: 4px solid #00ffff;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  filter: drop-shadow(0 0 8px #00ffff);
+}
+
+.loading-text {
+  margin-top: 15px;
+}
+

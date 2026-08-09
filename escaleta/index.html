@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de Escaletas - La Cueva del Güero</title>
+    <link rel="stylesheet" href="/css/escaleta-pro.css">
+
+</head>
+
+<body>
+
+    <h1>Generador de Escaletas – La Cueva del Güero</h1>
+
+    <!-- 🔥 FORMULARIO PRINCIPAL -->
+    <section id="formularioEscaleta">
+
+        <label>Nombre del invitado:</label>
+        <input id="nombre">
+
+        <label>Ocupación:</label>
+        <input id="ocupacion">
+
+        <label>Signo:</label>
+        <input id="signo">
+
+        <label>Fecha de nacimiento:</label>
+        <input id="fecha" type="date">
+
+        <label>Barrio:</label>
+        <input id="barrio">
+
+        <label>Trayectoria:</label>
+        <textarea id="trayectoria"></textarea>
+
+        <label>Herida:</label>
+        <textarea id="herida"></textarea>
+
+        <label>Momento incómodo:</label>
+        <textarea id="incomodo"></textarea>
+
+        <label>Gustos:</label>
+        <textarea id="gustos"></textarea>
+
+        <label>Cantidad de Cue Cards:</label>
+        <input id="cantidadCueCards" type="number" min="1" max="20" value="5">
+
+        <div class="botones">
+            <button id="botonGenerar">🚀 Generar Escaleta</button>
+            <button id="botonCopiar">Copiar</button>
+            <button id="botonDescargar">Descargar</button>
+            <button id="botonLimpiar">Limpiar</button>
+        </div>
+
+    </section>
+
+    <!-- 🔥 RESULTADO DE ESCALERA / GUION / BOTÓN DE CUE CARDS -->
+    <div id="resultado"></div>
+
+    <!-- 🔥 IMPORTA EL JS PRO -->
+    <script src="/js/guero-pro.js"></script>
+
+</body>
+</html>

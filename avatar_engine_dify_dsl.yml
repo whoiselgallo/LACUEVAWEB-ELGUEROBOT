@@ -1,0 +1,56 @@
+# Dify Workflow DSL - Avatar Engine (Nano Banana)
+# Importar directamente desde el panel de Dify -> Crear desde DSL
+app:
+  name: "Avatar Engine con Nano Banana"
+  mode: workflow
+  icon: "🎨"
+  icon_background: "#00FFFF"
+  description: "Workflow para la creación y registro de avatares estilo cómic neón utilizando Google Imagen 3 (Nano Banana)."
+workflow:
+  nodes:
+    - id: start_node
+      type: start
+      title: "Inicio: Datos del Avatar"
+      variables:
+        - name: "nombre"
+          type: string
+          required: true
+          description: "Nombre del personaje o invitado"
+        - name: "actividad"
+          type: string
+          required: true
+          description: "Postura o acción (ej: sentado en sillón, de pie)"
+        - name: "ropa"
+          type: string
+          required: true
+          description: "Estilo de vestimenta (ej: chamarra de cuero, casual)"
+    - id: http_avatar_engine
+      type: http_request
+      title: "API Avatar Engine"
+      method: post
+      url: "https://www.lacuevadelguero.com/api/api-avatar-engine.php"
+      headers:
+        - key: "Content-Type"
+          value: "application/json"
+      body:
+        type: json
+        content: |
+          {
+            "action": "generate",
+            "nombre": "{{start_node.nombre}}",
+            "actividad": "{{start_node.actividad}}",
+            "ropa": "{{start_node.ropa}}"
+          }
+    - id: end_node
+      type: end
+      title: "Fin del Proceso"
+      outputs:
+        - name: "success"
+          value: "{{http_avatar_engine.body.success}}"
+          type: boolean
+        - name: "avatar_url"
+          value: "https://www.lacuevadelguero.com/{{http_avatar_engine.body.avatar_url}}"
+          type: string
+        - name: "prompt_utilizado"
+          value: "{{http_avatar_engine.body.prompt}}"
+          type: string
