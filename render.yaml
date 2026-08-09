@@ -1,6 +1,8 @@
 # ═════════════════════════════════════════════════════════════════════════════════
 # RENDER BLUEPRINT - LA CUEVA DEL GÜERO
 # Archivo de configuración automática para despliegues en Render.com
+# ⚠️  Todas las credenciales se configuran en el Dashboard de Render.com
+#     NO almacenar API Keys ni contraseñas en este archivo
 # ═════════════════════════════════════════════════════════════════════════════════
 
 services:
@@ -11,24 +13,25 @@ services:
     region: oregon
     branch: main
     envVars:
-      # --- CREDENCIALES DE BASE DE DATOS (NEON.TECH) ---
+      # --- BASE DE DATOS (NEON.TECH) ---
+      # Configura estos valores en: Render Dashboard > Environment
       - key: DB_HOST
-        value: ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech
+        sync: false
       - key: DB_PORT
         value: "5432"
       - key: DB_NAME
         value: neondb
       - key: DB_USER
-        value: neondb_owner
+        sync: false
       - key: DB_PASS
-        value: npg_eOUvM7qXj0SZ
-      
-      # --- CREDENCIALES DE INTELIGENCIA ARTIFICIAL (DIFY.AI) ---
+        sync: false
+
+      # --- INTELIGENCIA ARTIFICIAL (DIFY.AI) ---
       - key: DIFY_API_KEY
-        value: app-HFon5L07VUDoe00fMeKudFjT
-      
-      # --- CREDENCIALES DEL DASHBOARD DE ADMINISTRACIÓN ---
+        sync: false
+
+      # --- DASHBOARD DE ADMINISTRACIÓN ---
       - key: ADMIN_USER
-        value: admin
+        sync: false
       - key: ADMIN_PASS
-        value: eldesmadredelGuero1
+        sync: false
