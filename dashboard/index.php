@@ -568,6 +568,9 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             <li class="menu-item" id="menu-avatar" onclick="switchView('avatar')">
                 <i class="fa-solid fa-masks-theater"></i> Avatar Engine
             </li>
+            <li class="menu-item" id="menu-mesa" onclick="switchView('mesa')">
+                <i class="fa-solid fa-chalkboard-user"></i> Mesa de Trabajo
+            </li>
         </ul>
         <div class="sidebar-footer">
             <a href="../index.html" class="btn-home" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; font-weight: 700; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,255,255,0.4); box-shadow: 0 0 5px rgba(0,255,255,0.1); box-sizing: border-box; transition: all 0.2s ease;">
@@ -1277,6 +1280,122 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             <h3 style="color:#fff; margin-bottom:15px;">👥 Personajes & Avatares Registrados</h3>
             <div id="avatarGallery" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:15px;"></div>
         </section>
+
+        <!-- VIEW 7: MESA DE TRABAJO INTERACTIVA (AUDITORÍA & LEADS CONTROLLER) -->
+        <section class="view-section" id="view-mesa" style="overflow-y:auto; padding: 25px;">
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Mesa de control interactiva para auditoría del sistema, simulación de pagos Stripe, mapeo de flujos y colaboración del equipo.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
+                <!-- PANEL: CONEXIONES & STRIPE SIMULATOR -->
+                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 20px; display:flex; flex-direction:column; gap:18px; box-shadow: 0 0 15px rgba(0,255,255,0.1);">
+                    <h3 style="color:#00FFFF; margin:0; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-server"></i> Conexión DB & Stripe Gateway</h3>
+                    
+                    <!-- Live DB Test -->
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(0,255,255,0.1); border-radius:10px; padding:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <strong style="font-size:0.85rem; color:#fff;">Estado Base de Datos (Neon.tech)</strong>
+                            <span id="db-status-badge" style="font-size:0.65rem; color:#39FF14; border:1px solid #39FF14; padding:2px 6px; border-radius:4px; font-weight:bold;">Operativo</span>
+                        </div>
+                        <button class="btn-neon" onclick="testDBConnection()" style="font-size:0.75rem; padding:6px 12px; width:100%;"><i class="fa-solid fa-rotate"></i> Testear Conexión en Vivo</button>
+                        <div id="db-test-result" style="margin-top:10px; font-size:0.75rem; color:#888; font-family:monospace; white-space:pre-wrap;"></div>
+                    </div>
+
+                    <!-- Stripe Mock Gateway -->
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,0,255,0.1); border-radius:10px; padding:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <strong style="font-size:0.85rem; color:#fff; display:flex; align-items:center; gap:5px;"><i class="fab fa-stripe" style="color:#635bff; font-size:1.4rem;"></i> Stripe Gateway</strong>
+                            <span id="stripe-status-badge" style="font-size:0.65rem; color:#ff4d4d; border:1px solid #ff4d4d; padding:2px 6px; border-radius:4px; font-weight:bold;">No Instalada / Mock</span>
+                        </div>
+                        <p style="font-size:0.75rem; color:#aaa; margin-bottom:10px;">La pasarela Stripe no tiene credenciales en el archivo config.php. Activa la simulación de cobro VIP.</p>
+                        
+                        <div style="display:flex; gap:8px; margin-bottom:12px;">
+                            <button class="btn-neon" onclick="generateMockStripeTokens()" style="flex:1; font-size:0.7rem; padding:5px;"><i class="fa-solid fa-key"></i> Generar API Keys</button>
+                            <button class="btn-neon btn-neon-magenta" onclick="simulateStripeCheckout()" style="flex:1; font-size:0.7rem; padding:5px;"><i class="fa-solid fa-credit-card"></i> Cobrar Membresía VIP</button>
+                        </div>
+                        <div id="stripe-result" style="font-size:0.75rem; color:#888; font-family:monospace; background:rgba(0,0,0,0.3); border-radius:6px; padding:8px;">Estado: Esperando acción...</div>
+                    </div>
+                </div>
+
+                <!-- PANEL: LEADS & AUDIENCE CALCULATOR -->
+                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px; display:flex; flex-direction:column; gap:15px; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
+                    <h3 style="color:#FF00FF; margin:0; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-chart-line"></i> Leads & Analítica de Suscriptores</h3>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div class="form-group">
+                            <label style="font-size:0.75rem; color:#aaa;">Alcance Mensual (Promedio)</label>
+                            <input type="number" id="calc-reach" class="form-input" value="150000" oninput="calculateLeads()" style="padding:6px; font-size:0.8rem;">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size:0.75rem; color:#aaa;">Tasa Conversión (CTR %)</label>
+                            <input type="number" id="calc-ctr" class="form-input" value="2.5" step="0.1" oninput="calculateLeads()" style="padding:6px; font-size:0.8rem;">
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(0,0,0,0.3); border-radius:10px; padding:12px; display:grid; grid-template-columns:1fr 1fr; gap:10px; text-align:center;">
+                        <div>
+                            <div style="color:#aaa; font-size:0.7rem; text-transform:uppercase;">Nuevos Leads Estimados</div>
+                            <div id="lead-output-num" style="color:#00FFFF; font-size:1.8rem; font-weight:800; text-shadow:0 0 8px #00FFFF;">3,750</div>
+                        </div>
+                        <div>
+                            <div style="color:#aaa; font-size:0.7rem; text-transform:uppercase;">Valor Mensual ($5 USD/VIP)</div>
+                            <div id="lead-output-val" style="color:#39FF14; font-size:1.8rem; font-weight:800; text-shadow:0 0 8px #39FF14;">$18,750</div>
+                        </div>
+                    </div>
+
+                    <button class="btn-neon" onclick="exportLeadsSimulator()" style="width:100%; font-size:0.75rem; padding:8px;"><i class="fa-solid fa-download"></i> Exportar Leads Simulación a CSV</button>
+                    <div id="leads-export-status" style="font-size:0.7rem; color:#888; text-align:center;"></div>
+                </div>
+            </div>
+
+            <!-- PANEL: MAPA DE FLUJO DE TRABAJO INTERACTIVO -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,255,0.1);">
+                <h3 style="color:#00FFFF; margin:0 0 15px 0;"><i class="fa-solid fa-circle-nodes"></i> Workflows de Información Internos</h3>
+                
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <!-- Step 1 -->
+                    <div onclick="showFlowInfo(1)" style="flex:1; min-width:130px; background:rgba(0,255,255,0.05); border:1px solid var(--neon-cyan); border-radius:10px; padding:10px; text-align:center; cursor:pointer;">
+                        <strong style="color:var(--neon-cyan); font-size:0.75rem;">1. Captación</strong>
+                        <p style="font-size:0.65rem; color:#aaa; margin:5px 0 0 0;">Chatbot & Landing Page</p>
+                    </div>
+                    <i class="fa-solid fa-angles-right" style="color:#555;"></i>
+                    <!-- Step 2 -->
+                    <div onclick="showFlowInfo(2)" style="flex:1; min-width:130px; background:rgba(255,0,255,0.05); border:1px solid var(--neon-magenta); border-radius:10px; padding:10px; text-align:center; cursor:pointer;">
+                        <strong style="color:var(--neon-magenta); font-size:0.75rem;">2. Curation</strong>
+                        <p style="font-size:0.65rem; color:#aaa; margin:5px 0 0 0;">Evaluación 3 Niveles</p>
+                    </div>
+                    <i class="fa-solid fa-angles-right" style="color:#555;"></i>
+                    <!-- Step 3 -->
+                    <div onclick="showFlowInfo(3)" style="flex:1; min-width:130px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:10px; text-align:center; cursor:pointer;">
+                        <strong style="color:#fff; font-size:0.75rem;">3. Scripting</strong>
+                        <p style="font-size:0.65rem; color:#aaa; margin:5px 0 0 0;">Escaletas IA Dify</p>
+                    </div>
+                    <i class="fa-solid fa-angles-right" style="color:#555;"></i>
+                    <!-- Step 4 -->
+                    <div onclick="showFlowInfo(4)" style="flex:1; min-width:130px; background:rgba(57,255,20,0.05); border:1px solid #39FF14; border-radius:10px; padding:10px; text-align:center; cursor:pointer;">
+                        <strong style="color:#39FF14; font-size:0.75rem;">4. Postpro & Canva</strong>
+                        <p style="font-size:0.65rem; color:#aaa; margin:5px 0 0 0;">Video Editor / PNGs</p>
+                    </div>
+                </div>
+
+                <div id="flow-info-display" style="margin-top:15px; font-size:0.8rem; color:#ccc; background:rgba(0,0,0,0.3); border-radius:8px; padding:12px; border-left:4px solid var(--neon-cyan);">
+                    Haz clic en cualquiera de las fases del flujo arriba para ver detalles de la auditoría y mapeo técnico.
+                </div>
+            </div>
+
+            <!-- PANEL: KANBAN COOPERACIÓN DE SOCIOS -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
+                <h3 style="color:#FF00FF; margin:0 0 15px 0;"><i class="fa-solid fa-chalkboard-user"></i> Kanban de Trabajo en Equipo en Vivo (Socios)</h3>
+                
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
+                    <input type="text" id="kanban-new-task" class="form-input" placeholder="Agregar nueva tarea (ej: Revisar guion Ep 19)..." style="padding:8px; font-size:0.8rem;">
+                    <button class="btn-neon btn-neon-magenta" onclick="addKanbanTask()" style="font-size:0.75rem; padding:8px 12px;"><i class="fa-solid fa-plus"></i> Asignar Tarea</button>
+                </div>
+
+                <div id="kanban-list" style="display:flex; flex-direction:column; gap:8px;">
+                    <!-- Lista de tareas dinamicas -->
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- MODAL OCULTO: IMPORTAR AVATAR PRE-EXISTENTE -->
@@ -1351,6 +1470,201 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 sidebar.classList.toggle("active");
             }
         }
+
+        // ============================================================
+        // MESA DE TRABAJO - CONTROLADORES INTERACTIVOS DE AUDITORÍA
+        // ============================================================
+
+        // 1. Test de Conexión Base de Datos
+        async function testDBConnection() {
+            const resultDiv = document.getElementById("db-test-result");
+            const badge = document.getElementById("db-status-badge");
+            resultDiv.textContent = "> Conectando a Neon.tech en vivo...";
+            
+            try {
+                const response = await fetch("../api/api-db-test.php");
+                const data = await response.json();
+                
+                if (data.success) {
+                    badge.textContent = "Conectado";
+                    badge.style.color = "#39FF14";
+                    badge.style.borderColor = "#39FF14";
+                    
+                    let html = `Conexión: Éxito (Driver: ${data.driver})\nLatencia: ${data.latency_ms} ms\n\nTablas y Registros:\n`;
+                    for (const table in data.details) {
+                        html += `- ${table}: ${data.details[table].rows} filas [${data.details[table].status}]\n`;
+                    }
+                    resultDiv.textContent = html;
+                } else {
+                    throw new Error(data.error || "Error desconocido");
+                }
+            } catch(err) {
+                badge.textContent = "Error";
+                badge.style.color = "#ff4d4d";
+                badge.style.borderColor = "#ff4d4d";
+                resultDiv.textContent = `Error de conexión:\n${err.message}`;
+            }
+        }
+
+        // 2. Simulador de Pasarela de Pagos Stripe
+        let mockStripeKeys = null;
+        function generateMockStripeTokens() {
+            const resultDiv = document.getElementById("stripe-result");
+            const badge = document.getElementById("stripe-status-badge");
+            
+            mockStripeKeys = {
+                publishable_key: "pk_test_cueva_" + Math.random().toString(36).substring(2, 15),
+                secret_key: "sk_test_cueva_" + Math.random().toString(36).substring(2, 15)
+            };
+            
+            badge.textContent = "Simulación OK";
+            badge.style.color = "#39FF14";
+            badge.style.borderColor = "#39FF14";
+            
+            resultDiv.innerHTML = `Claves Generadas:\nPublicable: <span style="color:#00FFFF;">${mockStripeKeys.publishable_key}</span>\nSecret: <span style="color:#FF00FF;">${mockStripeKeys.secret_key}</span>`;
+        }
+
+        function simulateStripeCheckout() {
+            const resultDiv = document.getElementById("stripe-result");
+            if (!mockStripeKeys) {
+                alert("Primero genera las API Keys de simulación.");
+                return;
+            }
+            
+            const numTarjeta = prompt("Simulador Stripe Checkout:\n\nIngresa número de tarjeta (4242 4242 4242):", "4242424242424242");
+            if (!numTarjeta) return;
+            
+            resultDiv.textContent = "> Conectando con Stripe Gateway api.stripe.com...";
+            
+            setTimeout(() => {
+                const chargeId = "ch_" + Math.random().toString(36).substring(2, 10);
+                resultDiv.innerHTML = `Estado: <span style="color:#39FF14;">PAGO EXITOSO</span>\nCargo ID: ${chargeId}\nMonto: $5.00 USD\nPlan: Membresía VIP Cueva\nFecha: ${new Date().toLocaleString()}`;
+                alert("¡Cobro Stripe Procesado Exitosamente (Simulación)!");
+            }, 1500);
+        }
+
+        // 3. Calculadora de Leads y Conversión
+        function calculateLeads() {
+            const reach = parseInt(document.getElementById("calc-reach").value) || 0;
+            const ctr = parseFloat(document.getElementById("calc-ctr").value) || 0;
+            
+            const leads = Math.round(reach * (ctr / 100));
+            const val = leads * 5;
+            
+            document.getElementById("lead-output-num").textContent = leads.toLocaleString();
+            document.getElementById("lead-output-val").textContent = "$" + val.toLocaleString();
+        }
+
+        function exportLeadsSimulator() {
+            const reach = parseInt(document.getElementById("calc-reach").value) || 0;
+            const ctr = parseFloat(document.getElementById("calc-ctr").value) || 0;
+            const leadsCount = Math.round(reach * (ctr / 100));
+            
+            let csv = "ID,Nombre,Email,Origen,Fecha Sincronizacion\n";
+            for (let i = 1; i <= Math.min(leadsCount, 50); i++) {
+                csv += `${i},Lead_Simulado_${i},lead_${i}@cuevadelguero.com,Mesa Trabajo,${new Date().toISOString().split('T')[0]}\n`;
+            }
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute("download", `Leads_Simulados_Cueva.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            document.getElementById("leads-export-status").textContent = `Exportadas las primeras 50 de ${leadsCount} filas de Leads a CSV.`;
+        }
+
+        // 4. Mapa de flujo descriptivo
+        function showFlowInfo(fase) {
+            const display = document.getElementById("flow-info-display");
+            
+            switch(fase) {
+                case 1:
+                    display.innerHTML = `<strong>1. Fase de Captación (Lead Generator):</strong><br>Los leads ingresan mediante el widget Paw Agent. La conversación se registra de forma síncrona en la tabla <code>conversations</code> de Neon PostgreSQL. Si el usuario ingresa un contacto, se genera un webhook interno.`;
+                    display.style.borderLeftColor = "var(--neon-cyan)";
+                    break;
+                case 2:
+                    display.innerHTML = `<strong>2. Fase de Curation (Evaluación de 3 Niveles):</strong><br>El sistema lee los datos de invitados estrella. Clasifica automáticamente según storytelling: Nivel Alto (Publicación completa en YouTube/Spotify), Nivel Medio (Contenido exclusivo VIP) y Nivel Bajo (Reevaluar perfil).`;
+                    display.style.borderLeftColor = "var(--neon-magenta)";
+                    break;
+                case 3:
+                    display.innerHTML = `<strong>3. Scripting Inteligente:</strong><br>Utiliza la API de Dify Workflow enlazada con la llave corporativa para generar guiones estructurados, cue cards para el set de grabación y escaletas técnicas guardadas en base de datos.`;
+                    display.style.borderLeftColor = "#fff";
+                    break;
+                case 4:
+                    display.innerHTML = `<strong>4. Postproducción y Canva:</strong><br>Se unifican los activos generados en el editor Canva PRO y en la línea de tiempo de video utilizando presets de formato rápido (YouTube, Instagram, TikTok) y limpiando el material usando comandos directos de FFmpeg e IA.`;
+                    display.style.borderLeftColor = "#39FF14";
+                    break;
+            }
+        }
+
+        // 5. Kanban de Trabajo en Equipo en Vivo (Socios)
+        let kanbanTasks = JSON.parse(localStorage.getItem("cueva_kanban_tasks")) || [
+            { id: 1, text: "Alinear niveles de audio del Episodio 18 a -14 LUFS", done: true },
+            { id: 2, text: "Cargar foto de portada para el post del blog de invitados", done: false },
+            { id: 3, text: "Configurar API Real de Stripe para membresías VIP", done: false }
+        ];
+
+        function renderKanban() {
+            const container = document.getElementById("kanban-list");
+            if (!container) return;
+            container.innerHTML = "";
+            
+            kanbanTasks.forEach(task => {
+                const div = document.createElement("div");
+                div.style.display = "flex";
+                div.style.justifyContent = "space-between";
+                div.style.alignItems = "center";
+                div.style.background = "rgba(255,255,255,0.02)";
+                div.style.padding = "8px 12px";
+                div.style.borderRadius = "8px";
+                div.style.border = task.done ? "1px solid rgba(57,255,20,0.2)" : "1px solid rgba(255,255,255,0.05)";
+                div.style.margin = "3px 0";
+                
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" ${task.done ? 'checked' : ''} onchange="toggleKanbanTask(${task.id})" style="cursor:pointer;">
+                        <span style="font-size:0.8rem; text-decoration:${task.done ? 'line-through' : 'none'}; color:${task.done ? '#888' : '#ccc'};">${task.text}</span>
+                    </div>
+                    <button onclick="deleteKanbanTask(${task.id})" style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-size:0.85rem;"><i class="fa-solid fa-trash"></i></button>
+                `;
+                container.appendChild(div);
+            });
+            
+            localStorage.setItem("cueva_kanban_tasks", JSON.stringify(kanbanTasks));
+        }
+
+        function addKanbanTask() {
+            const input = document.getElementById("kanban-new-task");
+            const text = input.value.trim();
+            if (!text) return;
+            
+            kanbanTasks.push({
+                id: Date.now(),
+                text: text,
+                done: false
+            });
+            input.value = "";
+            renderKanban();
+        }
+
+        function toggleKanbanTask(id) {
+            kanbanTasks = kanbanTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+            renderKanban();
+        }
+
+        function deleteKanbanTask(id) {
+            kanbanTasks = kanbanTasks.filter(t => t.id !== id);
+            renderKanban();
+        }
+
+        // Render inicializar Kanban al entrar
+        document.addEventListener("DOMContentLoaded", () => {
+            renderKanban();
+            calculateLeads();
+        });
     </script>
     <script src="../js/dashboard-pro.js"></script>
     <script src="../js/editor-canva.js"></script>

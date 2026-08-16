@@ -52,6 +52,15 @@ function switchView(view) {
             case 'video':
                 titleEl.innerHTML = `Editor de <span>Video</span>`;
                 break;
+            case 'canva':
+                titleEl.innerHTML = `Editor Canva <span>PRO</span>`;
+                break;
+            case 'avatar':
+                titleEl.innerHTML = `Avatar <span>Engine</span>`;
+                break;
+            case 'mesa':
+                titleEl.innerHTML = `Mesa de <span>Trabajo</span>`;
+                break;
         }
     }
 }
