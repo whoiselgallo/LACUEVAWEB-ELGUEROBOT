@@ -280,6 +280,23 @@ function log_conversation($db, $user_id, $visit_type, $user_message, $bot_answer
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════
+// FUNCIÓN: Rotación de Claves Gemini API
+// ═════════════════════════════════════════════════════════════════════════════════
+function get_gemini_api_key() {
+    $keysStr = getEnvVar('GEMINI_API_KEYS') ?: getEnvVar('GEMINI_API_KEY');
+    if (empty($keysStr)) {
+        return '';
+    }
+    $keys = explode(',', $keysStr);
+    $keys = array_filter(array_map('trim', $keys));
+    if (empty($keys)) {
+        return '';
+    }
+    $randomIndex = array_rand($keys);
+    return $keys[$randomIndex];
+}
+
+// ═════════════════════════════════════════════════════════════════════════════════
 // CONFIGURACIÓN DE ERROR HANDLING
 // ═════════════════════════════════════════════════════════════════════════════════
 if (APP_ENV === 'production') {

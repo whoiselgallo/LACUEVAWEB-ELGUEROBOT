@@ -185,7 +185,7 @@ try {
             $avatarUrl = '../images/avatar-alan-barraza.png';
         } else {
             // Intentar usar Google Imagen 3 via Gemini API (Nano Banana) si la clave existe
-            $geminiApiKey = getEnvVar('GEMINI_API_KEY') ?: getEnvVar('GOOGLE_API_KEY');
+            $geminiApiKey = get_gemini_api_key() ?: getEnvVar('GOOGLE_API_KEY');
             $generatedSuccessfully = false;
 
             if (!empty($geminiApiKey)) {
