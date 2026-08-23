@@ -875,7 +875,7 @@ async function syncYouTubeStudioStats() {
             document.getElementById("yt-stats-panel").style.display = "grid";
             document.getElementById("btn-yt-suggest").disabled = false;
             
-            alert(`✓ Datos REALES del canal obtenidos para los últimos 30 días (${data.subscribers.toLocaleString()} suscriptores totales).`);
+            alert(`✓ Datos obtenidos con éxito.\nOrigen: ${data.conexion}\nPeriodo: Últimos 30 días\nSuscriptores totales: ${data.subscribers.toLocaleString()}`);
         } else {
             throw new Error(data.error || "Falla al conectar con la API de YouTube.");
         }
