@@ -1,6 +1,6 @@
 <?php
 /**
- * API: CONEXIÓN REAL CON YOUTUBE ANALYTICS (CON TOKEN OAUTH DE SESIÓN)
+ * API: CONEXIÓN REAL CON YOUTUBE ANALYTICS (PÚBLICO Y OAUTH)
  * Endpoint: /api/api-youtube-analytics.php
  */
 
@@ -17,10 +17,10 @@ $ctr = 5.8;
 $retention = 42;
 $impressions = 0;
 $subscribers = 0;
-$conexionTipo = 'Simulado (Sin Conexión)';
+$conexionTipo = 'Simulado (Falta conexión)';
 $realStats = false;
 
-// 1. Verificar si existe token de OAuth real guardado
+// 1. Intentar obtener datos reales mediante OAuth si el token existe
 if (file_exists($tokenFile)) {
     $tokens = json_decode(file_get_contents($tokenFile), true);
     $accessToken = $tokens['access_token'] ?? '';
@@ -54,9 +54,8 @@ if (file_exists($tokenFile)) {
         }
     }
     
-    // 2. Si tenemos token activo, consultar las APIs de YouTube de forma real
     if (!empty($accessToken)) {
-        // A. Consultar estadísticas del canal autenticado (MINE)
+        // Consultar estadísticas del canal autenticado (MINE)
         $ch = curl_init("https://www.googleapis.com/youtube/v3/channels?part=statistics&mine=true");
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
@@ -75,7 +74,7 @@ if (file_exists($tokenFile)) {
             }
         }
         
-        // B. Intentar consultar reporte de YouTube Analytics para los últimos 30 días
+        // Consultar reporte de YouTube Analytics para los últimos 30 días
         $startDate = date('Y-m-d', strtotime('-30 days'));
         $endDate = date('Y-m-d', strtotime('-1 days'));
         
@@ -106,101 +105,64 @@ if (file_exists($tokenFile)) {
             $daysCount = count($rows);
             
             foreach ($rows as $row) {
-                $totalViews += (int)($row[1] ?? 0); // views
-                $totalDuration += (int)($row[4] ?? 0); // averageViewDuration (seconds)
+                $totalViews += (int)($row[1] ?? 0);
+                $totalDuration += (int)($row[4] ?? 0);
             }
             
             if ($totalViews > 0) {
                 $views = $totalViews;
-                $retention = $daysCount > 0 ? (int)(($totalDuration / $daysCount) / 10) : 42; // normalizar
-                if ($retention > 100) $retention = 48; // cap
+                $retention = $daysCount > 0 ? (int)(($totalDuration / $daysCount) / 10) : 42;
+                if ($retention > 100) $retention = 48;
                 $realStats = true;
                 $conexionTipo = 'Real (YouTube Analytics API)';
-            }
-        }
-        
-        // C. Fallback: Si Analytics API no está activa en tu consola, usar Data API v3 con el token de OAuth
-        if (!$realStats) {
-            // Obtener videos subidos por el canal
-            $ch = curl_init("https://www.googleapis.com/youtube/v3/search?part=snippet&mine=true&type=video&maxResults=10&order=date");
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $accessToken],
-                CURLOPT_TIMEOUT => 10
-            ]);
-            $vRes = curl_exec($ch);
-            $vCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            
-            if ($vCode === 200) {
-                $vData = json_decode($vRes, true);
-                $videoIds = [];
-                foreach ($vData['items'] ?? [] as $item) {
-                    if (isset($item['id']['videoId'])) {
-                        $videoIds[] = $item['id']['videoId'];
-                    }
-                }
-                
-                if (!empty($videoIds)) {
-                    $ch = curl_init("https://www.googleapis.com/youtube/v3/videos?part=statistics&id=" . implode(',', $videoIds));
-                    curl_setopt_array($ch, [
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_HTTPHEADER => ['Authorization: Bearer ' . $accessToken],
-                        CURLOPT_TIMEOUT => 10
-                    ]);
-                    $sRes = curl_exec($ch);
-                    curl_close($ch);
-                    
-                    $sData = json_decode($sRes, true);
-                    $totalViews = 0;
-                    foreach ($sData['items'] ?? [] as $videoItem) {
-                        $totalViews += (int)($videoItem['statistics']['viewCount'] ?? 0);
-                    }
-                    
-                    if ($totalViews > 0) {
-                        $views = $totalViews;
-                        $realStats = true;
-                        $conexionTipo = 'Real (YouTube Data API v3)';
-                    }
-                }
             }
         }
     }
 }
 
-// 3. Fallback de raspado si OAuth falló o no devolvió datos para evitar romper la UI
+// 2. Si falló OAuth o no está configurado, raspar la pestaña /videos pública de tu canal (Datos Reales de tu canal público)
 if (!$realStats) {
-    // Intentar raspar vistas del canal
-    $channelUrl = 'https://www.youtube.com/@LacuevadelGueroPodcast';
+    $channelUrl = 'https://www.youtube.com/@LacuevadelGueroPodcast/videos';
     $ctx = stream_context_create([
         'http' => [
             'header' => "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36\r\nAccept-Language: es-ES,es;q=0.9\r\n",
-            'timeout' => 8
+            'timeout' => 10
         ]
     ]);
     
     $html = @file_get_contents($channelUrl, false, $ctx);
     if ($html) {
-        if (preg_match_all('/"viewCountText"[^}]+"simpleText"\s*:\s*"([^"]+)"/', $html, $matches)) {
+        // Extraer suscriptores reales del HTML
+        if (preg_match('/"subscriberCountText"[^}]+"label"\s*:\s*"([^"]+)"/', $html, $subMatches)) {
+            $subText = $subMatches[1];
+            $cleanSub = preg_replace('/[^0-9.KkM]/', '', $subText);
+            if (stripos($cleanSub, 'M') !== false) $subscribers = (float)$cleanSub * 1000000;
+            elseif (stripos($cleanSub, 'K') !== false || stripos($cleanSub, 'k') !== false) $subscribers = (float)$cleanSub * 1000;
+            else $subscribers = (int)$cleanSub;
+        }
+
+        // Extraer vistas reales de los últimos videos
+        if (preg_match_all('/(\d[\d\s,.]*)\s*(vistas|views)/i', $html, $matches)) {
             $scrapeViews = 0;
-            foreach ($matches[1] as $viewText) {
-                $clean = preg_replace('/[^0-9.KkM]/', '', $viewText);
-                if (stripos($clean, 'M') !== false) $scrapeViews += (float)$clean * 1000000;
-                elseif (stripos($clean, 'K') !== false || stripos($clean, 'k') !== false) $scrapeViews += (float)$clean * 1000;
-                else $scrapeViews += (int)$clean;
+            // Sumar las vistas de los primeros 10 videos (que son los últimos subidos)
+            $viewTexts = array_slice($matches[1], 0, 10);
+            foreach ($viewTexts as $viewText) {
+                $clean = (int)preg_replace('/[^0-9]/', '', $viewText);
+                $scrapeViews += $clean;
             }
+            
             if ($scrapeViews > 0) {
                 $views = $scrapeViews;
                 $realStats = true;
-                $conexionTipo = 'Real (Scraping Fallback)';
+                $conexionTipo = 'Real (YouTube Public Scraper)';
             }
         }
     }
 }
 
-// Valores de prueba base para que no quede en 0
-if ($views < 100) {
-    $views = 14850;
+// Fallback de contingencia si no se puede conectar a internet
+if ($views === 0) {
+    $views = 1250; 
     $conexionTipo = 'Simulado (Falta conexión real o permisos)';
 }
 if ($subscribers === 0) {
