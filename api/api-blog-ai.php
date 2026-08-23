@@ -44,7 +44,7 @@ $prompt = "Actúa como el Redactor de Contenido y especialista SEO del podcast '
           "  \"articulo\": \"Escribe el cuerpo del artículo aquí con párrafos claros\"\n" .
           "}";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiApiKey);
+$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [

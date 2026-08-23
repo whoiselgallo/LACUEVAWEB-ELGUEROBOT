@@ -65,7 +65,7 @@ if (!empty($geminiApiKey)) {
               "Describe paso a paso los cortes exactos, marcas de tiempo del diálogo entre 'El Güero' y 'El Junior' (transcripción) y las correcciones de audio a -14 LUFS / -1.0 dB. " .
               "Devuelve la respuesta en formato de lista compacta (máximo 4 líneas) simulando logs de terminal técnica de alto nivel.";
 
-    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiApiKey);
+    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
     $payload = [
         "contents" => [
             [

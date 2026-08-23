@@ -48,7 +48,7 @@ $prompt = "Actúa como el Director de Contenido y Copywriter Viral de 'La Cueva 
           "  \"youtube\": \"texto del gancho\"\n" .
           "}";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiApiKey);
+$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [

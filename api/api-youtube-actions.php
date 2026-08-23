@@ -38,7 +38,7 @@ $prompt = "Actúa como el Consultor Experto en YouTube Studio de 'La Cueva del G
           "3. Si las impresiones son bajas, sugiere regenerar títulos llamativos con el 'Generador de Hooks'.\n\n" .
           "Escribe las sugerencias con jerga mexicana del norte, de forma muy concisa y directa. Formatea cada acción en una línea independiente.";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" . $geminiApiKey);
+$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [
