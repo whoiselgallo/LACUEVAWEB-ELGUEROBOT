@@ -912,7 +912,7 @@ async function generarPlanAccionesYT() {
         }
     } catch(err) {
         console.error("Error generando sugerencias YT:", err);
-        terminal.innerHTML = `> <span style='color:#ff4d4d;'>[Error] Falla al conectar con Gemini. Acciones sugeridas de respaldo:</span><br><br>` + 
+        terminal.innerHTML = `> <span style='color:#ff4d4d;'>[Error] Detalles: ${err.message}</span><br><br>` + 
                              `> ⚠️ <strong>[Canva PRO] Rediseña la miniatura neón. Tu CTR de ${currentYtStats.ctr}% es muy bajo carnal.</strong><br>` + 
                              `> ⚠️ <strong>[Video Editor] Activa el recorte de silencios a 0.5s para aumentar la retención (${currentYtStats.retention}%).</strong>`;
     } finally {
