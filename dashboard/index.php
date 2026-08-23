@@ -1383,6 +1383,66 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 </div>
             </div>
 
+            <!-- PANEL: CONEXIÓN Y AUTOMATIZACIÓN DE REDES SOCIALES (1-CLICK PUBLISH) -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(0,255,255,0.1);">
+                <h3 style="color:#00FFFF; margin:0 0 5px 0; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-share-nodes"></i> Conexión & Automatización de Redes Sociales</h3>
+                <p style="font-size:0.75rem; color:#aaa; margin-bottom:15px;">Enlaza los canales oficiales de La Cueva del Güero para publicar episodios, clips y audios en un solo clic.</p>
+                
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:12px; margin-bottom:15px;">
+                    <!-- YouTube -->
+                    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(255,0,0,0.15); border-radius:10px; padding:12px; text-align:center;">
+                        <i class="fab fa-youtube" style="font-size:1.8rem; color:#ff0000; margin-bottom:8px; display:block;"></i>
+                        <span style="font-weight:bold; font-size:0.75rem; color:#fff; display:block; margin-bottom:2px;">YouTube</span>
+                        <span id="status-yt" style="font-size:0.6rem; color:#ff4d4d; display:block; margin-bottom:8px;"><i class="fa-solid fa-circle-dot"></i> Desconectado</span>
+                        <button class="btn-neon" id="btn-connect-yt" onclick="conectarRedSocial('yt')" style="font-size:0.65rem; padding:4px 8px; width:100%; border-color:#ff0000; color:#ff0000;">Conectar</button>
+                    </div>
+                    <!-- Spotify -->
+                    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(30,215,96,0.15); border-radius:10px; padding:12px; text-align:center;">
+                        <i class="fab fa-spotify" style="font-size:1.8rem; color:#1ed760; margin-bottom:8px; display:block;"></i>
+                        <span style="font-weight:bold; font-size:0.75rem; color:#fff; display:block; margin-bottom:2px;">Spotify</span>
+                        <span id="status-sp" style="font-size:0.6rem; color:#ff4d4d; display:block; margin-bottom:8px;"><i class="fa-solid fa-circle-dot"></i> Desconectado</span>
+                        <button class="btn-neon" id="btn-connect-sp" onclick="conectarRedSocial('sp')" style="font-size:0.65rem; padding:4px 8px; width:100%; border-color:#1ed760; color:#1ed760;">Conectar</button>
+                    </div>
+                    <!-- TikTok -->
+                    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(0,242,234,0.15); border-radius:10px; padding:12px; text-align:center;">
+                        <i class="fab fa-tiktok" style="font-size:1.8rem; color:#00f2ea; margin-bottom:8px; display:block;"></i>
+                        <span style="font-weight:bold; font-size:0.75rem; color:#fff; display:block; margin-bottom:2px;">TikTok</span>
+                        <span id="status-tk" style="font-size:0.6rem; color:#ff4d4d; display:block; margin-bottom:8px;"><i class="fa-solid fa-circle-dot"></i> Desconectado</span>
+                        <button class="btn-neon" id="btn-connect-tk" onclick="conectarRedSocial('tk')" style="font-size:0.65rem; padding:4px 8px; width:100%; border-color:#00f2ea; color:#00f2ea;">Conectar</button>
+                    </div>
+                    <!-- Facebook -->
+                    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(24,119,242,0.15); border-radius:10px; padding:12px; text-align:center;">
+                        <i class="fab fa-facebook" style="font-size:1.8rem; color:#1877f2; margin-bottom:8px; display:block;"></i>
+                        <span style="font-weight:bold; font-size:0.75rem; color:#fff; display:block; margin-bottom:2px;">Facebook</span>
+                        <span id="status-fb" style="font-size:0.6rem; color:#ff4d4d; display:block; margin-bottom:8px;"><i class="fa-solid fa-circle-dot"></i> Desconectado</span>
+                        <button class="btn-neon" id="btn-connect-fb" onclick="conectarRedSocial('fb')" style="font-size:0.65rem; padding:4px 8px; width:100%; border-color:#1877f2; color:#1877f2;">Conectar</button>
+                    </div>
+                    <!-- Instagram -->
+                    <div style="background:rgba(255,255,255,0.01); border:1px solid rgba(225,48,108,0.15); border-radius:10px; padding:12px; text-align:center;">
+                        <i class="fab fa-instagram" style="font-size:1.8rem; color:#e1306c; margin-bottom:8px; display:block;"></i>
+                        <span style="font-weight:bold; font-size:0.75rem; color:#fff; display:block; margin-bottom:2px;">Instagram</span>
+                        <span id="status-ig" style="font-size:0.6rem; color:#ff4d4d; display:block; margin-bottom:8px;"><i class="fa-solid fa-circle-dot"></i> Desconectado</span>
+                        <button class="btn-neon" id="btn-connect-ig" onclick="conectarRedSocial('ig')" style="font-size:0.65rem; padding:4px 8px; width:100%; border-color:#e1306c; color:#e1306c;">Conectar</button>
+                    </div>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:10px;">
+                    <div style="font-weight:bold; font-size:0.8rem; color:#fff;"><i class="fa-solid fa-rocket"></i> Distribuidor Directo (1-Click Multi-Upload)</div>
+                    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px; align-items:end;">
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.7rem; color:#aaa;">Pista a Distribuir</label>
+                            <select id="publish-video-select" class="form-input" style="padding:6px; font-size:0.75rem; background:#000;">
+                                <option value="Capitulo_Multicam_JL.mp4">Capitulo_Multicam_JL.mp4 (YouTube / Facebook)</option>
+                                <option value="Capitulo_Sin_Silencios.mp4">Capitulo_Sin_Silencios.mp4 (TikTok / Instagram Reels)</option>
+                                <option value="Capitulo_Loudness_Normalizado.mp3">Capitulo_Loudness_Normalizado.mp3 (Spotify Audio Podcast)</option>
+                            </select>
+                        </div>
+                        <button class="btn-neon btn-neon-magenta" onclick="publicarTodoRedes()" style="padding:8px 12px; font-size:0.75rem; font-weight:bold; width:100%;"><i class="fa-solid fa-rocket"></i> Publicar en Redes</button>
+                    </div>
+                    <div id="publish-console-log" style="font-size:0.7rem; color:#666; font-family:monospace; background:rgba(0,0,0,0.4); padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.03);">Consola: Esperando automatización...</div>
+                </div>
+            </div>
+
             <!-- PANEL: KANBAN COOPERACIÓN DE SOCIOS -->
             <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
                 <h3 style="color:#FF00FF; margin:0 0 15px 0;"><i class="fa-solid fa-chalkboard-user"></i> Kanban de Trabajo en Equipo en Vivo (Socios)</h3>
