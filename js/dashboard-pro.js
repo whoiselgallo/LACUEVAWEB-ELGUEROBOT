@@ -842,25 +842,45 @@ let currentYtStats = {
     impressions: 0
 };
 
-function syncYouTubeStudioStats() {
-    currentYtStats.views = Math.floor(Math.random() * 25000) + 4000;
-    currentYtStats.ctr = (Math.random() * 5 + 2.2).toFixed(1); // 2.2% a 7.2%
-    currentYtStats.retention = Math.floor(Math.random() * 26) + 22; // 22% a 48%
-    currentYtStats.impressions = Math.floor(currentYtStats.views * (100 / currentYtStats.ctr));
-    
-    document.getElementById("yt-stat-views").textContent = currentYtStats.views.toLocaleString();
-    document.getElementById("yt-stat-ctr").textContent = `${currentYtStats.ctr}%`;
-    document.getElementById("yt-stat-retention").textContent = `${currentYtStats.retention}%`;
-    document.getElementById("yt-stat-impressions").textContent = currentYtStats.impressions.toLocaleString();
-    
-    // Cambiar colores según severidad de la alerta
-    document.getElementById("yt-stat-ctr").style.color = currentYtStats.ctr < 5.0 ? "#ff4d4d" : "#39FF14";
-    document.getElementById("yt-stat-retention").style.color = currentYtStats.retention < 40 ? "#ff4d4d" : "#39FF14";
-    
-    document.getElementById("yt-stats-panel").style.display = "grid";
-    document.getElementById("btn-yt-suggest").disabled = false;
-    
-    alert("✓ Métricas de rendimiento de YouTube Studio sincronizadas exitosamente.");
+async function syncYouTubeStudioStats() {
+    const btn = document.querySelector("button[onclick='syncYouTubeStudioStats()']");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Conectando...`;
+    btn.disabled = true;
+
+    try {
+        const response = await fetch("../api/api-youtube-analytics.php");
+        const data = await response.json();
+        
+        if (data.success) {
+            currentYtStats.views = data.views;
+            currentYtStats.ctr = data.ctr;
+            currentYtStats.retention = data.retention;
+            currentYtStats.impressions = data.impressions;
+            
+            document.getElementById("yt-stat-views").textContent = currentYtStats.views.toLocaleString() + " (30d)";
+            document.getElementById("yt-stat-ctr").textContent = `${currentYtStats.ctr}%`;
+            document.getElementById("yt-stat-retention").textContent = `${currentYtStats.retention}%`;
+            document.getElementById("yt-stat-impressions").textContent = currentYtStats.impressions.toLocaleString();
+            
+            // Cambiar colores según severidad de la alerta
+            document.getElementById("yt-stat-ctr").style.color = currentYtStats.ctr < 5.0 ? "#ff4d4d" : "#39FF14";
+            document.getElementById("yt-stat-retention").style.color = currentYtStats.retention < 40 ? "#ff4d4d" : "#39FF14";
+            
+            document.getElementById("yt-stats-panel").style.display = "grid";
+            document.getElementById("btn-yt-suggest").disabled = false;
+            
+            alert(`✓ Datos REALES del canal obtenidos para los últimos 30 días (${data.subscribers.toLocaleString()} suscriptores totales).`);
+        } else {
+            throw new Error(data.error || "Falla al conectar con la API de YouTube.");
+        }
+    } catch(err) {
+        console.error("Falla al conectar con YouTube:", err);
+        alert("Error de Conexión: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 }
 
 async function generarPlanAccionesYT() {
