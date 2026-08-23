@@ -1461,6 +1461,20 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 </div>
             </div>
 
+            <!-- PANEL: BANDEJA DE REVISIÓN Y CURADURÍA MAESTRA (Human-in-the-loop) -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px; margin-bottom: 25px; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
+                <h3 style="color:#FF00FF; margin:0 0 5px 0; display:flex; align-items:center; gap:8px;"><i class="fa-solid fa-stamp"></i> Filtro de Curaduría & Bandeja de Aprobación</h3>
+                <p style="font-size:0.75rem; color:#aaa; margin-bottom:15px;">Todo el contenido generado (hooks, artículos de blog y archivos multimedia) debe ser revisado y aprobado manualmente aquí antes de ser subido a internet.</p>
+                
+                <div style="display:flex; flex-direction:column; gap:12px;" id="approval-queue-container">
+                    <!-- Los elementos en revisión se renderizan aquí dinámicamente -->
+                    <div style="text-align:center; padding:20px; color:#666; font-size:0.8rem; background:rgba(0,0,0,0.2); border-radius:10px; border:1px dashed rgba(255,255,255,0.05);" id="approval-empty-msg">
+                        <i class="fa-solid fa-circle-check" style="color:#39FF14; font-size:1.4rem; margin-bottom:8px; display:block;"></i>
+                        Bandeja vacía. Todo el contenido ha sido revisado o no hay elementos en cola.
+                    </div>
+                </div>
+            </div>
+
             <!-- PANEL: KANBAN COOPERACIÓN DE SOCIOS -->
             <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-magenta); border-radius: 16px; padding: 20px; box-shadow: 0 0 15px rgba(255,0,255,0.1);">
                 <h3 style="color:#FF00FF; margin:0 0 15px 0;"><i class="fa-solid fa-chalkboard-user"></i> Kanban de Trabajo en Equipo en Vivo (Socios)</h3>

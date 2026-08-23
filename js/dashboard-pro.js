@@ -422,32 +422,19 @@ async function publicarBlogPost() {
         return;
     }
 
-    try {
-        // Enviar a la API del blog en formato JSON o FormData según lo espere upload-blog.php
-        const response = await fetch(API_BLOG_UPLOAD_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                title: title,
-                author: author,
-                category: category,
-                content: content,
-                date: new Date().toISOString().split('T')[0]
-            })
-        });
-
-        const res = await response.json();
-        if (res.success || response.status === 200) {
-            alert("✓ ¡Artículo publicado exitosamente en el Blog!");
-            // Limpiar formulario
-            document.getElementById("blog-title").value = "";
-            document.getElementById("blog-content").value = "";
-        } else {
-            alert("Falla al publicar: " + (res.error || "Error de red"));
-        }
-    } catch (err) {
-        alert("Post publicado o procesado. Verifica tu historial.");
-    }
+    // Enviar a la Bandeja de Aprobación de la Mesa de Trabajo (Human-in-the-loop)
+    agregarAColaAprobacion('blog', `Artículo de Blog: ${title}`, content, { 
+        title: title, 
+        author: author, 
+        category: category 
+    });
+    
+    alert("¡Artículo enviado a la Bandeja de Aprobación de la Mesa de Trabajo para su revisión!");
+    
+    // Limpiar formulario y enfocar pestaña
+    document.getElementById("blog-title").value = "";
+    document.getElementById("blog-content").value = "";
+    switchView('mesa');
 }
 
 /* ============================================================
@@ -662,10 +649,132 @@ window.oauthCallback = function(platform) {
     localStorage.setItem(`cueva_oauth_${platform}`, "true");
 };
 
+// ═════════════════════════════════════════════════════════════════════════════════
+// GESTOR DE BANDEJA DE APROBACIÓN (HUMAN-IN-THE-LOOP CURATION)
+// ═════════════════════════════════════════════════════════════════════════════════
+const colaAprobacion = [];
+
+function agregarAColaAprobacion(tipo, titulo, contenido, extraInfo = {}) {
+    const item = {
+        id: Date.now() + Math.random().toString(36).substr(2, 5),
+        tipo: tipo,
+        titulo: titulo,
+        contenido: contenido,
+        extraInfo: extraInfo,
+        estado: 'pendiente'
+    };
+    colaAprobacion.push(item);
+    renderizarColaAprobacion();
+}
+
+function renderizarColaAprobacion() {
+    const container = document.getElementById("approval-queue-container");
+    const emptyMsg = document.getElementById("approval-empty-msg");
+    if (!container) return;
+
+    // Limpiar elementos previos en revisión
+    container.querySelectorAll(".approval-item").forEach(el => el.remove());
+
+    if (colaAprobacion.length === 0) {
+        emptyMsg.style.display = "block";
+        return;
+    }
+
+    emptyMsg.style.display = "none";
+
+    colaAprobacion.forEach(item => {
+        const itemEl = document.createElement("div");
+        itemEl.className = "approval-item";
+        itemEl.style = "background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:10px; border-left: 4px solid " + (item.tipo === 'hook' ? '#00ffff' : (item.tipo === 'blog' ? '#ff00ff' : '#39ff14'));
+        
+        let typeIcon = item.tipo === 'hook' ? '<i class="fa-solid fa-magnet" style="color:#00ffff;"></i>' : (item.tipo === 'blog' ? '<i class="fa-solid fa-pen-nib" style="color:#ff00ff;"></i>' : '<i class="fa-solid fa-video" style="color:#39ff14;"></i>');
+        let typeLabel = item.tipo === 'hook' ? 'Gancho Social' : (item.tipo === 'blog' ? 'Post de Blog' : 'Archivo Multimedia');
+        
+        itemEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.7rem; color:#aaa; font-weight:bold; text-transform:uppercase;">${typeIcon} ${typeLabel}</span>
+                <span style="font-size:0.6rem; color:#ffb703; border:1px solid #ffb703; padding:2px 6px; border-radius:4px; font-weight:bold;">Pendiente de Criba</span>
+            </div>
+            <strong style="font-size:0.85rem; color:#fff;">${item.titulo}</strong>
+            <div style="font-size:0.75rem; color:#ccc; background:rgba(0,0,0,0.4); padding:10px; border-radius:6px; max-height:100px; overflow-y:auto; font-family:monospace; white-space:pre-wrap; border:1px solid rgba(255,255,255,0.05);">${item.contenido}</div>
+            
+            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:5px;">
+                <button class="btn-neon" onclick="rechazarItemAprobacion('${item.id}')" style="font-size:0.65rem; padding:4px 8px; border-color:#ff4d4d; color:#ff4d4d;"><i class="fa-solid fa-trash"></i> Rechazar</button>
+                <button class="btn-neon btn-neon-magenta" onclick="aprobarItemAprobacion('${item.id}')" style="font-size:0.65rem; padding:4px 10px; border-color:#39FF14; color:#39FF14;"><i class="fa-solid fa-check"></i> Aprobar y Publicar</button>
+            </div>
+        `;
+        container.appendChild(itemEl);
+    });
+}
+
+function rechazarItemAprobacion(id) {
+    const idx = colaAprobacion.findIndex(i => i.id === id);
+    if (idx !== -1) {
+        colaAprobacion.splice(idx, 1);
+        renderizarColaAprobacion();
+        alert("Contenido rechazado y removido de la bandeja.");
+    }
+}
+
+async function aprobarItemAprobacion(id) {
+    const item = colaAprobacion.find(i => i.id === id);
+    if (!item) return;
+
+    if (item.tipo === 'hook') {
+        const platform = item.extraInfo.platform;
+        alert(`Iniciando publicación aprobada de gancho en ${platform.toUpperCase()}...`);
+        await new Promise(r => setTimeout(r, 1200));
+        alert(`✓ ¡Aprobado y publicado exitosamente en tu perfil oficial de ${platform.toUpperCase()}!`);
+    } else if (item.tipo === 'blog') {
+        alert("Iniciando publicación aprobada de artículo de blog...");
+        try {
+            const response = await fetch(API_BLOG_UPLOAD_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: item.extraInfo.title,
+                    author: item.extraInfo.author,
+                    category: item.extraInfo.category,
+                    content: item.contenido,
+                    date: new Date().toISOString().split('T')[0]
+                })
+            });
+            const res = await response.json();
+            if (res.success || response.status === 200) {
+                alert("✓ ¡Artículo de Blog aprobado e indexado en la web oficial!");
+            } else {
+                throw new Error(res.error || "Error de red.");
+            }
+        } catch(err) {
+            alert("Error al publicar post: " + err.message);
+        }
+    } else if (item.tipo === 'media') {
+        const video = item.extraInfo.file;
+        const log = document.getElementById("publish-console-log");
+        alert(`Iniciando distribución aprobada de capítulo: ${video}...`);
+        
+        log.innerHTML = `> [Aprobación Confirmada] Publicando archivo multimedia: ${video}...<br>`;
+        for (let platform of item.extraInfo.conectadas) {
+            log.innerHTML += `> Conectando con API de ${platform.toUpperCase()}...<br>`;
+            await new Promise(r => setTimeout(r, 800));
+            log.innerHTML += `> <span style="color:#00ffff;">[${platform.toUpperCase()} API]</span> Subiendo paquete de datos multimedia (${video})...<br>`;
+            await new Promise(r => setTimeout(r, 1200));
+            log.innerHTML += `> <span style="color:#39ff14;">[${platform.toUpperCase()} API] ✓ Publicado exitosamente!</span><br>`;
+        }
+        log.innerHTML += `> <strong>[System] Distribución completada. El contenido ya está en vivo!</strong>`;
+        alert(`✓ ¡Capítulo ${video} aprobado y distribuido exitosamente en tus canales oficiales!`);
+    }
+
+    // Remover de la cola
+    const idx = colaAprobacion.findIndex(i => i.id === id);
+    if (idx !== -1) {
+        colaAprobacion.splice(idx, 1);
+        renderizarColaAprobacion();
+    }
+}
+
 async function publicarTodoRedes() {
     const video = document.getElementById("publish-video-select").value;
-    const log = document.getElementById("publish-console-log");
-    
     const conectadas = Object.keys(redesConectadas).filter(k => redesConectadas[k] || localStorage.getItem(`cueva_oauth_${k}`) === "true");
     
     if (conectadas.length === 0) {
@@ -673,20 +782,13 @@ async function publicarTodoRedes() {
         return;
     }
     
-    log.innerHTML = `> Iniciando cola de subida masiva para archivo: ${video}...<br>`;
+    // Enviar a la bandeja de aprobación
+    agregarAColaAprobacion('media', `Capítulo: ${video}`, `Pista multimedia lista para distribución final. Destino: ${conectadas.map(c=>c.toUpperCase()).join(', ')}`, {
+        file: video,
+        conectadas: conectadas
+    });
     
-    for (let platform of conectadas) {
-        log.innerHTML += `> Conectando con API de ${platform.toUpperCase()}...<br>`;
-        await new Promise(r => setTimeout(r, 1000));
-        log.innerHTML += `> Subiendo metadatos y generando descripción optimizada con Gemini...<br>`;
-        await new Promise(r => setTimeout(r, 800));
-        log.innerHTML += `> <span style="color:#00ffff;">[${platform.toUpperCase()} API]</span> Subiendo paquete de datos multimedia (${video})...<br>`;
-        await new Promise(r => setTimeout(r, 1200));
-        log.innerHTML += `> <span style="color:#39ff14;">[${platform.toUpperCase()} API] ✓ Publicado exitosamente!</span><br>`;
-    }
-    
-    log.innerHTML += `> <strong>[System] Distribución completada. El contenido ya está en vivo!</strong>`;
-    alert("¡Excelente! Contenido publicado y distribuido exitosamente en tus canales oficiales.");
+    alert("¡Pista de video/audio enviada a la Bandeja de Aprobación de la Mesa de Trabajo para su revisión!");
 }
 
 async function publicarHookIndividual(platform, key) {
@@ -701,26 +803,15 @@ async function publicarHookIndividual(platform, key) {
         alert("Por favor genera los ganchos primero.");
         return;
     }
-    
-    const btnId = `btn-pub-${key === 'youtube' ? 'youtube' : (key === 'shorts' ? 'shorts' : platform)}`;
-    const btn = document.getElementById(btnId);
-    if (!btn) return;
-    
-    const originalText = btn.innerHTML;
-    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publicando...`;
-    btn.disabled = true;
-    
-    try {
-        // Simular llamada API OAuth a la red social correspondiente para subir el post de texto/gancho
-        await new Promise(r => setTimeout(r, 1500));
-        alert(`✓ ¡Gancho publicado exitosamente en tu perfil oficial de ${platform.toUpperCase()}!`);
-    } catch(err) {
-        console.error("Error publicando gancho:", err);
-        alert("Error de publicación: " + err.message);
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }
+
+    // Enviar a la bandeja de aprobación
+    agregarAColaAprobacion('hook', `Gancho para ${platform.toUpperCase()}`, text, {
+        platform: platform,
+        key: key
+    });
+
+    alert(`¡Gancho de ${platform.toUpperCase()} enviado a la Bandeja de Aprobación de la Mesa de Trabajo para su revisión!`);
+    switchView('mesa');
 }
 
 function restaurarConexionesSociales() {
