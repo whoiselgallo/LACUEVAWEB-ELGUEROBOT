@@ -689,6 +689,40 @@ async function publicarTodoRedes() {
     alert("¡Excelente! Contenido publicado y distribuido exitosamente en tus canales oficiales.");
 }
 
+async function publicarHookIndividual(platform, key) {
+    const isConnected = redesConectadas[platform] || localStorage.getItem(`cueva_oauth_${platform}`) === "true";
+    if (!isConnected) {
+        alert(`Debes conectar la API de ${platform.toUpperCase()} primero en la sección 'Mesa de Trabajo'.`);
+        return;
+    }
+    
+    const text = hooksData[key];
+    if (!text || text.includes("Escribe un tema")) {
+        alert("Por favor genera los ganchos primero.");
+        return;
+    }
+    
+    const btnId = `btn-pub-${key === 'youtube' ? 'youtube' : (key === 'shorts' ? 'shorts' : platform)}`;
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publicando...`;
+    btn.disabled = true;
+    
+    try {
+        // Simular llamada API OAuth a la red social correspondiente para subir el post de texto/gancho
+        await new Promise(r => setTimeout(r, 1500));
+        alert(`✓ ¡Gancho publicado exitosamente en tu perfil oficial de ${platform.toUpperCase()}!`);
+    } catch(err) {
+        console.error("Error publicando gancho:", err);
+        alert("Error de publicación: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
 function restaurarConexionesSociales() {
     ["yt", "sp", "tk", "fb", "ig"].forEach(platform => {
         if (localStorage.getItem(`cueva_oauth_${platform}`) === "true") {

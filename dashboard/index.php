@@ -755,42 +755,60 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 <div class="magnetic-card facebook-card" style="border-top: 3px solid #1877F2;">
                     <h4><i class="fab fa-facebook" style="color: #1877F2;"></i> Facebook Feed</h4>
                     <div class="card-content" id="hook-facebook">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('facebook')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('facebook')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-fb" onclick="publicarHookIndividual('fb', 'facebook')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#1877F2; color:#1877F2;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
 
                 <!-- CARD: INSTAGRAM -->
                 <div class="magnetic-card instagram-card" style="border-top: 3px solid #E1306C;">
                     <h4><i class="fab fa-instagram" style="color: #E1306C;"></i> Instagram Carousel</h4>
                     <div class="card-content" id="hook-instagram">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('instagram')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('instagram')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-ig" onclick="publicarHookIndividual('ig', 'instagram')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#E1306C; color:#E1306C;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
 
                 <!-- CARD: TIKTOK -->
                 <div class="magnetic-card tiktok-card" style="border-top: 3px solid #000;">
                     <h4><i class="fab fa-tiktok" style="color: #fff;"></i> TikTok Hook</h4>
                     <div class="card-content" id="hook-tiktok">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('tiktok')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('tiktok')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-tk" onclick="publicarHookIndividual('tk', 'tiktok')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#fff; color:#fff;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
 
                 <!-- CARD: SPOTIFY -->
                 <div class="magnetic-card spotify-card" style="border-top: 3px solid #1DB954;">
                     <h4><i class="fab fa-spotify" style="color: #1DB954;"></i> Spotify Intro Teaser</h4>
                     <div class="card-content" id="hook-spotify">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('spotify')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('spotify')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-sp" onclick="publicarHookIndividual('sp', 'spotify')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#1DB954; color:#1DB954;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
 
                 <!-- CARD: YOUTUBE SHORTS -->
                 <div class="magnetic-card shorts-card" style="border-top: 3px solid #FF0000;">
                     <h4><i class="fab fa-youtube" style="color: #FF0000;"></i> YouTube Shorts</h4>
                     <div class="card-content" id="hook-shorts">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('shorts')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('shorts')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-shorts" onclick="publicarHookIndividual('yt', 'shorts')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#FF0000; color:#FF0000;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
 
                 <!-- CARD: YOUTUBE LONG -->
                 <div class="magnetic-card youtube-card" style="border-top: 3px solid #FF0000;">
                     <h4><i class="fab fa-youtube" style="color: #FF0000;"></i> YouTube Videos</h4>
                     <div class="card-content" id="hook-youtube">Escribe un tema arriba para generar ganchos...</div>
-                    <button class="btn-neon" onclick="copyHook('youtube')" style="width: 100%; padding: 6px 12px; font-size: 0.8rem;"><i class="fa-regular fa-copy"></i> Copiar Gancho</button>
+                    <div style="display:flex; gap:8px;">
+                        <button class="btn-neon" onclick="copyHook('youtube')" style="flex:1; padding: 6px 12px; font-size: 0.75rem;"><i class="fa-regular fa-copy"></i> Copiar</button>
+                        <button class="btn-neon btn-neon-magenta" id="btn-pub-youtube" onclick="publicarHookIndividual('yt', 'youtube')" style="flex:1; padding: 6px 12px; font-size: 0.75rem; border-color:#FF0000; color:#FF0000;"><i class="fa-solid fa-paper-plane"></i> Publicar</button>
+                    </div>
                 </div>
             </div>
         </section>
