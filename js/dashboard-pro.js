@@ -372,6 +372,45 @@ function convertirExtraccionAPost() {
     switchBlogTab("edit");
 }
 
+async function crearPostConGemini() {
+    if (!activeData.guion) {
+        alert("Primero selecciona un Episodio/Ficha en la sección 'Episodios y Fichas' para extraer su guión.");
+        return;
+    }
+    
+    const btn = document.getElementById("btn-blog-ai");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Gemini redactando post de blog...`;
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch("../api/api-blog-ai.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombre_invitado: activeNombre,
+                guion: activeData.guion
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById("blog-title").value = data.titulo;
+            document.getElementById("blog-content").value = data.articulo;
+            document.getElementById("blog-category").value = "entrevista";
+            alert("¡Artículo de blog generado exitosamente por Gemini a partir del guión!");
+        } else {
+            throw new Error(data.error || "Error al redactar el post.");
+        }
+    } catch(err) {
+        console.error("Error redactando post con Gemini:", err);
+        alert("Error de IA: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
 async function publicarBlogPost() {
     const title = document.getElementById("blog-title").value.trim();
     const author = document.getElementById("blog-author").value.trim();

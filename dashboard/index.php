@@ -712,6 +712,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
 
             <!-- TAB 2: REDACTAR / PUBLICAR POST -->
             <div class="blog-content-view hidden" id="blog-tab-edit">
+                <button class="btn-neon" id="btn-blog-ai" onclick="crearPostConGemini()" style="margin-bottom:20px; width:100%; border-color:#00ffff; color:#00ffff;"><i class="fa-solid fa-brain"></i> Escribir Post con Gemini (Desde Guión del Capítulo)</button>
                 <div class="form-group">
                     <label>Título del Post *</label>
                     <input type="text" class="form-input" id="blog-title" placeholder="Ej: Ficha Storytelling de Invitado X">
