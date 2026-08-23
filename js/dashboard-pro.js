@@ -463,53 +463,49 @@ let hooksData = {
     youtube: ""
 };
 
-function generarHooksParaRedes() {
+async function generarHooksParaRedes() {
     const topic = document.getElementById("hooks-topic").value.trim();
     if (!topic) {
         alert("Por favor ingresa un tema o frase central.");
         return;
     }
 
-    // Generar hermosos ganchos urbanos/norteños adaptados
-    hooksData.facebook = `🔥 LA NETA DEL BARRIO...
-¿Alguna vez te han dado la espalda los que decían ser tus compas? 
+    const btn = document.querySelector("#view-hooks button.btn-neon");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generando ganchos...`;
+    btn.disabled = true;
 
-Hoy platicamos de "${topic}" y cómo se aprende a distinguir a los reales del desmadre.
-
-👇 Deja tu comentario si te ha pasado compa. #LaCueva #Realidad`;
-
-    hooksData.instagram = `📸 HOOK PARA CAROUSEL:
-Slide 1: ¿Tus compas del barrio son de verdad? 💀
-Slide 2: Platicamos sobre "${topic}"...
-Slide 3: Al final, el tiempo limpia la cueva.
-
-Dale amor si estás de acuerdo. #LaCueva #Invitados #Storytelling`;
-
-    hooksData.tiktok = `⚡ ¡GANCHO DE 3 SEGUNDOS TIKTOK!
-"¡Si tu barrio hablara, se cae el desmadre! 🐾"
-
-Hoy te cuento qué tranza con "${topic}" y por qué la gente se asusta cuando dices la verdad.
-
-👀 Míralo completo y dime en los comentarios si te rajas.`;
-
-    hooksData.spotify = `🎙️ TEASER DE AUDIO SPOTIFY:
-[Música de fondo callejera entra suave]
-"Qué tranza compas. En este episodio nos metemos a fondo con "${topic}". No te pierdas las declaraciones sin filtro de nuestro invitado..."
-🎧 ¡Dale play ya!`;
-
-    hooksData.shorts = `🎬 YOUTUBE SHORTS (Flow Loop):
-"¡El barrio nunca olvida, perro! 🐾"
-
-Esto es lo que pasa cuando te toca encarar "${topic}" en la vida real.
-
-🔥 Suscríbete y activa la campanita para ver el desmadre completo.`;
-
-    hooksData.youtube = `📺 GANCHO Y CLICKBAIT YOUTUBE:
-Título: "La verdad detrás de: ${topic} 💀"
-
-"¡Esa mi gente! En este video deshebramos todo el chisme y el aprendizaje de ${topic}..."
-
-💬 Comenta la palabra 'CUEVA' y te saludo en el próximo video.`;
+    try {
+        const response = await fetch("../api/api-hooks-ai.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ topic: topic })
+        });
+        
+        const data = await response.json();
+        if (data.success && data.hooks) {
+            hooksData.facebook = data.hooks.facebook;
+            hooksData.instagram = data.hooks.instagram;
+            hooksData.tiktok = data.hooks.tiktok;
+            hooksData.spotify = data.hooks.spotify;
+            hooksData.shorts = data.hooks.shorts;
+            hooksData.youtube = data.hooks.youtube;
+        } else {
+            throw new Error(data.error || "Error en la respuesta de la IA.");
+        }
+    } catch (err) {
+        console.warn("Falla de API de ganchos Gemini, usando plantillas de respaldo:", err);
+        // Generar hermosos ganchos urbanos/norteños adaptados de respaldo
+        hooksData.facebook = `🔥 LA NETA DEL BARRIO...\n¿Alguna vez te han dado la espalda los que decían ser tus compas? \n\nHoy platicamos de "${topic}" y cómo se aprende a distinguir a los reales del desmadre.\n\n👇 Deja tu comentario si te ha pasado compa. #LaCueva #Realidad`;
+        hooksData.instagram = `📸 HOOK PARA CAROUSEL:\nSlide 1: ¿Tus compas del barrio son de verdad? 💀\nSlide 2: Platicamos sobre "${topic}"...\nSlide 3: Al final, el tiempo limpia la cueva.\n\nDale amor si estás de acuerdo. #LaCueva #Invitados #Storytelling`;
+        hooksData.tiktok = `⚡ ¡GANCHO DE 3 SEGUNDOS TIKTOK!\n"¡Si tu barrio hablara, se cae el desmadre! 🐾"\n\nHoy te cuento qué tranza con "${topic}" y por qué la gente se asusta cuando dices la verdad.\n\n👀 Míralo completo y dime en los comentarios si te rajas.`;
+        hooksData.spotify = `🎙️ TEASER DE AUDIO SPOTIFY:\n[Música de fondo callejera entra suave]\n"Qué tranza compas. En este episodio nos metemos a fondo con "${topic}". No te pierdas las declaraciones sin filtro de nuestro invitado..."\n🎧 ¡Dale play ya!`;
+        hooksData.shorts = `🎬 YOUTUBE SHORTS (Flow Loop):\n"¡El barrio nunca olvida, perro! 🐾"\n\nEsto es lo que pasa cuando te toca encarar "${topic}" en la vida real.\n\n🔥 Suscríbete y activa la campanita para ver el desmadre completo.`;
+        hooksData.youtube = `📺 GANCHO Y CLICKBAIT YOUTUBE:\nTítulo: "La verdad detrás de: ${topic} 💀"\n\n"¡Esa mi gente! En este video deshebramos todo el chisme y el aprendizaje de ${topic}..."\n\n💬 Comenta la palabra 'CUEVA' y te saludo en el próximo video.`;
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
 
     // Renderizar en las cards magnéticas
     document.getElementById("hook-facebook").textContent = hooksData.facebook;
