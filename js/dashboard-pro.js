@@ -607,32 +607,37 @@ function conectarRedSocial(platform) {
     }
 
     const width = 600;
-    const height = 600;
+    const height = 650;
     const left = (screen.width - width) / 2;
     const top = (screen.height - height) / 2;
     
-    const popup = window.open("", "_blank", `width=${width},height=${height},left=${left},top=${top}`);
-    
-    let html = `
-        <html>
-        <head>
-            <title>OAuth Consent - La Cueva</title>
-            <style>
-                body { background: #0b0b0e; color: #fff; font-family: sans-serif; text-align: center; padding: 40px; }
-                .logo { font-size: 30px; font-weight: bold; margin-bottom: 20px; }
-                .btn { display: inline-block; background: #00ffff; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 16px; box-shadow: 0 0 10px #00ffff; }
-                .btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
-                p { color: #888; font-size: 14px; margin-bottom: 30px; }
-            </style>
-        </head>
-        <body>
-            <div class="logo">🔑 Conectar con ${platform.toUpperCase()}</div>
-            <p>El podcast 'La Cueva del Güero' solicita permisos para subir contenido, videos, audios y editar descripciones en tus canales oficiales de ${platform.toUpperCase()}.</p>
-            <button class="btn" onclick="window.opener.oauthCallback('${platform}'); window.close();">Aprobar Acceso API</button>
-        </body>
-        </html>
-    `;
-    popup.document.write(html);
+    if (platform === 'yt' || platform === 'sp') {
+        // Ejecutar flujo OAuth de Google / YouTube real
+        window.open("../api/auth-google.php", "_blank", `width=${width},height=${height},left=${left},top=${top}`);
+    } else {
+        // Fallback simulado para otras plataformas
+        const popup = window.open("", "_blank", `width=${width},height=${height},left=${left},top=${top}`);
+        let html = `
+            <html>
+            <head>
+                <title>OAuth Consent - La Cueva</title>
+                <style>
+                    body { background: #0b0b0e; color: #fff; font-family: sans-serif; text-align: center; padding: 40px; }
+                    .logo { font-size: 30px; font-weight: bold; margin-bottom: 20px; }
+                    .btn { display: inline-block; background: #00ffff; color: #000; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 16px; box-shadow: 0 0 10px #00ffff; }
+                    .btn:hover { background: #fff; box-shadow: 0 0 15px #fff; }
+                    p { color: #888; font-size: 14px; margin-bottom: 30px; }
+                </style>
+            </head>
+            <body>
+                <div class="logo">🔑 Conectar con ${platform.toUpperCase()}</div>
+                <p>El podcast 'La Cueva del Güero' solicita permisos para subir contenido, videos, audios y editar descripciones en tus canales oficiales de ${platform.toUpperCase()}.</p>
+                <button class="btn" onclick="window.opener.oauthCallback('${platform}'); window.close();">Aprobar Acceso API</button>
+            </body>
+            </html>
+        `;
+        popup.document.write(html);
+    }
 }
 
 window.oauthCallback = function(platform) {
