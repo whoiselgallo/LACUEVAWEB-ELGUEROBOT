@@ -1361,8 +1361,30 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         </div>
                     </div>
 
-                    <button class="btn-neon" onclick="exportLeadsSimulator()" style="width:100%; font-size:0.75rem; padding:8px;"><i class="fa-solid fa-download"></i> Exportar Leads Simulación a CSV</button>
-                    <div id="leads-export-status" style="font-size:0.7rem; color:#888; text-align:center;"></div>
+                    <button class="btn-neon" onclick="exportLeadsSimulator()" style="width:100%; font-size:0.75rem; padding:8px; margin-bottom: 5px;"><i class="fa-solid fa-download"></i> Exportar Leads Simulación a CSV</button>
+                    <div id="leads-export-status" style="font-size:0.7rem; color:#888; text-align:center; margin-bottom: 10px;"></div>
+
+                    <!-- INTEGRACIÓN DE YOUTUBE STUDIO CON RECOMENDACIONES IA -->
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+                        <span style="color:#aaa; font-weight:bold; font-size:0.75rem;"><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube Studio Insights & Sugerencias IA</span>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                            <button class="btn-neon" onclick="syncYouTubeStudioStats()" style="font-size:0.65rem; padding:5px; border-color:#ff0000; color:#ff0000;"><i class="fa-solid fa-rotate"></i> Sincronizar Métricas</button>
+                            <button class="btn-neon btn-neon-magenta" id="btn-yt-suggest" onclick="generarPlanAccionesYT()" style="font-size:0.65rem; padding:5px; border-color:#00ffff; color:#00ffff;" disabled><i class="fa-solid fa-brain"></i> Crear Plan de Acción</button>
+                        </div>
+                        
+                        <!-- Panel de estadísticas cargadas -->
+                        <div id="yt-stats-panel" style="display:none; background:rgba(0,0,0,0.3); border-radius:10px; padding:10px; font-size:0.7rem; grid-template-columns: 1fr 1fr; gap:8px; border:1px solid rgba(255,255,255,0.03); margin-top:5px;">
+                            <div>Vistas 24h: <strong style="color:#fff;" id="yt-stat-views">-</strong></div>
+                            <div>CTR: <strong style="color:#ffb703;" id="yt-stat-ctr">-</strong></div>
+                            <div>Retención: <strong style="color:#ff4d4d;" id="yt-stat-retention">-</strong></div>
+                            <div>Impresiones: <strong style="color:#00ffff;" id="yt-stat-impressions">-</strong></div>
+                        </div>
+                        
+                        <!-- Terminal de Acciones IA -->
+                        <div id="yt-action-plan" style="display:none; font-size:0.7rem; color:#ccc; background:rgba(15,15,20,0.9); border:1px solid var(--neon-magenta); border-radius:8px; padding:10px; border-left:4px solid var(--neon-magenta); max-height:160px; overflow-y:auto; margin-top:5px; font-family:monospace;">
+                            <!-- Acciones Gemini aparecerán aquí -->
+                        </div>
+                    </div>
                 </div>
             </div>
 
