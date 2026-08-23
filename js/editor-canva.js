@@ -416,7 +416,6 @@ function onMouseUp() {
 // --- CONECTORES DE NUBE OAUTH / SIMULACIÓN DE SINCRONIZACIÓN ---
 function conectarCloudCanva(servicio) {
     abrirImportarNube();
-    // Resaltar la pestaña del servicio correspondiente
 }
 
 function authCloudPlatform(nombreServicio, idServicio) {
@@ -426,6 +425,18 @@ function authCloudPlatform(nombreServicio, idServicio) {
 
     if (!statusBadge || !listEl || !btnEl) return;
 
+    if (idServicio === 'google') {
+        if (cloudConnections[idServicio]) {
+            // Desconectar (redirigir al script PHP para borrar sesión)
+            window.location.href = '../api/api-drive-oauth.php?action=logout';
+        } else {
+            // Conectar (redirigir al script PHP para iniciar OAuth)
+            window.location.href = '../api/api-drive-oauth.php?action=login';
+        }
+        return;
+    }
+
+    // Comportamiento simulado para Dropbox, OneDrive y TeraBox
     if (cloudConnections[idServicio]) {
         // Desconectar cuenta
         cloudConnections[idServicio] = false;
@@ -574,3 +585,43 @@ function seleccionarArchivoNube(servicio, nombreArchivo) {
         }
     }, 2000);
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('sync') === 'google-success') {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        cloudConnections['google'] = true;
+        const statusBadge = document.getElementById('status-google');
+        const listEl = document.getElementById('list-google');
+        const btnEl = document.getElementById('btn-google');
+        
+        if (statusBadge && listEl && btnEl) {
+            statusBadge.textContent = 'Sincronizado';
+            statusBadge.style.color = '#39FF14';
+            statusBadge.style.borderColor = '#39FF14';
+            btnEl.innerHTML = '<i class="fa-solid fa-plug"></i> Desconectar Cuenta';
+            listEl.style.display = 'flex';
+            listEl.innerHTML = '<li style="color:#aaa; font-size:0.75rem;">Sincronizando archivos desde Google Drive...</li>';
+            
+            fetch('../api/api-drive-oauth.php?action=list')
+                .then(r => r.json())
+                .then(data => {
+                    if(data.files) {
+                        listEl.innerHTML = '';
+                        data.files.forEach(f => {
+                            const isVideo = f.mimeType.includes('video');
+                            const icon = isVideo ? 'fa-file-video' : 'fa-image';
+                            const color = isVideo ? 'var(--neon-magenta)' : 'var(--neon-cyan)';
+                            listEl.innerHTML += `<li><a href="${f.webViewLink}" target="_blank" style="color:#fff; text-decoration:none;"><i class="fa-regular ${icon}" style="color:${color};"></i> ${f.name}</a></li>`;
+                        });
+                    }
+                })
+                .catch(err => {
+                    listEl.innerHTML = '<li style="color:#ff4d4d; font-size:0.75rem;">Error conectando a la API de Drive</li>';
+                });
+        }
+        
+        if(typeof abrirImportarNube === 'function') abrirImportarNube();
+    }
+});
