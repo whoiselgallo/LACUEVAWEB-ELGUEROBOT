@@ -27,8 +27,7 @@ if (empty($geminiApiKey)) {
     exit;
 }
 
-// Llamar a la API de Gemini usando la estructura de REST
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" . $geminiApiKey);
+// Construir payload con instrucciones del sistema
 $payload = [
     "contents" => [
         [
@@ -45,40 +44,27 @@ $payload = [
             ]
         ]
     ],
-    "tools" => [
-        [
-            "googleSearch" => new stdClass()
-        ]
-    ],
     "generationConfig" => [
         "temperature" => 0.7,
-        "maxOutputTokens" => 65536,
+        "maxOutputTokens" => 2048,
         "topP" => 0.95
     ]
 ];
 
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_TIMEOUT => 40
-]);
+$geminiRes = call_gemini_generate($payload);
 
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 200) {
-    $resData = json_decode($response, true);
-    // Extraer la respuesta del formato del JSON de respuesta de Gemini generateContent
-    $answer = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '¡Guau! Hubo un problema al escuchar a mis jefes.';
+if ($geminiRes['success']) {
+    $answer = $geminiRes['text'];
     
     // Registrar conversación en base de datos para auditoría
-    $db = db_connect();
-    log_conversation($db, $userId, 'follower', $query, $answer);
+    try {
+        $db = db_connect();
+        log_conversation($db, $userId, 'follower', $query, $answer);
+    } catch (Exception $e) {
+        error_log("Log conversation error: " . $e->getMessage());
+    }
     
-    echo json_encode(['answer' => $answer]);
+    echo json_encode(['answer' => $answer, 'model' => $geminiRes['model']]);
 } else {
     // Fallback a Dify si la API de Gemini falla
     $difyRes = call_dify_api($query, $userId);

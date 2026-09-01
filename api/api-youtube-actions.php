@@ -38,7 +38,6 @@ $prompt = "Actúa como el Consultor Experto en YouTube Studio de 'La Cueva del G
           "3. Si las impresiones son bajas, sugiere regenerar títulos llamativos con el 'Generador de Hooks'.\n\n" .
           "Escribe las sugerencias con jerga mexicana del norte, de forma muy concisa y directa. Formatea cada acción en una línea independiente.";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [
@@ -54,21 +53,10 @@ $payload = [
     ]
 ];
 
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_TIMEOUT => 30
-]);
+$geminiRes = call_gemini_generate($payload);
 
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 200) {
-    $resData = json_decode($response, true);
-    $text = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+if ($geminiRes['success']) {
+    $text = $geminiRes['text'];
     
     // Formatear a HTML básico para desplegar en la terminal del dashboard
     $formattedHtml = "";
@@ -82,12 +70,13 @@ if ($http_code === 200) {
     
     echo json_encode([
         'success' => true,
-        'actions_html' => $formattedHtml
+        'actions_html' => $formattedHtml,
+        'model' => $geminiRes['model']
     ], JSON_UNESCAPED_UNICODE);
 } else {
     echo json_encode([
         'success' => false,
-        'error' => "Error de API de Gemini (HTTP {$http_code}): " . $response
+        'error' => $geminiRes['error']
     ]);
 }
 ?>

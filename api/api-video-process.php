@@ -65,7 +65,6 @@ if (!empty($geminiApiKey)) {
               "Describe paso a paso los cortes exactos, marcas de tiempo del diálogo entre 'El Güero' y 'El Junior' (transcripción) y las correcciones de audio a -14 LUFS / -1.0 dB. " .
               "Devuelve la respuesta en formato de lista compacta (máximo 4 líneas) simulando logs de terminal técnica de alto nivel.";
 
-    $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
     $payload = [
         "contents" => [
             [
@@ -81,21 +80,10 @@ if (!empty($geminiApiKey)) {
         ]
     ];
 
-    curl_setopt_array($ch, [
-        CURLOPT_POST => true,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-        CURLOPT_POSTFIELDS => json_encode($payload),
-        CURLOPT_TIMEOUT => 25
-    ]);
+    $geminiRes = call_gemini_generate($payload);
 
-    $response = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    if ($http_code === 200) {
-        $resData = json_decode($response, true);
-        $aiAnalysis = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+    if ($geminiRes['success']) {
+        $aiAnalysis = $geminiRes['text'];
         
         // Agregar logs de Gemini al listado
         if (!empty($aiAnalysis)) {
@@ -108,7 +96,7 @@ if (!empty($geminiApiKey)) {
             }
         }
     } else {
-        $logs[] = "[Gemini Video Analyzer] Error de enlace con el cerebro de IA. Usando redundancia de logs locales.";
+        $logs[] = "[Alerta] Conexión IA externa no disponible ({$geminiRes['error']}), ejecutando heurística local...";
     }
 }
 

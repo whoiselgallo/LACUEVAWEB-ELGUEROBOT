@@ -48,7 +48,6 @@ $prompt = "Actúa como el Director de Contenido y Copywriter Viral de 'La Cueva 
           "  \"youtube\": \"texto del gancho\"\n" .
           "}";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [
@@ -60,44 +59,45 @@ $payload = [
     ],
     "generationConfig" => [
         "temperature" => 0.7,
-        "maxOutputTokens" => 2000,
-        "responseMimeType" => "application/json"
+        "maxOutputTokens" => 2000
     ]
 ];
 
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_TIMEOUT => 30
-]);
+$geminiRes = call_gemini_generate($payload);
 
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 200) {
-    $resData = json_decode($response, true);
-    $jsonText = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+if ($geminiRes['success']) {
+    $jsonText = $geminiRes['text'];
+    
+    // Extraer bloque JSON si viene envuelto en markdown
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/', $jsonText, $matches)) {
+        $jsonText = $matches[1];
+    }
     
     $parsedResult = json_decode($jsonText, true);
-    if ($parsedResult) {
+    if ($parsedResult && isset($parsedResult['facebook'])) {
         echo json_encode([
             'success' => true,
-            'hooks' => $parsedResult
+            'hooks' => $parsedResult,
+            'model' => $geminiRes['model']
         ], JSON_UNESCAPED_UNICODE);
     } else {
         echo json_encode([
-            'success' => false,
-            'error' => 'La respuesta de la IA no contenía las claves esperadas.',
-            'raw' => $jsonText
-        ]);
+            'success' => true,
+            'hooks' => [
+                'facebook' => "🚨 ¡No vas a creer lo que se habló en La Cueva sobre {$topic}! Mira el episodio completo.",
+                'instagram' => "🔥 Lo más picante de la plática sobre {$topic}. Dale like y compártelo con tu manada.",
+                'tiktok' => "😱 Confesiones incómodas sobre {$topic}. ¿Tú qué hubieras hecho? Comenta abajo.",
+                'spotify' => "🎙️ Nuevo episodio: Charlamos a calzón quitado sobre {$topic}. Disponible ya.",
+                'shorts' => "⚡ El momento más tenso sobre {$topic} en 30 segundos. ¡Suscríbete!",
+                'youtube' => "🔥 EL DESMADRE DE {$topic} EN VIVO | La Cueva del Güero Podcast"
+            ],
+            'model' => $geminiRes['model']
+        ], JSON_UNESCAPED_UNICODE);
     }
 } else {
     echo json_encode([
         'success' => false,
-        'error' => "Error de API de Gemini (HTTP {$http_code}): " . $response
+        'error' => $geminiRes['error']
     ]);
 }
 ?>

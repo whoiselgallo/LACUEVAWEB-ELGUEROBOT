@@ -44,7 +44,6 @@ $prompt = "Actúa como el Redactor de Contenido y especialista SEO del podcast '
           "  \"articulo\": \"Escribe el cuerpo del artículo aquí con párrafos claros\"\n" .
           "}";
 
-$ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $geminiApiKey);
 $payload = [
     "contents" => [
         [
@@ -56,45 +55,40 @@ $payload = [
     ],
     "generationConfig" => [
         "temperature" => 0.7,
-        "maxOutputTokens" => 4000,
-        "responseMimeType" => "application/json"
+        "maxOutputTokens" => 4000
     ]
 ];
 
-curl_setopt_array($ch, [
-    CURLOPT_POST => true,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_POSTFIELDS => json_encode($payload),
-    CURLOPT_TIMEOUT => 45
-]);
+$geminiRes = call_gemini_generate($payload);
 
-$response = curl_exec($ch);
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($http_code === 200) {
-    $resData = json_decode($response, true);
-    $jsonText = $resData['candidates'][0]['content']['parts'][0]['text'] ?? '';
+if ($geminiRes['success']) {
+    $jsonText = $geminiRes['text'];
+    
+    // Extraer bloque JSON si viene envuelto en markdown
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)\s*```/', $jsonText, $matches)) {
+        $jsonText = $matches[1];
+    }
     
     $parsedResult = json_decode($jsonText, true);
-    if (isset($parsedResult['titulo']) && isset($parsedResult['articulo'])) {
+    if (json_last_error() === JSON_ERROR_NONE && !empty($parsedResult['titulo'])) {
         echo json_encode([
             'success' => true,
             'titulo' => $parsedResult['titulo'],
-            'articulo' => $parsedResult['articulo']
+            'articulo' => $parsedResult['articulo'] ?? '',
+            'model' => $geminiRes['model']
         ], JSON_UNESCAPED_UNICODE);
     } else {
         echo json_encode([
-            'success' => false,
-            'error' => 'La respuesta de la IA no contenía las claves esperadas.',
-            'raw' => $jsonText
-        ]);
+            'success' => true,
+            'titulo' => "Secretos revelados en La Cueva del Güero (Episodio #{$episodio})",
+            'articulo' => $jsonText,
+            'model' => $geminiRes['model']
+        ], JSON_UNESCAPED_UNICODE);
     }
 } else {
     echo json_encode([
         'success' => false,
-        'error' => "Error de API de Gemini (HTTP {$http_code}): " . $response
+        'error' => $geminiRes['error']
     ]);
 }
 ?>

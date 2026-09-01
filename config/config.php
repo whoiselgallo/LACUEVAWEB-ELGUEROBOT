@@ -296,6 +296,50 @@ function get_gemini_api_key() {
     return $keys[$randomIndex];
 }
 
+/**
+ * FUNCIÓN CENTRAL: Llamar a la API de Gemini con rotación de claves y fallback automático de modelos
+ */
+function call_gemini_generate($payload, $apiKey = null) {
+    if (!$apiKey) {
+        $apiKey = get_gemini_api_key();
+    }
+    if (empty($apiKey)) {
+        return ['success' => false, 'error' => 'No hay claves de API de Gemini configuradas.'];
+    }
+
+    $models = ['gemini-3.6-flash', 'gemini-3-flash-preview'];
+    $lastError = '';
+
+    foreach ($models as $model) {
+        $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key=" . $apiKey);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+            CURLOPT_POSTFIELDS => json_encode($payload),
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => 0
+        ]);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($http_code === 200) {
+            $data = json_decode($response, true);
+            $text = $data['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            if (!empty($text)) {
+                return ['success' => true, 'text' => $text, 'model' => $model, 'raw' => $data];
+            }
+        } else {
+            $errData = json_decode($response, true);
+            $lastError = $errData['error']['message'] ?? "Error HTTP {$http_code}: {$response}";
+        }
+    }
+
+    return ['success' => false, 'error' => $lastError];
+}
+
 // ═════════════════════════════════════════════════════════════════════════════════
 // CONFIGURACIÓN DE ERROR HANDLING
 // ═════════════════════════════════════════════════════════════════════════════════
