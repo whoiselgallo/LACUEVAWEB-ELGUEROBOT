@@ -930,3 +930,41 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarRegistros();
     restaurarConexionesSociales();
 });
+async function generarFondoNeonIA() {
+    const promptInput = document.getElementById("prompt-fondo-ia");
+    const btn = document.getElementById("btn-generar-fondo-ia");
+    if (!promptInput || !promptInput.value.trim()) {
+        alert("Escribe una descripción para el fondo (ie: estudio de podcast neon morado)");
+        return;
+    }
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner spin"></i> Generando fondo con Imagen 3...';
+    btn.disabled = true;
+    try {
+        const res = await fetch("../api/api-imagen-generator.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt: promptInput.value.trim(), aspect_ratio: "16:9" })
+        });
+        const data = await res.json();
+        if (data.success && data.base64) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.getElementById("canvas-pro");
+                if (canvas) {
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                }
+            };
+            img.src = data.base64;
+            alert("¡Fondo generado con éxito con Google Imagen 3!");
+        } else {
+            alert("Error al generar fondo: " + (data.error || "Desconocido"));
+        }
+    } catch(err) {
+        alert("Falla de red al conectar con Imagen 3:" + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
