@@ -968,3 +968,50 @@ async function generarFondoNeonIA() {
         btn.disabled = false;
     }
 }
+
+async function editarTranscripcionPorTexto() {
+    const textoInput = document.getElementById("video-transcripcion-raw");
+    const instruccionInput = document.getElementById("video-instruccion-editor");
+    const btn = document.getElementById("btn-editar-por-texto");
+    const resultadoContenedor = document.getElementById("video-text-edited-result");
+
+    if (!textoInput || !textoInput.value.trim()) {
+        alert("Pega o escribe la transcripción o dialogo del video para editarlo por texto.");
+        return;
+    }
+
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner spin"></i> Editando video por texto con Gemini...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch("../api/api-text-based-editor.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                texto_original: textoInput.value.trim(),
+                instruccion: instruccionInput ? instruccionInput.value.trim() : 'Pulir y hacer viral',
+                episodio: 1
+            })
+        });
+        const data = await res.json();
+        if (data.success && data.data) {
+            if (resultadoContenedor) {
+                resultadoContenedor.style.display = "block";
+                resultadoContenedor.innerHTML = 
+                    `<div style='background:rgba(0,255,204,0.1); border:1px solid #00ffcc; padding:10px; border-radius:6px; margin-top:10px;'>` +
+                    `<strong style='color:#00ffcc;'><i class='fa-solid fa-file-lines'></i> Guion / Transcripción Editada (Lista para Clips):</strong><br>` +
+                    `<p style='color:#fff; margin-top:5px; white-space:pre-wrap;'>${data.data.texto_editado}</p>` +
+                    `<div style='margin-top:8px; font-size:12color:#aaa;'>Tags del Clip: <strong style='color:#ff007f;'>${data.data.gancho_inicial || 'Gancho Estrátegico'}</strong> | Duración Estimada: <strong style='color:#00ffcc;'>${data.data.duracion_estimada_final || '45s'}</strong></div>`;
+            }
+            alert("¡Procesado con éxito! El video eesta listo para cortarse por texto.");
+        } else {
+            alert("Error al editar por texto: " + (data.error || "Desconocido"));
+        }
+    } catch(err) {
+        alert("Falla de red: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}

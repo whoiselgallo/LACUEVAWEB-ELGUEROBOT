@@ -1,0 +1,18 @@
+
+<!-- HERRAMIENTA: EDICIÓN DE CLIPS POR TEXTO -->
+<div class="glass-card" style="margin-top:20px; border-left:4px solid #00ffcc;">
+    <h3 style="color:#00ffcc;"><i class="fa-solid fa-pen-nib"></i> Editor de Video Basado en Texto (Text-Based Video Editor)</h3>
+    <p style="color:#ccc; font-size:13px;">Pega la transcripción del episodio o el dialogo del clip. Gemini recortará muletillas, pausas y partes aburridas directamente sobre el texto para generar el guion limpio del clip viral.</p>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-top:10px;">
+        <div>
+            <label style="color:#fff; font-size:12px;">Transcripción / Diálogo Crudo (con pausas o muletillas):</label>
+            <textarea id="video-transcripcion-raw" rows="6" style="width:100%; background:#0d0d1a; border:1px solid rgba(0,255,204,0.3); color:#fff; padding:10px; border-radius:6px; font-family:monospace;" placeholder="Pega que dice El Güero y el invitado..."></textarea>
+        </div>
+        <div>
+            <label style="color:#fff; font-size:12px;">Instrucción para el corte (ej pulir / ritmo rápido):</label>
+            <input type="text" id="video-instruccion-editor" style="width:100%; background:#0d0d1a; border:1px solid rgba(0,255,204,0.3); color:#fff; padding:8px; border-radius:6px; margin-bottom:10px;" value="Pulir, quitar silencios y dejar solo el remate viral para TikTok">
+            <button type="button" id="btn-editar-por-texto" class="btn-neon" onclick="editarTranscripcionPorTexto()" style="width:100%; border-color:#00ffcc; color:#00ffcc;"><i class="fa-solid fa-scissors"></i> Recortar y Pulir Video por Texto</button>
+            <div id="video-text-edited-result" style="display:none;"></div>
+        </div>
+    </div>
+</div>
