@@ -16,6 +16,8 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## 📌 Listo (Ready / To Do)
 *Tareas priorizadas y listas para ser tomadas por desarrollo.*
+- [ ] **Configurar Cloud Run Jobs para el Dashboard PRO:** Orquestar trabajos por lotes en segundo plano para el procesamiento pesado del ecosistema (transcripción de podcasts con Whisper, corte de clips virales con FFmpeg, sincronización programada de analíticas de YouTube y respaldos de base de datos) desacoplándolos de las peticiones web directas.
+- [ ] **Desacoplar Dify a favor de Gemini API 100% nativo:** Migrar endpoints residuales (`api/api-escaleta.php`, `api/api-guion.php`, `api/api-cuecards.php`) a llamadas directas con `get_gemini_api_key()` y retirar variables de entorno `DIFY_*`.
 - [ ] Rediseño visual del sitio bajo las pautas del Design System Neón.
 - [ ] Conexión del inicio de sesión (SSO) unificado con la Landing de TSolutions.
 - [ ] Configuración del API Gateway de estadísticas en la landing central.
