@@ -16,6 +16,7 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## 📌 Listo (Ready / To Do)
 *Tareas priorizadas y listas para ser tomadas por desarrollo.*
+- [ ] **Actualizar Prompt Maestro de Hooks Virales (`api/api-hooks-ai.php`):** Implementar el nuevo prompt de neuro-marketing y copywriting persuasivo con estilo "true crime" y debate urbano sin censura (Fórmula Ganadora: Disruptor en primeras 3 palabras, desarrollo del conflicto humano real y CTA nativo de alta retención para Facebook, Instagram, TikTok, Spotify, Shorts y YouTube).
 - [ ] **Módulo de Descargables PDF PRO (Guión, Cuecards y Escaleta):**
   - **Guión Técnico:** Plantilla estilo cinematográfico / broadcast (doble columna Audio/Video, tipografía legible con acotaciones de entonación y marcas de tiempo).
   - **Cue Cards:** Formato tarjeta de mano para set de grabación (tarjetas de media carta apaisadas, tipografía grande de alto contraste legible a distancia para El Güero en cabina).
