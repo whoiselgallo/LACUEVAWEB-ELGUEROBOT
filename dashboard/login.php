@@ -86,8 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+}
 
-    if ($action === 'register') {
+if ($action === 'register') {
         $email = trim(sanitize_input($_POST['email'] ?? ''));
         $password = trim($_POST['new_password'] ?? '');
         $confirm = trim($_POST['confirm_password'] ?? '');
