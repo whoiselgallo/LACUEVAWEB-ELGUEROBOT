@@ -82,10 +82,13 @@ define('ADMIN_PASS', getEnvVar('ADMIN_PASS', 'eldesmadredelGuero1'));
 // ═════════════════════════════════════════════════════════════════════════════════
 function db_connect() {
     try {
-        // Detectar dinámicamente si se debe usar PostgreSQL (Neon.tech/Supabase) o MySQL (Hostinger/cPanel)
-        $isPostgres = (DB_PORT == '5432' || strpos(DB_HOST, 'neon.tech') !== false || strpos(DB_HOST, 'supabase') !== false);
+        $isCloudSqlSocket = (strpos(DB_HOST, '/cloudsql/') === 0 || substr_count(DB_HOST, ':') === 2);
+        $isPostgres = ($isCloudSqlSocket || DB_PORT == '5432' || strpos(DB_HOST, 'neon.tech') !== false || strpos(DB_HOST, 'supabase') !== false);
         
-        if ($isPostgres) {
+        if ($isCloudSqlSocket) {
+            $socketPath = (strpos(DB_HOST, '/cloudsql/') === 0) ? DB_HOST : '/cloudsql/' . DB_HOST;
+            $dsn = "pgsql:host={$socketPath};port=" . DB_PORT . ";dbname=" . DB_NAME;
+        } elseif ($isPostgres) {
             $dsn = 'pgsql:host=' . DB_HOST . 
                    ';port=' . DB_PORT . 
                    ';dbname=' . DB_NAME . 
