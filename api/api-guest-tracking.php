@@ -15,7 +15,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
     $code = sanitize_input($_GET['code'] ?? '');
     if (empty($code)) {
-        echo json_encode(['success' => false, 'error' => 'Codigo de seguimiento requerido.r]);
+        echo json_encode(['success' => false, 'error' => 'Codigo de seguimiento requerido.']);
         exit;
     }
 
@@ -51,7 +51,7 @@ if ($method === 'POST') {
     
     $trackingData[$code] = [
         'code' => $code,
-        'nombre' => 'nombre,
+        'nombre' => $nombre,
         'telefono' => $telefono,
         'correo' => $correo,
         'estado' => 'Cuestionario Completado',

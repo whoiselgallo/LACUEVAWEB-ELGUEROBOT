@@ -32,13 +32,51 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['listar'] ?? false)) {
     try {
         $stmt = $db->query("
-            SELECT id, nombre, created_at 
+            SELECT id, nombre, storytelling, created_at 
             FROM knowledge_base 
             WHERE tipo='storytelling' 
-            ORDER BY created_at DESC
+            ORDER BY id ASC
         ");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $list = [];
+        foreach ($rows as $r) {
+            $story = json_decode($r['storytelling'] ?? '{}', true);
+            $curaduria = $story['curaduria'] ?? [
+                'nivel' => 'ALTO',
+                'badge' => '🟢 NIVEL ALTO',
+                'formato' => 'Invitado Principal al Canal',
+                'color' => '#39FF14',
+                'razon' => 'Ficha cargada en base de datos.'
+            ];
+            $list[] = [
+                'id' => $r['id'],
+                'nombre' => $r['nombre'],
+                'created_at' => $r['created_at'],
+                'curaduria' => $curaduria
+            ];
+        }
+
+        // Si por alguna razón knowledge_base está vacía, consultar tabla invitados como fallback
+        if (empty($list)) {
+            $invStmt = $db->query("SELECT id, nombre, created_at, ocupacion, barrio FROM invitados ORDER BY id ASC");
+            foreach ($invStmt->fetchAll(PDO::FETCH_ASSOC) as $inv) {
+                $list[] = [
+                    'id' => $inv['id'],
+                    'nombre' => $inv['nombre'],
+                    'created_at' => $inv['created_at'],
+                    'curaduria' => [
+                        'nivel' => 'ALTO',
+                        'badge' => '🟢 NIVEL ALTO',
+                        'formato' => 'Invitado Principal al Canal',
+                        'color' => '#39FF14',
+                        'razon' => ($inv['ocupacion'] ?? 'Invitado') . ' - ' . ($inv['barrio'] ?? 'Mexicali')
+                    ]
+                ];
+            }
+        }
         
-        echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+        echo json_encode($list, JSON_UNESCAPED_UNICODE);
         exit();
     } catch (Exception $e) {
         json_response(['error' => $e->getMessage()], 500);
@@ -109,7 +147,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 json_response(['registro' => $reg], 200);
             } else {
-                json_response(['error' => 'Registro no encontrado'], 404);
+                // Fallback a tabla invitados
+                $stmtInv = $db->prepare("SELECT * FROM invitados WHERE id = ?");
+                $stmtInv->execute([$id]);
+                $inv = $stmtInv->fetch(PDO::FETCH_ASSOC);
+                if ($inv) {
+                    $inv['escaleta'] = "ESCALETA DE PRODUCCIÓN - LA CUEVA\nInvitado: " . $inv['nombre'] . "\nOcupación: " . ($inv['ocupacion'] ?? 'Invitado') . "\nBarrio: " . ($inv['barrio'] ?? 'Mexicali') . "\n\n" . ($inv['trayectoria'] ?? '');
+                    $inv['guion'] = "GUIÓN TENTATIVO PARA EL GÜERO Y EL JUNIOR\nInvitado: " . $inv['nombre'] . "\n\nEl Güero: ¡Bienvenido a La Cueva, " . $inv['nombre'] . "!\n\n" . ($inv['herida'] ?? '');
+                    $inv['cue_cards'] = "CUE CARDS DE GRABACIÓN\n• Nombre: " . $inv['nombre'] . "\n• Barrio: " . ($inv['barrio'] ?? '') . "\n• Molestia: " . ($inv['molestia'] ?? '');
+                    $inv['curaduria'] = [
+                        'nivel' => 'ALTO',
+                        'badge' => '🟢 NIVEL ALTO',
+                        'formato' => 'Invitado Principal al Canal',
+                        'color' => '#39FF14',
+                        'razon' => 'Ficha cargada en base de datos invitados.'
+                    ];
+                    json_response(['registro' => $inv], 200);
+                } else {
+                    json_response(['error' => 'Registro no encontrado'], 404);
+                }
             }
             exit();
         }

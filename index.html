@@ -207,6 +207,36 @@
           color: #000;
           box-shadow: 0 0 20px var(--c), inset 0 0 20px var(--c);
         }
+
+        /* AJUSTES MOBILE-FIRST HERO: EVITAR SOLAPAMIENTO DE AVATARES */
+        @media (max-width: 768px) {
+          #hero-intro-stage {
+            height: 520px !important;
+          }
+          #char-guero-walk, #char-junior-walk {
+            width: 135px !important;
+            height: 180px !important;
+          }
+          #intro-logos-wrapper {
+            top: 5% !important;
+            gap: 6px !important;
+          }
+          #intro-logos-wrapper img {
+            height: 65px !important;
+          }
+          #intro-logos-wrapper img[alt="La Cueva del Güero"] {
+            height: 50px !important;
+          }
+          #intro-action-buttons {
+            bottom: 12px !important;
+            gap: 6px !important;
+            padding: 0 8px;
+          }
+          .btn-glowing {
+            padding: 5px 12px !important;
+            font-size: 0.72rem !important;
+          }
+        }
       </style>
 
       <script>
@@ -220,6 +250,8 @@
           const logoWrapper = document.getElementById('intro-logos-wrapper');
           const buttons = document.getElementById('intro-action-buttons');
 
+          const isMobile = () => window.innerWidth <= 768;
+
           // Paso 1: Levantar telón negro y activar partículas
           setTimeout(() => {
             curtain.style.opacity = '0';
@@ -232,15 +264,20 @@
             studioBg.style.opacity = '1';
           }, 1800);
 
-          // Paso 3: Entran caminando los avatares (como siluetas neón)
+          // Paso 3: Entran caminando los avatares (como siluetas neón sin solaparse)
           setTimeout(() => {
             charGuero.style.opacity = '1';
-            charGuero.style.left = '18%';
             charJunior.style.opacity = '1';
-            charJunior.style.right = '18%';
+            if (isMobile()) {
+              charGuero.style.left = '4%';
+              charJunior.style.right = '4%';
+            } else {
+              charGuero.style.left = '18%';
+              charJunior.style.right = '18%';
+            }
           }, 2800);
 
-          // Paso 4: Llegada al sofá -> Se sientan (se revelan a color y se acomodan en los cojines)
+          // Paso 4: Llegada al sofá -> Se sientan armoniosamente a los lados
           setTimeout(() => {
              // Acelerar la transición de acomodo a 1.5 segundos
              charGuero.style.transition = 'all 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
@@ -250,14 +287,23 @@
              charGuero.style.filter = 'none';
              charJunior.style.filter = 'none';
              
-             // Posicionarlos en los cojines del sofá (El Güero perro reducido un 30% para armonía natural)
-             charGuero.style.bottom = '42px';
-             charGuero.style.left = '28%';
-             charGuero.style.transform = 'scale(0.7)';
-             
-             charJunior.style.bottom = '45px';
-             charJunior.style.right = '23%';
-             charJunior.style.transform = 'scale(1)';
+             if (isMobile()) {
+               charGuero.style.bottom = '52px';
+               charGuero.style.left = '6%';
+               charGuero.style.transform = 'scale(0.85)';
+               
+               charJunior.style.bottom = '52px';
+               charJunior.style.right = '5%';
+               charJunior.style.transform = 'scale(0.95)';
+             } else {
+               charGuero.style.bottom = '42px';
+               charGuero.style.left = '28%';
+               charGuero.style.transform = 'scale(0.7)';
+               
+               charJunior.style.bottom = '45px';
+               charJunior.style.right = '23%';
+               charJunior.style.transform = 'scale(1)';
+             }
             
             // Aparecen los logotipos
             logoWrapper.style.opacity = '1';

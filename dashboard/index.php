@@ -540,6 +540,9 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 justify-content: space-between;
             }
         }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
