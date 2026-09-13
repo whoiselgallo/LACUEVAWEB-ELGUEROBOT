@@ -17,10 +17,11 @@ if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {
     exit();
 }
 
-$db = db_connect();
-
-// Auto-crear tabla de usuarios si no existe aún (Self-healing)
+$db = null;
+$db_error = null;
 try {
+    $db = db_connect();
+    // Auto-crear tabla de usuarios si no existe aún (Self-healing)
     $db->exec("
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -34,6 +35,7 @@ try {
     ");
 } catch (Exception $e) {
     error_log("Users table auto-create error: " . $e->getMessage());
+    $db_error = $e->getMessage();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,20 +46,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pass = trim($_POST['password'] ?? '');
         $user_input = $user;
 
-        // 1. LLAVE MAESTRA -> REGISTRO OBLIGATORIO DE CORREO CORPORATIVO
+        // 1. LLAVE MAESTRA -> ACCESO DIRECTO O REGISTRO CORPORATIVO
         if (($user === ADMIN_USER || strtolower($user) === 'admin') && $pass === ADMIN_PASS) {
+            if (!$db) {
+                // Modo rescate si la BD no responde
+                $_SESSION['admin_logged'] = true;
+                $_SESSION['admin_user']   = ADMIN_USER;
+                $_SESSION['admin_name']   = 'Administrador Maestro';
+                header("Location: index.php");
+                exit();
+            }
             $show_onboarding = true;
         } else {
-            // 2. VALIDAR EN BASE DE DATOS NEON POSTGRESQL
-            try {
-                $stmt = $db->prepare("SELECT * FROM users WHERE LOWER(email) = LOWER(?)");
-                $stmt->execute([$user]);
-                $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+            // 2. VALIDAR EN BASE DE DATOS
+            if (!$db) {
+                $error = 'Base de datos no disponible temporalmente. Ingresa con las credenciales maestras.';
+            } else {
+                try {
+                    $stmt = $db->prepare("SELECT * FROM users WHERE LOWER(email) = LOWER(?)");
+                    $stmt->execute([$user]);
+                    $userData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                if ($userData && password_verify($pass, $userData['password_hash'])) {
-                    $_SESSION['admin_logged'] = true;
-                    $_SESSION['admin_user']   = $userData['email'];
-                    $_SESSION['admin_name']   = $userData['nombre'] ?? $userData['email'];
+                    if ($userData && password_verify($pass, $userData['password_hash'])) {
+                        $_SESSION['admin_logged'] = true;
+                        $_SESSION['admin_user']   = $userData['email'];
+                        $_SESSION['admin_name']   = $userData['nombre'] ?? $userData['email'];
 
                     // Actualizar último ingreso
                     $up = $db->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");

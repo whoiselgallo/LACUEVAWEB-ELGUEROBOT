@@ -89,7 +89,8 @@ function db_connect() {
             $dsn = 'pgsql:host=' . DB_HOST . 
                    ';port=' . DB_PORT . 
                    ';dbname=' . DB_NAME . 
-                   ';sslmode=require';
+                   ';sslmode=require' .
+                   ';connect_timeout=3';
         } else {
             $dsn = 'mysql:host=' . DB_HOST . 
                    ';port=' . DB_PORT . 
