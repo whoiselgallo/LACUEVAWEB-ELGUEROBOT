@@ -296,55 +296,39 @@ async function guardarEdicion(tipo) {
 
 function descargarAsset(tipo) {
     if (!activeId) return;
-    const content = activeData[tipo];
-    const extension = tipo === 'cuecards' ? 'html' : 'txt';
-    const filename = `${activeNombre.toLowerCase().replace(/\s+/g, '_')}_${tipo}.${extension}`;
+    const content = activeData[tipo] || "";
     
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Abrir vista previa y exportador de PDF PRO
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "../api/api-export-pdf.php";
+    form.target = "_blank";
+
+    const tipoInput = document.createElement("input");
+    tipoInput.type = "hidden";
+    tipoInput.name = "tipo";
+    tipoInput.value = tipo;
+    form.appendChild(tipoInput);
+
+    const invitadoInput = document.createElement("input");
+    invitadoInput.type = "hidden";
+    invitadoInput.name = "invitado";
+    invitadoInput.value = activeNombre;
+    form.appendChild(invitadoInput);
+
+    const contentInput = document.createElement("input");
+    contentInput.type = "hidden";
+    contentInput.name = "content";
+    contentInput.value = content;
+    form.appendChild(contentInput);
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
 }
 
 function imprimirCueCards() {
-    if (!activeId || !activeData.cue_cards.trim()) {
-        alert("No hay Cue Cards para imprimir.");
-        return;
-    }
-
-    const win = window.open("", "_blank");
-    if (!win) {
-        alert("Habilita las ventanas emergentes.");
-        return;
-    }
-
-    win.document.write(`
-        <!DOCTYPE html>
-        <html lang="es">
-        <head>
-            <meta charset="UTF-8">
-            <title>Cue Cards - ${activeNombre}</title>
-            <style>
-                body { font-family: Arial, sans-serif; padding: 30px; background: #fff; color: #000; }
-                pre { white-space: pre-wrap; font-size: 1.25rem; line-height: 1.6; }
-                @media print { .no-print { display: none; } }
-                .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-            </style>
-        </head>
-        <body>
-            <div class="header no-print">
-                <h2>Cue Cards de Conducción: ${activeNombre}</h2>
-                <button onclick="window.print()" style="padding:10px 20px; font-weight:bold; background:#000; color:#fff; border:none; cursor:pointer;">Imprimir</button>
-            </div>
-            <pre>${escapeHtml(activeData.cue_cards)}</pre>
-        </body>
-        </html>
-    `);
-    win.document.close();
-    win.focus();
+    descargarAsset('cuecards');
 }
 
 /* ============================================================

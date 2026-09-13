@@ -388,7 +388,7 @@ function addPawMessage(text, sender = "user") {
           }
 
           const data = await response.json();
-          if (data.success && data.answer) {
+          if (data && data.answer) {
               addPawMessage(data.answer, "bot");
 
               // DETECTAR ACTIVACIÓN DE ACCESO DE INVITADO:

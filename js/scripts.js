@@ -133,6 +133,15 @@ function habilitarDropdowns() {
         });
     });
 
+    // Cerrar dropdown al hacer clic en cualquiera de sus enlaces
+    document.querySelectorAll('.dropdown-menu a').forEach((link) => {
+        link.addEventListener('click', () => {
+            document.querySelectorAll('.dropdown-menu.dropdown-open').forEach((menu) => {
+                menu.classList.remove('dropdown-open');
+            });
+        });
+    });
+
     // Cerrar dropdowns con Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {

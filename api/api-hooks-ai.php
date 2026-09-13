@@ -28,25 +28,26 @@ if (empty($geminiApiKey)) {
     exit;
 }
 
-$prompt = "Actúa como el Director de Contenido y Copywriter Viral de 'La Cueva del Güero'. " .
-          "A partir del siguiente tema central: '{$topic}', genera 6 ganchos (hooks) y copys personalizados para redes sociales. " .
-          "Debes usar expresiones del norte de México (Mexicali) como 'carnal', 'raza', 'chido', 'guau', 'la cueva', 'desmadre' para que encaje con la vibra del podcast.\n\n" .
-          "REQUISITOS POR PLATAFORMA:\n" .
-          "1. facebook: Un copy interactivo para feed, con hashtags, invitando a comentar.\n" .
-          "2. instagram: Estilo gancho para carrusel de 3 slides (Slide 1: Título intrigante, Slide 2: Contenido, Slide 3: Llamado a la acción).\n" .
-          "3. tiktok: Gancho de 3 segundos de alto impacto para video corto.\n" .
-          "4. spotify: Guion de introducción para el episodio de audio.\n" .
-          "5. shorts: Gancho dinámico y loopable para YouTube Shorts.\n" .
-          "6. youtube: Título clickbait y descripción llamativa para el video largo.\n\n" .
-          "FORMATEA TU RESPUESTA EXACTAMENTE EN ESTE FORMATO JSON (No envíes texto fuera del JSON):\n" .
+$prompt = "Actúa como un director creativo experto en copywriting persuasivo, retención de audiencia y neuro-marketing para podcasts de alto impacto, estilo 'true crime', charlas urbanas y debate sin censura (estilo La Cueva del Güero).\n\n" .
+          "Tu objetivo es generar 6 hooks optimizados para diferentes plataformas a partir del tema principal y la descripción del episodio que te proporcione el usuario.\n\n" .
+          "REGLAS OBLIGATORIAS DE TONO Y ESTILO:\n" .
+          "1. Voz y tono: Urbano, directo, sin rodeos, provocativo y conversacional (como una plática de sobremesa entre amigos con mucha calle). Evita formalismos aburridos.\n" .
+          "2. Cero clichés corporativos: Prohibido empezar con frases vacías como 'No vas a creer...', 'En este episodio...' o 'Bienvenidos a un nuevo video'. Ve directo al dolor, la curiosidad, el conflicto o la tensión.\n" .
+          "3. Estructura de retención (Fórmula Ganadora):\n" .
+          "   - Gancho / Disruptor (Primeras 3 palabras): Rompe el patrón mental del usuario haciendo una pregunta incómoda, una declaración polémica o revelando la consecuencia más grave del tema.\n" .
+          "   - Desarrollo del conflicto: Conecta el tema con una experiencia humana real (traición, lealtades rotas, calle, consecuencias).\n" .
+          "   - Llamado a la Acción (CTA) Nativo: Pide la interacción adaptada a cada plataforma (comentarios para debate en TikTok, compartir con la 'manada' en Instagram, suscripción para tensión continua en Shorts).\n\n" .
+          "FORMATO DE SALIDA REQUERIDO:\n" .
+          "Genera estrictamente un objeto JSON válido (sin texto antes ni después) con los 6 hooks adaptados para cada una de las siguientes plataformas, usando emojis estratégicos:\n" .
           "{\n" .
-          "  \"facebook\": \"texto del gancho\",\n" .
-          "  \"instagram\": \"texto del gancho\",\n" .
-          "  \"tiktok\": \"texto del gancho\",\n" .
-          "  \"spotify\": \"texto del gancho\",\n" .
-          "  \"shorts\": \"texto del gancho\",\n" .
-          "  \"youtube\": \"texto del gancho\"\n" .
-          "}";
+          "  \"facebook\": \"[Facebook Feed] Enfoque en debate y curiosidad general...\",\n" .
+          "  \"instagram\": \"[Instagram Carousel] Enfoque visual/mental, invitando a deslizar y etiquetar...\",\n" .
+          "  \"tiktok\": \"[TikTok Hook] Enfoque ultra agresivo en los primeros 3 segundos, incitando a debatir...\",\n" .
+          "  \"spotify\": \"[Spotify Intro Teaser] Enfoque auditivo, creando atmósfera de misterio o charla íntima y cruda...\",\n" .
+          "  \"shorts\": \"[YouTube Shorts] Enfoque en la máxima tensión del corte, cerrando con invitación a suscribirse...\",\n" .
+          "  \"youtube\": \"[YouTube Videos] Título optimizado para CTR + Bajada de descripción narrativa que invite al clic inmediato...\"\n" .
+          "}\n\n" .
+          "Tema del episodio a procesar: {$topic}";
 
 $payload = [
     "contents" => [

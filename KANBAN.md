@@ -16,13 +16,7 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## 📌 Listo (Ready / To Do)
 *Tareas priorizadas y listas para ser tomadas por desarrollo.*
-- [ ] **Actualizar Prompt Maestro de Hooks Virales (`api/api-hooks-ai.php`):** Implementar el nuevo prompt de neuro-marketing y copywriting persuasivo con estilo "true crime" y debate urbano sin censura (Fórmula Ganadora: Disruptor en primeras 3 palabras, desarrollo del conflicto humano real y CTA nativo de alta retención para Facebook, Instagram, TikTok, Spotify, Shorts y YouTube).
-- [ ] **Módulo de Descargables PDF PRO (Guión, Cuecards y Escaleta):**
-  - **Guión Técnico:** Plantilla estilo cinematográfico / broadcast (doble columna Audio/Video, tipografía legible con acotaciones de entonación y marcas de tiempo).
-  - **Cue Cards:** Formato tarjeta de mano para set de grabación (tarjetas de media carta apaisadas, tipografía grande de alto contraste legible a distancia para El Güero en cabina).
-  - **Escaleta Técnica:** Formato de parrilla de producción ejecutiva (bloques de tiempo, hitos narrativos, ganchos y menciones de patrocinadores).
 - [ ] **Configurar Cloud Run Jobs para el Dashboard PRO:** Orquestar trabajos por lotes en segundo plano para el procesamiento pesado del ecosistema (transcripción de podcasts con Whisper, corte de clips virales con FFmpeg, sincronización programada de analíticas de YouTube y respaldos de base de datos) desacoplándolos de las peticiones web directas.
-- [ ] **Desacoplar Dify a favor de Gemini API 100% nativo:** Migrar endpoints residuales (`api/api-escaleta.php`, `api/api-guion.php`, `api/api-cuecards.php`) a llamadas directas con `get_gemini_api_key()` y retirar variables de entorno `DIFY_*`.
 - [ ] Rediseño visual del sitio bajo las pautas del Design System Neón.
 - [ ] Conexión del inicio de sesión (SSO) unificado con la Landing de TSolutions.
 - [ ] Configuración del API Gateway de estadísticas en la landing central.
@@ -32,20 +26,27 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## ⚡ En Progreso (In Progress)
 *Acciones actualmente en desarrollo activo.*
-- [ ] Corregir la navegación móvil del header en `js/scripts.js` (clases `.nav-toggle` y `.nav-links`).
-- [ ] Reemplazar la simulación de `setTimeout` del chatbot en `js/paw-agent.js` por una llamada `fetch()` real a `/api/api-el-guero-bot.php`.
+- [ ] Pruebas en vivo con usuarios y creadores en el panel de control.
 
 ---
 
 ## 🔍 En Resumen (Under Review / Verification)
-*Tareas completadas que están siendo verificadas en producción en Hostinger.*
-- [ ] Verificar la llamada real de IA del generador de guiones en [api-guion.php](file:///t:/LACUEVAWEB+ELGUEROBOT/api/api-guion.php).
-- [ ] Probar el generador de Cue Cards en [guero-pro.js](file:///t:/LACUEVAWEB+ELGUEROBOT/js/guero-pro.js) enviando el texto real para impresión en PDF.
+*Tareas completadas que están siendo verificadas en producción en Google Cloud Run.*
+- [x] **Prompt Maestro de Hooks:** Probado en `/api/api-hooks-ai.php` con neuro-marketing y fórmula de retención.
+- [x] **Gemini 100% Nativo:** Guión, escaleta y cue cards migrados con éxito desacoplados de Dify.
+- [x] **Descargables PDF PRO:** Implementado `/api/api-export-pdf.php` con formatos broadcast, tarjetas de set y parrilla ejecutiva.
+- [x] **El Güero Bot:** Restaurado con personalidad norteña urbana y captación de leads en `/api/api-el-guero-bot.php`.
 
 ---
 
 ## 🛠️ Modificado (Modified)
 *Componentes modificados estructuralmente durante el desarrollo para dar soporte a nuevas funciones.*
+- [x] **api-hooks-ai.php:** Implementado nuevo Prompt Maestro de neuro-marketing y copywriting persuasivo con salidas JSON por plataforma.
+- [x] **api-guion.php:** Migrado a Gemini 100% nativo con formato cinematográfico broadcast de 6 bloques y timecodes.
+- [x] **api-escaleta.php:** Migrado a Gemini con generación de escaleta técnica, guión base y preguntas de cabina.
+- [x] **api-cuecards.php:** Migrado a Gemini con tarjetas A5 de alto contraste para set de grabación.
+- [x] **api-export-pdf.php:** Creado motor de impresión y guardado como PDF profesional para Guiones, Cue Cards y Escaletas.
+- [x] **dashboard-pro.js:** Integrado botón de exportación PDF y modal de impresión directa.
 - [x] **config.php:** Modificado para actuar como el núcleo dinámico de datos del servidor cargando credenciales mediante variables de entorno (con fallbacks estables).
 - [x] **Guardar-evaluacion.php:** Vinculado al archivo de configuración central para evitar base de datos y passwords hardcodeados.
 
@@ -53,12 +54,14 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## 🎨 Rediseñado (Redesigned)
 *Mejoras aplicadas al diseño visual, tipografía y tokens.*
-- [ ] *Pendiente por comenzar en la Fase 3 del roadmap (Design System).*
+- [x] **Módulo de Impresión / PDF:** Estilos aplicados para lectura en cabina (A5 apaisado) y formato guión de cine (Courier Prime / dos columnas).
 
 ---
 
 ## 🐛 Corrección de Errores (Bug Fixes)
 *Errores críticos y fallas de dependencias solucionados.*
+- [x] **Navegación Móvil:** Corregido el auto-cierre de los enlaces dentro del dropdown en `js/scripts.js`.
+- [x] **Reactivación El Güero Bot:** Restaurado el conector de IA Gemini en `api/api-el-guero-bot.php` y sincronizado con `js/paw-agent.js`.
 - [x] **Renombrado de carpeta:** Carpeta `config1` renombrada a `config` para habilitar las dependencias require PHP.
 - [x] **Rutas relativas de API:** Corrección de `require_once` rotos de la carpeta `api/` (cambiado de `/../../config/` a `/../config/`).
 - [x] **Doble salida JSON:** Reparado el bug de doble impresión JSON y variables indefinidas en `api-invitados-save.php`.
