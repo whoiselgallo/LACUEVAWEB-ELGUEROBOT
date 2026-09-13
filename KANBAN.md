@@ -16,6 +16,10 @@ Este tablero Kanban representa el estado del desarrollo, corrección de errores,
 
 ## 📌 Listo (Ready / To Do)
 *Tareas priorizadas y listas para ser tomadas por desarrollo.*
+- [ ] **Módulo de Descargables PDF PRO (Guión, Cuecards y Escaleta):**
+  - **Guión Técnico:** Plantilla estilo cinematográfico / broadcast (doble columna Audio/Video, tipografía legible con acotaciones de entonación y marcas de tiempo).
+  - **Cue Cards:** Formato tarjeta de mano para set de grabación (tarjetas de media carta apaisadas, tipografía grande de alto contraste legible a distancia para El Güero en cabina).
+  - **Escaleta Técnica:** Formato de parrilla de producción ejecutiva (bloques de tiempo, hitos narrativos, ganchos y menciones de patrocinadores).
 - [ ] **Configurar Cloud Run Jobs para el Dashboard PRO:** Orquestar trabajos por lotes en segundo plano para el procesamiento pesado del ecosistema (transcripción de podcasts con Whisper, corte de clips virales con FFmpeg, sincronización programada de analíticas de YouTube y respaldos de base de datos) desacoplándolos de las peticiones web directas.
 - [ ] **Desacoplar Dify a favor de Gemini API 100% nativo:** Migrar endpoints residuales (`api/api-escaleta.php`, `api/api-guion.php`, `api/api-cuecards.php`) a llamadas directas con `get_gemini_api_key()` y retirar variables de entorno `DIFY_*`.
 - [ ] Rediseño visual del sitio bajo las pautas del Design System Neón.
