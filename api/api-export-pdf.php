@@ -15,9 +15,11 @@ $content  = $_REQUEST['content'] ?? '';
 
 // Títulos y metadatos por tipo
 $titulos = [
-    'guion'    => 'GUIÓN TÉCNICO BROADCAST',
-    'cuecards' => 'CUE CARDS DE CABINA Y SET',
-    'escaleta' => 'ESCALETA TÉCNICA Y PRODUCCIÓN EJECUTIVA'
+    'guion'     => 'GUIÓN TÉCNICO BROADCAST',
+    'cuecards'  => 'CUE CARDS DE CABINA Y SET',
+    'escaleta'  => 'ESCALETA TÉCNICA Y PRODUCCIÓN EJECUTIVA',
+    'tema-blog' => 'PROPUESTA EDITORIAL Y TEMA PARA BLOG',
+    'tema_blog' => 'PROPUESTA EDITORIAL Y TEMA PARA BLOG'
 ];
 $docTitulo = $titulos[$tipo] ?? 'DOCUMENTO DE PRODUCCIÓN';
 ?>
@@ -309,6 +311,16 @@ $docTitulo = $titulos[$tipo] ?? 'DOCUMENTO DE PRODUCCIÓN';
         <?php elseif ($tipo === 'escaleta'): ?>
             <div class="escaleta-wrapper">
                 <div class="escaleta-content"><?= htmlspecialchars($content ?: "ESCALETA TÉCNICA EN DESARROLLO PARA {$invitado}.") ?></div>
+            </div>
+
+        <?php elseif ($tipo === 'tema-blog' || $tipo === 'tema_blog'): ?>
+            <div class="doc-body" style="border-left-color: var(--neon-magenta); font-family: 'Outfit', sans-serif; font-size: 1rem; line-height: 1.7; background: #0c0c18;">
+                <div style="margin-bottom: 20px; padding: 15px 20px; background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--neon-magenta); text-transform: uppercase; letter-spacing: 1px;">Propuesta Editorial Semidesarrollada</span>
+                    <h2 style="color: #fff; margin: 6px 0; font-size: 1.4rem;"><?= htmlspecialchars($_REQUEST['titulo_tema'] ?? 'Tema Central para Blog') ?></h2>
+                    <p style="color: var(--neon-cyan); margin: 0; font-size: 0.95rem;"><strong>Tesis:</strong> <?= htmlspecialchars($_REQUEST['tesis'] ?? 'Ángulo editorial de peso') ?></p>
+                </div>
+                <div style="white-space: pre-wrap; color: #ececf5;"><?= htmlspecialchars($content) ?></div>
             </div>
 
         <?php else: ?>

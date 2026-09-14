@@ -10,8 +10,10 @@ let activeNombre = "";
 let activeData = {
     escaleta: "",
     guion: "",
-    cue_cards: ""
+    cue_cards: "",
+    storytelling: ""
 };
+let activeTemaBlog = null;
 
 /* ============================================================
    NAVEGACIÓN DE VISTAS (TAB SWITCHER)
@@ -285,6 +287,10 @@ async function mostrarDetalle(id) {
             }
         }
 
+        // STORYTELLING Y TEMA DE BLOG
+        activeData.storytelling = typeof reg.storytelling === 'string' ? reg.storytelling : JSON.stringify(reg.storytelling || {});
+        inicializarTemaBlog(reg);
+
         renderBloquesNormales();
     } catch (error) {
         console.error("Error cargando detalle:", error);
@@ -292,6 +298,205 @@ async function mostrarDetalle(id) {
     }
 }
 window.mostrarDetalle = mostrarDetalle;
+
+/* ============================================================
+   SECCIÓN 1.1: SELECCIÓN DE TEMA PARA BLOG CON IA & ENVÍO A BLOG
+   ============================================================ */
+
+function inicializarTemaBlog(reg) {
+    const defaultTitulo = `Los madrazos del camino: Cómo ${activeNombre} forjó su carácter en el barrio`;
+    const defaultTesis = reg.storytelling_enfoque || "El verdadero valor no se mide en victorias fáciles, sino en la capacidad de mantenerse leal y firme frente a los momentos más duros.";
+    const defaultGancho = reg.frase || `"El barrio no es la esquina, el barrio es la familia que te cuida la espalda."`;
+    
+    activeTemaBlog = {
+        titulo: defaultTitulo,
+        tesis: defaultTesis,
+        puntos_clave: [
+            `Raíces y origen: La infancia y el aprendizaje forzado en las calles.`,
+            `El momento decisivo: ${reg.reto || 'Superar el momento más humillante y salir adelante.'}`,
+            `Sabiduría de set: La visión de vida que ${activeNombre} aporta a la audiencia.`
+        ],
+        frase_gancho: defaultGancho,
+        categoria: "Storytelling",
+        potencia: "NIVEL ALTO",
+        resumen_semidesarrollado: `EXPEDIENTE EDITORIAL PARA BLOG - LA CUEVA DEL GÜERO\nInvitado: ${activeNombre}\n\n1. ANTECEDENTES Y TESIS:\n${defaultTesis}\n\n2. EJES DE DESARROLLO:\n- Raíces y contexto de barrio.\n- Madrazos del trabajo y momentos de quiebre.\n- Lecciones de supervivencia y superación.\n\n3. CITA DETONADORA:\n${defaultGancho}\n\n4. BORRADOR DE ENTRADA:\nEn este capítulo sin censura de La Cueva del Güero, nos sumergimos en la historia de ${activeNombre}, explorando cómo la lealtad y el trabajo duro permitieron romper barreras en la frontera sin perder la identidad.`
+    };
+
+    actualizarVistaTemaBlog(activeTemaBlog);
+}
+
+function actualizarVistaTemaBlog(tema) {
+    if (!tema) return;
+    const titEl = document.getElementById("tema-blog-titulo");
+    if (titEl) titEl.textContent = tema.titulo || "Tema por definir";
+
+    const tesisEl = document.getElementById("tema-blog-tesis");
+    if (tesisEl) tesisEl.textContent = tema.tesis || "Tesis en análisis...";
+
+    const puntosEl = document.getElementById("tema-blog-puntos");
+    if (puntosEl && Array.isArray(tema.puntos_clave)) {
+        puntosEl.innerHTML = tema.puntos_clave.map(p => `<li style="margin-bottom: 4px;">${escapeHtml(p)}</li>`).join("");
+    }
+
+    const ganchoEl = document.getElementById("tema-blog-gancho");
+    if (ganchoEl) ganchoEl.textContent = `"${(tema.frase_gancho || '').replace(/^"|"$/g, '')}"`;
+
+    const catBadge = document.getElementById("tema-blog-categoria-badge");
+    if (catBadge) catBadge.textContent = tema.categoria || "Storytelling";
+}
+
+// BOTÓN 1: RELEER EPISODIO Y GENERAR OTRO TEMA CON IA
+async function reanalizarTemaBlogConIA() {
+    if (!activeNombre) {
+        alert("Selecciona primero un invitado en la lista.");
+        return;
+    }
+
+    const btn = document.getElementById("btn-releer-tema-ia");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Releyendo expediente con IA...`;
+    btn.disabled = true;
+
+    try {
+        const response = await fetch("../api/api-blog-ai.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "proponer_tema",
+                nombre_invitado: activeNombre,
+                guion: activeData.guion,
+                escaleta: activeData.escaleta,
+                storytelling: activeData.storytelling,
+                tema_anterior: activeTemaBlog ? activeTemaBlog.titulo : ""
+            })
+        });
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+            activeTemaBlog = result.data;
+            actualizarVistaTemaBlog(activeTemaBlog);
+            // Efecto visual de actualización
+            const panel = document.getElementById("tema-blog-panel");
+            if (panel) {
+                panel.style.boxShadow = "0 0 25px rgba(255, 0, 255, 0.6)";
+                setTimeout(() => { panel.style.boxShadow = "0 4px 20px rgba(255, 0, 255, 0.12)"; }, 1000);
+            }
+        } else {
+            throw new Error(result.error || "No se pudo generar nuevo tema.");
+        }
+    } catch (err) {
+        console.error("Error al releer tema con IA:", err);
+        alert("Aviso: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+window.reanalizarTemaBlogConIA = reanalizarTemaBlogConIA;
+
+// BOTÓN 2: GENERAR TEMA EN PDF Y ENVIAR DIRECTAMENTE A PROCESAR BLOG
+function generarPDFYEnviarABlog() {
+    if (!activeTemaBlog || !activeNombre) {
+        alert("Selecciona un invitado para preparar la propuesta editorial.");
+        return;
+    }
+
+    const puntosTexto = (activeTemaBlog.puntos_clave || []).map((p, i) => `${i + 1}. ${p}`).join("\n");
+    const fullText = `======================================================================
+LA CUEVA DEL GÜERO - PROPUESTA EDITORIAL & TEMA PARA BLOG
+======================================================================
+INVITADO:   ${activeNombre}
+CATEGORÍA:  ${activeTemaBlog.categoria || 'Storytelling'}
+POTENCIA:   ${activeTemaBlog.potencia || 'NIVEL ALTO'}
+FECHA:      ${new Date().toLocaleDateString('es-MX')}
+
+----------------------------------------------------------------------
+TÍTULO DEL ARTÍCULO:
+${activeTemaBlog.titulo}
+----------------------------------------------------------------------
+
+TESIS Y ÁNGULO CENTRAL:
+${activeTemaBlog.tesis}
+
+EJES TEMÁTICOS Y ANÉCDOTAS CLAVE:
+${puntosTexto}
+
+FRASE / GANCHO DETONADOR:
+"${(activeTemaBlog.frase_gancho || '').replace(/^"|"$/g, '')}"
+
+----------------------------------------------------------------------
+BORRADOR SEMIDESARROLLADO PARA EL ARTÍCULO:
+----------------------------------------------------------------------
+${activeTemaBlog.resumen_semidesarrollado || ''}
+
+======================================================================
+INSTRUCCIÓN DE PRODUCCIÓN:
+Usa el botón "Convertir a Post Editable" en el Gestor de Blog para expandir este texto en el artículo final o publicarlo directamente.
+======================================================================`;
+
+    // 1. Abrir/Generar PDF en pestaña secundaria
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "../api/api-export-pdf.php";
+    form.target = "_blank";
+
+    const fields = {
+        tipo: "tema-blog",
+        invitado: activeNombre,
+        titulo_tema: activeTemaBlog.titulo,
+        tesis: activeTemaBlog.tesis,
+        content: fullText
+    };
+
+    for (const key in fields) {
+        const inp = document.createElement("input");
+        inp.type = "hidden";
+        inp.name = key;
+        inp.value = fields[key];
+        form.appendChild(inp);
+    }
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+
+    // 2. Redireccionar suavemente al Gestor de Blog (PDF Conversor)
+    switchView('blog');
+    switchBlogTab('upload');
+
+    // 3. Inyectar el texto en el área de extracción de PDF del Blog
+    extractedTextBuffer = fullText;
+    const extractedEl = document.getElementById("blog-extracted-text");
+    if (extractedEl) {
+        extractedEl.value = fullText;
+    }
+    const previewContainer = document.getElementById("blog-preview-container");
+    if (previewContainer) {
+        previewContainer.classList.remove("hidden");
+    }
+
+    const titleInput = document.getElementById("blog-title");
+    if (titleInput) {
+        titleInput.value = activeTemaBlog.titulo;
+    }
+    const authorInput = document.getElementById("blog-author");
+    if (authorInput) {
+        authorInput.value = `La Cueva del Güero • ${activeNombre}`;
+    }
+
+    const fileInfo = document.getElementById("blog-file-info");
+    if (fileInfo) {
+        fileInfo.style.display = "block";
+        fileInfo.innerHTML = `<i class="fa-solid fa-check-circle"></i> Ficha y Tema de <strong>${escapeHtml(activeNombre)}</strong> cargado exitosamente desde Episodios.`;
+    }
+
+    // Scroll al área de trabajo
+    setTimeout(() => {
+        if (previewContainer) previewContainer.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+}
+window.generarPDFYEnviarABlog = generarPDFYEnviarABlog;
 
 function togglePonderacion() {
     const criterios = document.getElementById("ponderacion-criterios");

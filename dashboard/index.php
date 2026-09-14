@@ -788,6 +788,62 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                             <div id="curaduria-actions" style="display: flex; gap: 10px; margin-top: 10px;"></div>
                         </div>
                         
+                        <!-- SELECCIÓN DE TEMA PARA BLOG CON IA (DIRECCIONAMIENTO A PROCESAR BLOG) -->
+                        <div id="tema-blog-panel" class="seccion-asset" style="border-color: rgba(255, 0, 255, 0.4); background: rgba(14, 8, 24, 0.95); margin-bottom: 22px; box-shadow: 0 4px 20px rgba(255, 0, 255, 0.12);">
+                            <div class="seccion-header" style="border-bottom-color: rgba(255, 0, 255, 0.25); flex-wrap: wrap; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <i class="fa-solid fa-feather-pointed" style="color: var(--neon-magenta); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-magenta);"></i>
+                                    <div>
+                                        <h3 style="margin: 0; color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                            Selección de Tema para Blog <span style="font-size: 0.72rem; background: rgba(255,0,255,0.15); border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 2px 8px; border-radius: 12px;">IA Editorial</span>
+                                        </h3>
+                                        <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Ángulo narrativo con peso y poder de barrio extraído del episodio para desarrollar artículo.</p>
+                                    </div>
+                                </div>
+                                <div class="btn-action-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button class="btn-neon btn-neon-magenta" id="btn-releer-tema-ia" onclick="reanalizarTemaBlogConIA()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <i class="fa-solid fa-rotate"></i> 1. Releer Episodio y Generar Otro Tema
+                                    </button>
+                                    <button class="btn-neon" id="btn-enviar-tema-blog" onclick="generarPDFYEnviarABlog()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: #39FF14; color: #39FF14;">
+                                        <i class="fa-solid fa-file-pdf"></i> 2. Generar PDF y Enviar a Procesar Blog
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- CUERPO DE LA PROPUESTA TEMÁTICA -->
+                            <div id="tema-blog-body" style="padding-top: 10px;">
+                                <div style="margin-bottom: 12px;">
+                                    <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--neon-magenta); font-weight: 700;">Título Editorial Sugerido:</span>
+                                    <h4 id="tema-blog-titulo" style="margin: 4px 0 0 0; font-size: 1.15rem; color: var(--neon-cyan); line-height: 1.4;">Selecciona un invitado para ver propuesta editorial...</h4>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; margin-bottom: 14px;">
+                                    <div style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px;">
+                                        <h5 style="margin: 0 0 6px 0; color: var(--neon-magenta); font-size: 0.82rem;"><i class="fa-solid fa-compass"></i> Tesis & Ángulo de Peso:</h5>
+                                        <p id="tema-blog-tesis" style="margin: 0; font-size: 0.88rem; color: #ddd; line-height: 1.5;">El análisis con IA identificará la tesis con mayor resonancia para la audiencia.</p>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px;">
+                                        <h5 style="margin: 0 0 6px 0; color: var(--neon-cyan); font-size: 0.82rem;"><i class="fa-solid fa-list-ol"></i> Ejes Temáticos a Desarrollar:</h5>
+                                        <ul id="tema-blog-puntos" style="margin: 0; padding-left: 18px; font-size: 0.84rem; color: #ccc; line-height: 1.45;">
+                                            <li>Eje temático de origen y raíces.</li>
+                                            <li>Conflicto y lección clave del episodio.</li>
+                                            <li>Sabiduría aplicable para el lector.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); border-left: 3px solid #39FF14; padding: 10px 14px; border-radius: 6px; flex-wrap: wrap; gap: 10px;">
+                                    <div style="flex-grow: 1;">
+                                        <span style="font-size: 0.72rem; color: #39FF14; font-weight: 700; text-transform: uppercase;">Frase / Gancho Detonador:</span>
+                                        <p id="tema-blog-gancho" style="margin: 2px 0 0 0; font-size: 0.88rem; color: #fff; font-style: italic;">"Frase detonadora pendiente de análisis."</p>
+                                    </div>
+                                    <div style="text-align: right; min-width: 140px;">
+                                        <span id="tema-blog-categoria-badge" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; background: rgba(0,255,255,0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-weight: 600;">Storytelling</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="detalle-scroll" style="width: 100%;">
                             <!-- ESCALETA -->
                             <div class="seccion-asset">
