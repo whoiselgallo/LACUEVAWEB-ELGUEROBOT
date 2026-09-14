@@ -618,23 +618,65 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     </div>
                     
                     <div class="detalle-contenido hidden" id="detalleContenido" style="display: flex; flex-direction: column; height: 100%;">
-                        <div class="detalle-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 15px;">
-                            <h2 id="detalleNombre" style="margin: 0; color: var(--neon-magenta);">Nombre</h2>
-                            <span id="detalleFecha" style="color: #666; font-size: 0.85rem;"></span>
-                        </div>
-                        
-                        <!-- BANNER DE CURADURÍA Y DECISIÓN DE PRODUCCIÓN -->
-                        <div id="curaduria-banner" style="background: rgba(0,0,0,0.4); border: 1px solid var(--neon-cyan); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
-                                    <span id="curaduria-badge" style="font-weight: 800; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; background: rgba(0,255,255,0.1); border: 1px solid var(--neon-cyan); text-transform: uppercase;">🟢 NIVEL ALTO</span>
-                                    <strong id="curaduria-formato" style="color: #fff; font-size: 1rem;">Invitado Principal al Canal</strong>
+                        <!-- TARJETA TIPO AURELIO — CABECERA -->
+                        <div id="tarjeta-aurelio" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(0,255,255,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                                <div>
+                                    <h2 id="detalleNombre" style="margin: 0 0 2px 0; color: var(--neon-cyan); font-size: 1.4rem; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fa-solid fa-clapperboard"></i> Nombre
+                                    </h2>
+                                    <span id="detalleAlias" style="color: var(--neon-magenta); font-weight: 700; font-size: 0.95rem;">Alias: ---</span>
                                 </div>
-                                <p id="curaduria-razon" style="margin: 0; font-size: 0.85rem; color: #aaa; line-height: 1.4;"></p>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <span id="detalleFecha" style="color: #666; font-size: 0.8rem;"></span>
+                                    <button class="btn-neon" id="btn-tracking" onclick="alert('Tracking en vivo próximamente')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
+                                        <i class="fa-solid fa-bullseye"></i> Ver Tracking en Vivo
+                                    </button>
+                                </div>
                             </div>
-                            <div id="curaduria-actions" style="display: flex; gap: 10px;">
-                                <!-- Dynamic production action buttons based on level -->
+
+                            <!-- GRID 2 COLUMNAS: Enfoque + Reto -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 14px;">
+                                    <h4 style="margin: 0 0 8px 0; color: var(--neon-cyan); font-size: 0.85rem;"><i class="fa-solid fa-bullhorn"></i> Storytelling & Enfoque:</h4>
+                                    <p id="detalle-enfoque" style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.4;"></p>
+                                </div>
+                                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,0,255,0.15); border-radius: 8px; padding: 14px;">
+                                    <h4 style="margin: 0 0 8px 0; color: var(--neon-magenta); font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> Reto / Momento Difícil:</h4>
+                                    <p id="detalle-reto" style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.4;"></p>
+                                </div>
                             </div>
+
+                            <!-- FRASE -->
+                            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+                                <h4 style="margin: 0 0 8px 0; color: var(--neon-cyan); font-size: 0.85rem;"><i class="fa-solid fa-quote-left"></i> Frase para la Audiencia:</h4>
+                                <p id="detalle-frase" style="margin: 0; color: #eee; font-size: 1rem; font-style: italic; line-height: 1.4;"></p>
+                            </div>
+
+                            <!-- BOTÓN GUARDAR -->
+                            <button class="btn-neon" onclick="alert('Ajustes guardados (próximamente)')" style="border-color: var(--neon-cyan); background: var(--neon-cyan); color: #0a0a14; padding: 8px 18px; font-size: 0.85rem; border-radius: 6px; cursor: pointer; font-weight: 700;">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes
+                            </button>
+                        </div>
+
+                        <!-- PONDERACIÓN DE CURADURÍA (0-9) -->
+                        <div id="ponderacion-panel" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(57,255,20,0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; cursor: pointer;" onclick="togglePonderacion()">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span id="ponderacion-score-badge" style="font-size: 1.6rem; font-weight: 900; color: #39FF14;">0.0</span>
+                                    <div>
+                                        <span id="ponderacion-nivel-badge" style="font-weight: 800; font-size: 0.8rem; padding: 3px 10px; border-radius: 20px; background: rgba(57,255,20,0.1); border: 1px solid #39FF14; color: #39FF14;">🟢 NIVEL ALTO</span>
+                                        <p id="ponderacion-formato" style="margin: 4px 0 0 0; font-size: 0.85rem; color: #aaa;"></p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-chevron-down" id="ponderacion-toggle-icon" style="color: #666; font-size: 0.9rem; transition: transform 0.3s;"></i>
+                            </div>
+                            <!-- CRITERIOS EXPANDIBLES -->
+                            <div id="ponderacion-criterios" style="display: none;">
+                                <!-- Se llena dinámicamente por JS -->
+                            </div>
+                            <!-- ACCIONES DE PRODUCCIÓN -->
+                            <div id="curaduria-actions" style="display: flex; gap: 10px; margin-top: 10px;"></div>
                         </div>
                         
                         <div class="detalle-scroll" style="flex-grow: 1; overflow-y: auto;">

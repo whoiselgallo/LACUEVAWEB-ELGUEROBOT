@@ -53,7 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['listar'] ?? false)) {
                 'id' => $r['id'],
                 'nombre' => $r['nombre'],
                 'created_at' => $r['created_at'],
-                'curaduria' => $curaduria
+                'curaduria' => $curaduria,
+                'ponderacion_score' => $story['ponderacion']['score_total'] ?? 0
             ];
         }
 
@@ -137,6 +138,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $reg['escaleta'] = $story['escaleta'] ?? '';
                 $reg['guion'] = $story['guion'] ?? '';
                 $reg['cue_cards'] = $story['cue_cards'] ?? '';
+                $reg['alias'] = $story['alias'] ?? '';
+                $reg['storytelling_enfoque'] = $story['storytelling_enfoque'] ?? '';
+                $reg['reto'] = $story['reto'] ?? '';
+                $reg['frase'] = $story['frase'] ?? '';
+                $reg['ponderacion'] = $story['ponderacion'] ?? ['score_total' => 0, 'criterios' => []];
                 $reg['curaduria'] = $story['curaduria'] ?? [
                     'nivel' => 'ALTO',
                     'badge' => '🟢 NIVEL ALTO',

@@ -79,14 +79,14 @@ window.switchView = switchView;
    ============================================================ */
 
 const INVITADOS_DEFAULT = [
-    { id: 1, nombre: "Leo Camacho Higuera", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Expediente de alta potencia narrativa y lealtad de barrio.' } },
-    { id: 2, nombre: "Javi Domz (jeyb)", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Director creativo de cine y TV. Storytelling visual de alto impacto.' } },
-    { id: 3, nombre: "Marcelo Ivan Maciel Maldonado", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Tribunal estatal de justicia administrativa y visión social del barrio.' } },
-    { id: 4, nombre: "Aurelio Gonzalez", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Carrocería automotriz y cultura de esfuerzo en la colonia Carbajal.' } },
-    { id: 5, nombre: "Guillermina Ayala Quiñonez", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Empleada doméstica. Historia humana conmovedora del barrio Libertad.' } },
-    { id: 6, nombre: "Sergio Rene Coronado Vega", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.' } },
-    { id: 7, nombre: "Sergio Noe Escobar Perez", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Llantero de origen hondureño. Migración, superación y trabajo honesto.' } },
-    { id: 8, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } }
+    { id: 2, nombre: "Leo Camacho Higuera", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Expediente de alta potencia narrativa y lealtad de barrio.' } },
+    { id: 3, nombre: "Javi Domz (jeyb)", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Director creativo de cine y TV. Storytelling visual de alto impacto.' } },
+    { id: 4, nombre: "Marcelo Ivan Maciel Maldonado", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Tribunal estatal de justicia administrativa y visión social del barrio.' } },
+    { id: 5, nombre: "Aurelio Gonzalez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Negocios y trayectoria comercial en la frontera desde la Carbajal.' } },
+    { id: 6, nombre: "Guillermina Ayala Quiñonez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Empleada doméstica. Historia humana conmovedora del barrio Libertad.' } },
+    { id: 7, nombre: "Sergio Rene Coronado Vega", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.' } },
+    { id: 8, nombre: "Sergio Noe Escobar Perez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Llantero hondureño. Migración, superación y trabajo honesto en la frontera.' } },
+    { id: 9, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } }
 ];
 
 async function cargarRegistros() {
@@ -134,6 +134,7 @@ function mostrarRegistros(registros) {
         const nombre = escapeHtml(reg.nombre || "Sin nombre");
         const fecha = formatDate(reg.created_at || "");
         const id = reg.id;
+        const score = reg.ponderacion_score || '';
 
         // Extraer objeto curaduría si viene en el registro
         const curaduria = reg.curaduria || { nivel: 'ALTO', badge: '🟢 ALTO', color: '#39FF14' };
@@ -144,7 +145,10 @@ function mostrarRegistros(registros) {
             <div class="registro-card" id="card-${id}" onclick="mostrarDetalle(${id})">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                     <h3 style="margin:0; font-size:1rem;">${nombre}</h3>
-                    <span style="font-size:0.75rem; font-weight:bold; color:${badgeColor}; border:1px solid ${badgeColor}; padding:2px 6px; border-radius:10px;">${badgeTag}</span>
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        ${score ? `<span style="font-weight:900; font-size:0.85rem; color:${badgeColor};">${score}</span>` : ''}
+                        <span style="font-size:0.7rem; font-weight:bold; color:${badgeColor}; border:1px solid ${badgeColor}; padding:2px 6px; border-radius:10px;">${badgeTag}</span>
+                    </div>
                 </div>
                 <p><i class="fa-regular fa-calendar-days"></i> ${fecha}</p>
             </div>
@@ -195,41 +199,89 @@ async function mostrarDetalle(id) {
             contenidoEl.classList.remove("hidden");
         }
 
-        document.getElementById("detalleNombre").textContent = escapeHtml(activeNombre);
-        document.getElementById("detalleFecha").innerHTML = `<i class="fa-regular fa-clock"></i> Creado: ${formatDate(reg.created_at)}`;
+        // TARJETA AURELIO — Nombre, Alias, Fecha
+        const nombreEl = document.getElementById("detalleNombre");
+        if (nombreEl) nombreEl.innerHTML = `<i class="fa-solid fa-clapperboard"></i> ${escapeHtml(activeNombre)}`;
+        
+        const aliasEl = document.getElementById("detalleAlias");
+        if (aliasEl) aliasEl.textContent = `Alias: ${reg.alias || activeNombre.split(' ')[0]}`;
+        
+        const fechaEl = document.getElementById("detalleFecha");
+        if (fechaEl) fechaEl.innerHTML = `<i class="fa-regular fa-clock"></i> ${formatDate(reg.created_at)}`;
 
-        // RENDERIZAR BANNER DE CURADURÍA
+        // TARJETA AURELIO — Enfoque, Reto, Frase
+        const enfoqueEl = document.getElementById("detalle-enfoque");
+        if (enfoqueEl) enfoqueEl.textContent = reg.storytelling_enfoque || 'Tema por definir durante pre-producción.';
+        
+        const retoEl = document.getElementById("detalle-reto");
+        if (retoEl) retoEl.textContent = reg.reto || 'Reto por explorar en la entrevista.';
+        
+        const fraseEl = document.getElementById("detalle-frase");
+        if (fraseEl) fraseEl.textContent = reg.frase || '"Frase pendiente de definir."';
+
+        // PONDERACIÓN DE CURADURÍA
         const curaduria = reg.curaduria || {
-            nivel: 'ALTO',
-            badge: '🟢 NIVEL ALTO',
-            formato: 'Invitado Principal al Canal',
-            color: '#39FF14',
-            razon: 'Ficha con información destacada. Aprobado para programa completo.'
+            nivel: 'ALTO', badge: '🟢 NIVEL ALTO', formato: 'Episodio Completo',
+            color: '#39FF14', razon: 'Ficha con información destacada.'
         };
+        const ponderacion = reg.ponderacion || { score_total: 0, criterios: [] };
 
-        const bannerEl = document.getElementById("curaduria-banner");
-        const badgeEl = document.getElementById("curaduria-badge");
-        const formatoEl = document.getElementById("curaduria-formato");
-        const razonEl = document.getElementById("curaduria-razon");
-        const actionsEl = document.getElementById("curaduria-actions");
-
-        if (bannerEl) bannerEl.style.borderColor = curaduria.color || '#00FFFF';
-        if (badgeEl) {
-            badgeEl.textContent = curaduria.badge;
-            badgeEl.style.color = curaduria.color;
-            badgeEl.style.borderColor = curaduria.color;
-            badgeEl.style.background = `rgba(${curaduria.nivel === 'BAJO' ? '255,0,255' : (curaduria.nivel === 'MEDIO' ? '0,255,255' : '57,255,20')}, 0.1)`;
+        // Score badge
+        const scoreBadge = document.getElementById("ponderacion-score-badge");
+        if (scoreBadge) {
+            scoreBadge.textContent = ponderacion.score_total || '0.0';
+            scoreBadge.style.color = curaduria.color || '#39FF14';
         }
-        if (formatoEl) formatoEl.textContent = curaduria.formato;
-        if (razonEl) razonEl.textContent = curaduria.razon;
 
+        // Nivel badge
+        const nivelBadge = document.getElementById("ponderacion-nivel-badge");
+        if (nivelBadge) {
+            nivelBadge.textContent = curaduria.badge || '🟢 ALTO';
+            nivelBadge.style.color = curaduria.color;
+            nivelBadge.style.borderColor = curaduria.color;
+            nivelBadge.style.background = `${curaduria.color}15`;
+        }
+
+        // Formato
+        const formatoEl = document.getElementById("ponderacion-formato");
+        if (formatoEl) formatoEl.textContent = curaduria.formato || '';
+
+        // Panel border
+        const ponderacionPanel = document.getElementById("ponderacion-panel");
+        if (ponderacionPanel) ponderacionPanel.style.borderColor = `${curaduria.color}50`;
+
+        // Renderizar criterios
+        const criteriosEl = document.getElementById("ponderacion-criterios");
+        if (criteriosEl && ponderacion.criterios && ponderacion.criterios.length > 0) {
+            let criteriosHtml = '';
+            ponderacion.criterios.forEach((c, i) => {
+                const pct = Math.round((c.score / 9) * 100);
+                const barColor = c.score >= 7 ? '#39FF14' : (c.score >= 5 ? '#00FFFF' : '#FF00FF');
+                criteriosHtml += `
+                    <div style="margin-bottom: 10px; padding: 8px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; border-left: 3px solid ${barColor};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 700; font-size: 0.8rem; color: #eee;">${i+1}. ${escapeHtml(c.nombre)}</span>
+                            <span style="font-weight: 900; font-size: 0.85rem; color: ${barColor};">${c.score}/9</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 4px; height: 6px; margin-bottom: 5px; overflow: hidden;">
+                            <div style="height: 100%; width: ${pct}%; background: ${barColor}; border-radius: 4px; box-shadow: 0 0 8px ${barColor}40; transition: width 0.5s;"></div>
+                        </div>
+                        <p style="margin: 0; font-size: 0.75rem; color: #888; line-height: 1.3;">${escapeHtml(c.justificacion)}</p>
+                    </div>
+                `;
+            });
+            criteriosEl.innerHTML = criteriosHtml;
+        }
+
+        // Acciones de producción
+        const actionsEl = document.getElementById("curaduria-actions");
         if (actionsEl) {
             if (curaduria.nivel === 'BAJO') {
-                actionsEl.innerHTML = `<button class="btn-neon btn-neon-magenta" onclick="canalizarAMicroContenido('${escapeHtml(activeNombre)}')"><i class="fa-solid fa-bolt"></i> Extraer Hooks & Shorts (30s)</button>`;
+                actionsEl.innerHTML = `<button class="btn-neon btn-neon-magenta" onclick="canalizarAMicroContenido('${escapeHtml(activeNombre)}')" style="border-color:#FF00FF;color:#FF00FF;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-bolt"></i> Extraer Hooks & Shorts (30s)</button>`;
             } else if (curaduria.nivel === 'MEDIO') {
-                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Generando guion para entrevista corta de 10 min...')"><i class="fa-solid fa-stopwatch"></i> Formato Entrevista Corta (10m)</button>`;
+                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Generando guion para entrevista corta de 10 min...')" style="border-color:#00FFFF;color:#00FFFF;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-stopwatch"></i> Formato Entrevista Corta (10m)</button>`;
             } else {
-                actionsEl.innerHTML = `<button class="btn-neon" style="border-color:#39FF14; color:#39FF14;" onclick="alert('Programa completo de 40+ min aprobado.')"><i class="fa-solid fa-star"></i> Programa Completo Aprobado</button>`;
+                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Programa completo de 40+ min aprobado.')" style="border-color:#39FF14;color:#39FF14;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-star"></i> Programa Completo Aprobado</button>`;
             }
         }
 
@@ -239,6 +291,17 @@ async function mostrarDetalle(id) {
         alert("Error cargando detalle: " + error.message);
     }
 }
+
+function togglePonderacion() {
+    const criterios = document.getElementById("ponderacion-criterios");
+    const icon = document.getElementById("ponderacion-toggle-icon");
+    if (criterios) {
+        const isHidden = criterios.style.display === 'none';
+        criterios.style.display = isHidden ? 'block' : 'none';
+        if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0)';
+    }
+}
+window.togglePonderacion = togglePonderacion;
 
 function canalizarAMicroContenido(nombre) {
     document.getElementById("hooks-topic").value = `Historias breves y frases detonadoras de ${nombre}`;
