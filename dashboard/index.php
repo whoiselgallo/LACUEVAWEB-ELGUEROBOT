@@ -1847,6 +1847,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             renderKanban();
             calculateLeads();
         });
+    </script>
     <script src="../js/dashboard-pro.js?v=<?= time() ?>"></script>
     <script src="../js/editor-canva.js?v=<?= time() ?>"></script>
     <script src="../js/avatar-engine.js?v=<?= time() ?>"></script>

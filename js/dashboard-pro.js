@@ -291,6 +291,7 @@ async function mostrarDetalle(id) {
         alert("Error cargando detalle: " + error.message);
     }
 }
+window.mostrarDetalle = mostrarDetalle;
 
 function togglePonderacion() {
     const criterios = document.getElementById("ponderacion-criterios");
@@ -304,10 +305,12 @@ function togglePonderacion() {
 window.togglePonderacion = togglePonderacion;
 
 function canalizarAMicroContenido(nombre) {
-    document.getElementById("hooks-topic").value = `Historias breves y frases detonadoras de ${nombre}`;
+    const topicEl = document.getElementById("hooks-topic");
+    if (topicEl) topicEl.value = `Historias breves y frases detonadoras de ${nombre}`;
     switchView('hooks');
-    generarHooksParaRedes();
+    if (typeof generarHooksParaRedes === 'function') generarHooksParaRedes();
 }
+window.canalizarAMicroContenido = canalizarAMicroContenido;
 
 function renderBloquesNormales() {
     const escEl = document.getElementById("wrapper-escaleta");
@@ -359,6 +362,8 @@ async function guardarEdicion(tipo) {
         alert("Error guardando edición: " + err.message);
     }
 }
+window.habilitarEdicion = habilitarEdicion;
+window.guardarEdicion = guardarEdicion;
 
 function descargarAsset(tipo) {
     if (!activeId) return;
@@ -392,24 +397,33 @@ function descargarAsset(tipo) {
     form.submit();
     document.body.removeChild(form);
 }
+window.descargarAsset = descargarAsset;
 
 function imprimirCueCards() {
     descargarAsset('cuecards');
 }
+window.imprimirCueCards = imprimirCueCards;
 
 /* ============================================================
    SECCIÓN 2: GESTOR DE BLOG (PDF CONVERSION)
    ============================================================ */
 
 function switchBlogTab(tab) {
-    document.getElementById("btn-tab-upload").classList.remove("active");
-    document.getElementById("btn-tab-edit").classList.remove("active");
-    document.getElementById(`btn-tab-${tab}`).classList.add("active");
+    const btnUp = document.getElementById("btn-tab-upload");
+    if (btnUp) btnUp.classList.remove("active");
+    const btnEd = document.getElementById("btn-tab-edit");
+    if (btnEd) btnEd.classList.remove("active");
+    const btnTarget = document.getElementById(`btn-tab-${tab}`);
+    if (btnTarget) btnTarget.classList.add("active");
 
-    document.getElementById("blog-tab-upload").classList.add("hidden");
-    document.getElementById("blog-tab-edit").classList.add("hidden");
-    document.getElementById(`blog-tab-${tab}`).classList.remove("hidden");
+    const tabUp = document.getElementById("blog-tab-upload");
+    if (tabUp) tabUp.classList.add("hidden");
+    const tabEd = document.getElementById("blog-tab-edit");
+    if (tabEd) tabEd.classList.add("hidden");
+    const tabTarget = document.getElementById(`blog-tab-${tab}`);
+    if (tabTarget) tabTarget.classList.remove("hidden");
 }
+window.switchBlogTab = switchBlogTab;
 
 let extractedTextBuffer = "";
 
