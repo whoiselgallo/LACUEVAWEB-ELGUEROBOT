@@ -8,7 +8,7 @@ set -e
 
 # ── CONFIGURACIÓN ──────────────────────────────────────────────────────
 NEON_URL="postgresql://neondb_owner:npg_eOUvM7qXj0SZ@ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require"
-CLOUD_HOST="136.64.199.83"
+CLOUD_HOST="136.114.160.76"
 CLOUD_PORT="5432"
 CLOUD_USER="postgres"
 CLOUD_DB="lacueva_db"
@@ -110,3 +110,4 @@ echo "════════════════════════�
 echo ""
 
 unset PGPASSWORD
+
