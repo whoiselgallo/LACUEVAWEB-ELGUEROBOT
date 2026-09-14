@@ -310,9 +310,12 @@ function canalizarAMicroContenido(nombre) {
 }
 
 function renderBloquesNormales() {
-    document.getElementById("wrapper-escaleta").innerHTML = `<div class="text-block" id="block-escaleta">${escapeHtml(activeData.escaleta)}</div>`;
-    document.getElementById("wrapper-guion").innerHTML = `<div class="text-block" id="block-guion">${escapeHtml(activeData.guion)}</div>`;
-    document.getElementById("wrapper-cuecards").innerHTML = `<div class="text-block" id="block-cuecards" style="background:#090911; font-family:monospace; color:#39FF14; border: 1px solid rgba(57,255,20,0.2); text-shadow:0 0 5px rgba(57,255,20,0.2);">${escapeHtml(activeData.cue_cards)}</div>`;
+    const escEl = document.getElementById("wrapper-escaleta");
+    if (escEl) escEl.innerHTML = `<div class="text-block" id="block-escaleta">${escapeHtml(activeData.escaleta)}</div>`;
+    const guiEl = document.getElementById("wrapper-guion");
+    if (guiEl) guiEl.innerHTML = `<div class="text-block" id="block-guion">${escapeHtml(activeData.guion)}</div>`;
+    const cueEl = document.getElementById("wrapper-cuecards");
+    if (cueEl) cueEl.innerHTML = `<div class="text-block" id="block-cuecards" style="background:#090911; font-family:monospace; color:#39FF14; border: 1px solid rgba(57,255,20,0.2); text-shadow:0 0 5px rgba(57,255,20,0.2);">${escapeHtml(activeData.cue_cards)}</div>`;
 }
 
 function habilitarEdicion(tipo) {

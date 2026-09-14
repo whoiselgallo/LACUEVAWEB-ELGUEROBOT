@@ -988,10 +988,23 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <span style="font-size:0.75rem; color:#666;"> Snapping Activo | 60 FPS</span>
                 </div>
                 <!-- MULTI-TRACK WINDOW -->
-                <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; position:relative; min-height:110px;">
+                <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; position:relative; min-height:140px;" id="timeline-tracks-wrapper">
                     <!-- Cabezal de reproducción rojo -->
                     <div id="timeline-progress" style="position:absolute; top:0; bottom:0; left:0; width:2px; background:#ff4d4d; z-index:10; box-shadow:0 0 8px #ff4d4d;">
                         <div style="width:10px; height:10px; background:#ff4d4d; border-radius:50%; margin-left:-4px; margin-top:-4px;"></div>
+                    </div>
+
+                    <!-- PISTA DE MARCADORES VIRALES (IA HOOKS) -->
+                    <div id="viral-markers-track" style="height:18px; position:relative; border-bottom:1px dashed rgba(255,255,255,0.1); margin-bottom:2px;">
+                        <div class="viral-marker" style="position:absolute; left:18%; top:0; background:#ffa500; color:#000; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Hook Viral Detectado por Gemini" onclick="saltarAMarcador(18)">
+                            <i class="fa-solid fa-bolt"></i> Hook 1
+                        </div>
+                        <div class="viral-marker" style="position:absolute; left:48%; top:0; background:#FF00FF; color:#fff; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Momento Picante Detectado" onclick="saltarAMarcador(48)">
+                            <i class="fa-solid fa-fire"></i> Momento Clave
+                        </div>
+                        <div class="viral-marker" style="position:absolute; left:78%; top:0; background:#00FFFF; color:#000; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Cierre Impactante" onclick="saltarAMarcador(78)">
+                            <i class="fa-solid fa-star"></i> Frase Cierre
+                        </div>
                     </div>
 
                     <!-- PISTA SUBTÍTULOS -->
@@ -999,10 +1012,10 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <i class="fa-solid fa-closed-captioning"></i> [IA Subtítulos Generados] "A los 10 años, mi papá me mandó a la calle..."
                     </div>
 
-                    <!-- PISTA VIDEO -->
-                    <div style="height:32px; background:rgba(255,0,255,0.1); border:1px solid var(--neon-magenta); border-radius:4px; font-size:0.75rem; color:#FF00FF; padding-left:10px; line-height:30px; position:relative; overflow:hidden;">
-                        <i class="fa-solid fa-video"></i> Video_Principal_Capitulo.mp4 (Premiere Multicapa Layer)
-                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(255,0,255,0.2); border-left:1px solid #FF00FF; cursor:ew-resize;"></div>
+                    <!-- PISTA VIDEO (MULTICAPA DRAGGABLE) -->
+                    <div id="track-video" class="timeline-clip-track" style="height:32px; background:rgba(255,0,255,0.12); border:1px solid var(--neon-magenta); border-radius:4px; font-size:0.75rem; color:#FF00FF; padding:0 10px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; cursor:grab;" draggable="true">
+                        <span><i class="fa-solid fa-video"></i> <span id="track-video-label">Video_Principal.mp4</span></span>
+                        <div class="clip-trim-handle" style="width:12px; height:100%; background:rgba(255,0,255,0.3); border-left:2px solid #FF00FF; cursor:ew-resize;" title="Ajustar recorte"></div>
                     </div>
 
                     <!-- PISTA AUDIO & WAVEFORM -->
@@ -1011,6 +1024,12 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                             <i class="fa-solid fa-waveform-lines"></i> Audio / Voz Waveform
                         </div>
                         <div id="waveform" style="width:100%; height:100%; z-index:2;"></div>
+                    </div>
+
+                    <!-- PISTA FX / MÚSICA DE FONDO (DRAGGABLE) -->
+                    <div id="track-fx" class="timeline-clip-track" style="height:26px; background:rgba(0,255,255,0.08); border:1px dashed #00FFFF; border-radius:4px; font-size:0.7rem; color:#00FFFF; padding:0 10px; display:flex; align-items:center; justify-content:space-between; position:relative; cursor:grab;" draggable="true">
+                        <span><i class="fa-solid fa-music"></i> Pista FX / Fondo Urbano (Beat La Cueva)</span>
+                        <div class="clip-trim-handle" style="width:10px; height:100%; background:rgba(0,255,255,0.2); border-left:1px solid #00FFFF; cursor:ew-resize;"></div>
                     </div>
                 </div>
             </div>
@@ -1828,11 +1847,11 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             renderKanban();
             calculateLeads();
         });
-    </script>
-    <script src="../js/dashboard-pro.js"></script>
-    <script src="../js/editor-canva.js"></script>
-    <script src="../js/avatar-engine.js"></script>
+    <script src="../js/dashboard-pro.js?v=<?= time() ?>"></script>
+    <script src="../js/editor-canva.js?v=<?= time() ?>"></script>
+    <script src="../js/avatar-engine.js?v=<?= time() ?>"></script>
     <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
-    <script src="../js/video-editor.js"></script>
+    <script src="../js/ffmpeg-wasm-helper.js?v=<?= time() ?>"></script>
+    <script src="../js/video-editor.js?v=<?= time() ?>"></script>
 </body>
 </html>

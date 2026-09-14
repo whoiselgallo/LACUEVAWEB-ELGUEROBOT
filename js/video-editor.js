@@ -115,6 +115,75 @@ function formatTime(secs) {
     return `${m}:${s}:${ms}`;
 }
 
+// 🎯 SALTAR A MARCADOR VIRAL EN LA LÍNEA DE TIEMPO
+function saltarAMarcador(porcentaje) {
+    const video = document.getElementById("editor-preview-video");
+    if (video && video.duration) {
+        video.currentTime = (porcentaje / 100) * video.duration;
+        const progress = document.getElementById("timeline-progress");
+        if (progress) progress.style.left = `${porcentaje}%`;
+    }
+}
+window.saltarAMarcador = saltarAMarcador;
+
+// ✂️ RECORTE RÁPIDO EN CLIENTE CON FFMPEG WASM (SIN CONSUMO EN CLOUD)
+async function recortarClipLocalmente(startTime, duration) {
+    const fileInput = document.getElementById("editor-file-input");
+    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+    if (!file) {
+        alert("Por favor selecciona un archivo de video primero.");
+        return;
+    }
+
+    alert("Iniciando recorte local con motor WebAssembly (0 minutos de CPU Cloud)...");
+    try {
+        const trimmedBlob = await window.cuevaFFmpeg.trimVideo(file, startTime, duration);
+        const video = document.getElementById("editor-preview-video");
+        if (video) {
+            video.src = URL.createObjectURL(trimmedBlob);
+            video.play();
+        }
+        alert("✓ Clip recortado localmente al instante en tu máquina.");
+    } catch (err) {
+        console.error("Error en recorte local:", err);
+        alert("No fue posible recortar con WebAssembly: " + err.message);
+    }
+}
+window.recortarClipLocalmente = recortarClipLocalmente;
+
+// 🎚️ HABILITAR DRAG & DROP EN PISTAS DEL TIMELINE
+function initTimelineDragAndDrop() {
+    const tracks = document.querySelectorAll(".timeline-clip-track");
+    tracks.forEach(track => {
+        let isDragging = false;
+        let startX = 0;
+        let initialOffset = 0;
+
+        track.addEventListener("mousedown", (e) => {
+            if (e.target.classList.contains("clip-trim-handle")) return;
+            isDragging = true;
+            startX = e.clientX;
+            initialOffset = parseInt(track.style.marginLeft || "0", 10);
+            track.style.opacity = "0.75";
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - startX;
+            const newMargin = Math.max(0, initialOffset + deltaX);
+            track.style.marginLeft = `${newMargin}px`;
+        });
+
+        window.addEventListener("mouseup", () => {
+            if (isDragging) {
+                isDragging = false;
+                track.style.opacity = "1";
+            }
+        });
+    });
+}
+document.addEventListener("DOMContentLoaded", initTimelineDragAndDrop);
+
 // 🤖 BOTONES DE ACCIÓN INTELIGENTE (IA PANEL CONECTADO A CLOUD RUN)
 function ejecutarIAVideo(accion) {
     if (accion === "Subtítulos Automáticos") {
