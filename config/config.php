@@ -63,9 +63,9 @@ define('DIFY_TIMEOUT', (int)getEnvVar('DIFY_TIMEOUT', 60));
 // BASE DE DATOS - PostgreSQL / Google Cloud SQL (eclipcss:us-central1:cueva-db-prod)
 // ═════════════════════════════════════════════════════════════════════════════════
 define('DB_HOST', getEnvVar('DB_HOST', '136.114.160.76'));
-define('DB_NAME', getEnvVar('DB_NAME', 'lacueva_db'));
+define('DB_NAME', getEnvVar('DB_NAME', 'postgres'));
 define('DB_USER', getEnvVar('DB_USER', 'postgres'));
-define('DB_PASS', getEnvVar('DB_PASS', ''));
+define('DB_PASS', getEnvVar('DB_PASS', 'eldesmadredelGuero#1'));
 define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
