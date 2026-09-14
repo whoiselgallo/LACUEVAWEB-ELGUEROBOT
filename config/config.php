@@ -60,12 +60,12 @@ define('DIFY_WORKFLOW_URL', getEnvVar('DIFY_WORKFLOW_URL', 'https://api.dify.ai/
 define('DIFY_TIMEOUT', (int)getEnvVar('DIFY_TIMEOUT', 60));
 
 // ═════════════════════════════════════════════════════════════════════════════════
-// BASE DE DATOS - PostgreSQL / Google Cloud SQL (eclipcss:us-central1:cueva-db-prod)
+// BASE DE DATOS - PostgreSQL / Neon.tech (Serverless Free - Sin Facturación GCP)
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DB_HOST', getEnvVar('DB_HOST', '136.114.160.76'));
-define('DB_NAME', getEnvVar('DB_NAME', 'postgres'));
-define('DB_USER', getEnvVar('DB_USER', 'postgres'));
-define('DB_PASS', getEnvVar('DB_PASS', 'eldesmadredelGuero#1'));
+define('DB_HOST', getEnvVar('DB_HOST', 'ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech'));
+define('DB_NAME', getEnvVar('DB_NAME', 'neondb'));
+define('DB_USER', getEnvVar('DB_USER', 'neondb_owner'));
+define('DB_PASS', getEnvVar('DB_PASS', 'npg_eOUvM7qXj0SZ'));
 define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
