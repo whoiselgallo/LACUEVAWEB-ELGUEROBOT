@@ -790,45 +790,45 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         
                         <div class="detalle-scroll" style="width: 100%;">
                             <!-- ESCALETA -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1rem;"><i class="fa-solid fa-list-check"></i> Escaleta</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1.05rem;"><i class="fa-solid fa-list-check"></i> Escaleta Técnica de Producción</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action" onclick="descargarAsset('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action" onclick="descargarAsset('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-escaleta">
-                                    <div class="text-block" id="block-escaleta" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-escaleta"></div>
                                 </div>
                             </div>
 
                             <!-- GUION -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1rem;"><i class="fa-solid fa-file-lines"></i> Guión</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1.05rem;"><i class="fa-solid fa-file-lines"></i> Guión para Set (El Güero & El Junior)</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action" onclick="descargarAsset('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action" onclick="descargarAsset('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-guion">
-                                    <div class="text-block" id="block-guion" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-guion"></div>
                                 </div>
                             </div>
 
                             <!-- CUE CARDS -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-magenta); font-size: 1rem;"><i class="fa-solid fa-address-card"></i> Cue Cards</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-green); font-size: 1.05rem;"><i class="fa-solid fa-address-card"></i> Cue Cards para Conducción</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action btn-magenta" onclick="imprimirCueCards()" style="background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px;"><i class="fa-solid fa-print"></i> Imprimir</button>
-                                        <button class="btn-action" onclick="descargarAsset('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action btn-magenta" onclick="imprimirCueCards()" style="background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px;"><i class="fa-solid fa-print"></i> Imprimir</button>
+                                        <button class="btn-action" onclick="descargarAsset('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-cuecards">
-                                    <div class="text-block" id="block-cuecards" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-cuecards"></div>
                                 </div>
                             </div>
                         </div>
