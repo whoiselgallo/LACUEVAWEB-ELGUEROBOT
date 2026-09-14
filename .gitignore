@@ -23,6 +23,8 @@ uploads/
 node_modules/
 package-lock.json
 yarn.lock
+.next/
+*.tsbuildinfo
 
 # Dependencias PHP
 vendor/

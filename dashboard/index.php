@@ -1315,7 +1315,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <!-- Live DB Test -->
                     <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(0,255,255,0.1); border-radius:10px; padding:12px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                            <strong style="font-size:0.85rem; color:#fff;">Estado Base de Datos (Neon.tech)</strong>
+                            <strong style="font-size:0.85rem; color:#fff;">Estado Base de Datos (Cloud SQL / PostgreSQL)</strong>
                             <span id="db-status-badge" style="font-size:0.65rem; color:#39FF14; border:1px solid #39FF14; padding:2px 6px; border-radius:4px; font-weight:bold;">Operativo</span>
                         </div>
                         <button class="btn-neon" onclick="testDBConnection()" style="font-size:0.75rem; padding:6px 12px; width:100%;"><i class="fa-solid fa-rotate"></i> Testear Conexión en Vivo</button>
@@ -1597,7 +1597,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
         async function testDBConnection() {
             const resultDiv = document.getElementById("db-test-result");
             const badge = document.getElementById("db-status-badge");
-            resultDiv.textContent = "> Conectando a Neon.tech en vivo...";
+            resultDiv.textContent = "> Conectando a PostgreSQL / Cloud SQL en vivo...";
             
             try {
                 const response = await fetch("../api/api-db-test.php");
@@ -1700,7 +1700,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             
             switch(fase) {
                 case 1:
-                    display.innerHTML = `<strong>1. Fase de Captación (Lead Generator):</strong><br>Los leads ingresan mediante el widget Paw Agent. La conversación se registra de forma síncrona en la tabla <code>conversations</code> de Neon PostgreSQL. Si el usuario ingresa un contacto, se genera un webhook interno.`;
+                    display.innerHTML = `<strong>1. Fase de Captación (Lead Generator):</strong><br>Los leads ingresan mediante el widget Paw Agent. La conversación se registra de forma síncrona en la tabla <code>conversations</code> de PostgreSQL. Si el usuario ingresa un contacto, se genera un webhook interno.`;
                     display.style.borderLeftColor = "var(--neon-cyan)";
                     break;
                 case 2:
