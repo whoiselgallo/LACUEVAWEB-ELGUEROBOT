@@ -89,16 +89,9 @@ function db_connect() {
             $socketPath = (strpos(DB_HOST, '/cloudsql/') === 0) ? DB_HOST : '/cloudsql/' . DB_HOST;
             $dsn = "pgsql:host={$socketPath};port=" . DB_PORT . ";dbname=" . DB_NAME;
         } elseif ($isPostgres) {
-            $neonOpt = '';
-            if (strpos(DB_HOST, 'neon.tech') !== false) {
-                $endpoint = explode('.', DB_HOST)[0];
-                $endpoint = str_replace('-pooler', '', $endpoint);
-                $neonOpt = ";options='endpoint={$endpoint}'";
-            }
             $dsn = 'pgsql:host=' . DB_HOST . 
                    ';port=' . DB_PORT . 
                    ';dbname=' . DB_NAME . 
-                   $neonOpt .
                    ';sslmode=require' .
                    ';connect_timeout=10';
         } else {
