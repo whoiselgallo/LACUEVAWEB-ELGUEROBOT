@@ -248,7 +248,116 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar Neón estilizada (Slide bar vertical) */
+        .subpanel-detalle::-webkit-scrollbar,
+        .registros-scroll::-webkit-scrollbar {
+            width: 9px;
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-track,
+        .registros-scroll::-webkit-scrollbar-track {
+            background: rgba(4, 4, 10, 0.85);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-thumb,
+        .registros-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-magenta));
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-thumb:hover,
+        .registros-scroll::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #39FF14, var(--neon-cyan));
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.7);
+        }
+
+        /* Estilos expandidos y legibles para Escaleta, Guion y Cue Cards */
+        .seccion-asset {
+            margin-bottom: 22px;
+            background: rgba(8, 8, 18, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 22px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .seccion-asset:hover {
+            border-color: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 6px 25px rgba(0, 255, 255, 0.15);
+        }
+
+        .text-block {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 18px 20px;
+            color: #ececf3;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Outfit', sans-serif;
+            min-height: 120px;
+        }
+
+        #block-cuecards {
+            background: #06060e !important;
+            font-family: 'Consolas', 'Courier New', monospace !important;
+            color: #39FF14 !important;
+            border: 1px solid rgba(57, 255, 20, 0.35) !important;
+            text-shadow: 0 0 6px rgba(57, 255, 20, 0.3) !important;
+            font-size: 0.92rem !important;
+            letter-spacing: 0.5px;
+            line-height: 1.7 !important;
+            min-height: 150px;
+        }
+
+        .edit-textarea {
+            width: 100%;
+            min-height: 240px;
+            background: #06060e;
+            color: #fff;
+            border: 1px solid var(--neon-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+        }
+
+        .btn-save-edit {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: var(--neon-cyan);
+            color: #06060c;
+            border: none;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-save-edit:hover {
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transform: translateY(-2px);
         }
 
         /* TABS Y PANELES GENERALES */
@@ -617,7 +726,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <p>Selecciona un registro para visualizar y realizar ajustes manuales.</p>
                     </div>
                     
-                    <div class="detalle-contenido hidden" id="detalleContenido" style="display: flex; flex-direction: column; height: 100%;">
+                    <div class="detalle-contenido hidden" id="detalleContenido" style="display: flex; flex-direction: column; width: 100%;">
                         <!-- TARJETA TIPO AURELIO — CABECERA -->
                         <div id="tarjeta-aurelio" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(0,255,255,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
@@ -679,7 +788,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                             <div id="curaduria-actions" style="display: flex; gap: 10px; margin-top: 10px;"></div>
                         </div>
                         
-                        <div class="detalle-scroll" style="flex-grow: 1; overflow-y: auto;">
+                        <div class="detalle-scroll" style="width: 100%;">
                             <!-- ESCALETA -->
                             <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
                                 <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
