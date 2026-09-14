@@ -1005,10 +1005,12 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(255,0,255,0.2); border-left:1px solid #FF00FF; cursor:ew-resize;"></div>
                     </div>
 
-                    <!-- PISTA AUDIO -->
-                    <div style="height:28px; background:rgba(78,252,34,0.1); border:1px solid #4EFC22; border-radius:4px; font-size:0.75rem; color:#4EFC22; padding-left:10px; line-height:26px; position:relative; overflow:hidden;">
-                        <i class="fa-solid fa-music"></i> Audio_Episodio_Mejorado.wav (Filmora Sync Auto)
-                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(78,252,34,0.2); border-left:1px solid #4EFC22; cursor:ew-resize;"></div>
+                    <!-- PISTA AUDIO & WAVEFORM -->
+                    <div id="track-audio" style="height:44px; background:rgba(78,252,34,0.06); border:1px solid #4EFC22; border-radius:6px; position:relative; overflow:hidden; display:flex; align-items:center;">
+                        <div style="position:absolute; left:8px; top:4px; z-index:3; font-size:0.7rem; color:#4EFC22; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:4px; pointer-events:none;">
+                            <i class="fa-solid fa-waveform-lines"></i> Audio / Voz Waveform
+                        </div>
+                        <div id="waveform" style="width:100%; height:100%; z-index:2;"></div>
                     </div>
                 </div>
             </div>
@@ -1830,6 +1832,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <script src="../js/dashboard-pro.js"></script>
     <script src="../js/editor-canva.js"></script>
     <script src="../js/avatar-engine.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
     <script src="../js/video-editor.js"></script>
 </body>
 </html>

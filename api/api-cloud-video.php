@@ -169,6 +169,77 @@ switch ($action) {
         exit();
 
     // -------------------------------------------------------------------------
+    // 3.1. STREAMING EN TIEMPO REAL CON SERVER-SENT EVENTS (SSE)
+    // -------------------------------------------------------------------------
+    case 'stream-logs':
+        $jobId = sanitize_input($_GET['job_id'] ?? ($data['job_id'] ?? ''));
+        $jobFile = "{$jobsDir}/{$jobId}.json";
+
+        // Cabeceras SSE estándar
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        header('Connection: keep-alive');
+        header('X-Accel-Buffering: no'); // Para servidores Nginx / Reverse Proxy
+
+        if (!file_exists($jobFile)) {
+            echo "event: error\n";
+            echo "data: " . json_encode(['message' => 'Trabajo no encontrado.']) . "\n\n";
+            ob_flush();
+            flush();
+            exit();
+        }
+
+        $lastSentIndex = 0;
+        $maxSeconds = 120; // Tiempo máximo de conexión continua
+        $startTime = time();
+
+        // Enviar evento inicial de conexión
+        echo "event: open\n";
+        echo "data: " . json_encode(['job_id' => $jobId, 'connected_at' => date('Y-m-d H:i:s')]) . "\n\n";
+        ob_flush();
+        flush();
+
+        while ((time() - $startTime) < $maxSeconds) {
+            clearstatcache(true, $jobFile);
+            if (file_exists($jobFile)) {
+                $meta = json_decode(file_get_contents($jobFile), true);
+                $logs = $meta['logs'] ?? [];
+                $status = $meta['status'] ?? 'unknown';
+
+                // Transmitir nuevos logs acumulados
+                while ($lastSentIndex < count($logs)) {
+                    $logLine = $logs[$lastSentIndex];
+                    echo "event: log\n";
+                    echo "data: " . json_encode([
+                        'index' => $lastSentIndex,
+                        'log' => $logLine,
+                        'status' => $status
+                    ], JSON_UNESCAPED_UNICODE) . "\n\n";
+                    $lastSentIndex++;
+                    ob_flush();
+                    flush();
+                }
+
+                // Si el trabajo finalizó o falló, enviar evento de cierre
+                if ($status === 'completed' || $status === 'failed') {
+                    echo "event: status\n";
+                    echo "data: " . json_encode([
+                        'status' => $status,
+                        'result_file' => $meta['result_file'] ?? '',
+                        'output_uri' => $meta['output_uri'] ?? ''
+                    ]) . "\n\n";
+                    ob_flush();
+                    flush();
+                    break;
+                }
+            }
+
+            usleep(250000); // 250ms de pausa para baja carga de CPU
+        }
+
+        exit();
+
+    // -------------------------------------------------------------------------
     // 4. WEBHOOK: RECIBE LOGS Y ESTADO DESDE EL CONTENEDOR (worker.py)
     // -------------------------------------------------------------------------
     case 'webhook':

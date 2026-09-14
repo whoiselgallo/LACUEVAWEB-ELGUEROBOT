@@ -47,6 +47,47 @@ function initVideoEditor() {
     // Escuchar el input de subida de video del editor
     const fileInput = document.getElementById("editor-file-input");
     if (fileInput) {
+let activeWaveSurfer = null;
+
+function initWaveSurferInstance(mediaUrlOrElement) {
+    const container = document.getElementById("waveform");
+    if (!container || typeof WaveSurfer === "undefined") return;
+
+    if (activeWaveSurfer) {
+        activeWaveSurfer.destroy();
+        activeWaveSurfer = null;
+    }
+
+    try {
+        const video = document.getElementById("editor-preview-video");
+        activeWaveSurfer = WaveSurfer.create({
+            container: '#waveform',
+            waveColor: '#4EFC22',
+            progressColor: '#00FFFF',
+            cursorColor: '#ff4d4d',
+            cursorWidth: 2,
+            height: 38,
+            barWidth: 2,
+            barGap: 1,
+            barRadius: 2,
+            normalize: true,
+            media: video || undefined
+        });
+
+        if (typeof mediaUrlOrElement === "string" && !video) {
+            activeWaveSurfer.load(mediaUrlOrElement);
+        }
+
+        activeWaveSurfer.on('seeking', (currentTime) => {
+            if (video && Math.abs(video.currentTime - currentTime) > 0.1) {
+                video.currentTime = currentTime;
+            }
+        });
+    } catch (e) {
+        console.warn("WaveSurfer no pudo inicializarse:", e);
+    }
+}
+
         fileInput.addEventListener("change", (e) => {
             const file = e.target.files[0];
             if (file) {
@@ -59,6 +100,8 @@ function initVideoEditor() {
                 if (nameDisplay) {
                     nameDisplay.textContent = file.name;
                 }
+                // Inicializar onda de audio WaveSurfer
+                initWaveSurferInstance(url);
                 alert(`Archivo "${file.name}" cargado en la biblioteca y la línea de tiempo.`);
             }
         });
@@ -376,63 +419,85 @@ function ejecutarLimpiezaIA(accion, extraParams = {}) {
             let printedLogsCount = 0;
 
             // 2. Iniciar Polling de Logs y Estado
-            activePollingInterval = setInterval(() => {
-                fetch(`../api/api-cloud-video.php?action=job-status&job_id=${jobId}`)
-                    .then(r => r.json())
-                    .then(res => {
-                        if (res.status === 'success' && res.job) {
-                            const job = res.job;
-                            const logs = job.logs || [];
+            // CONECTAR STREAMING EN TIEMPO REAL CON SERVER-SENT EVENTS (SSE)
+            statusText.textContent = "Estado: Conectando stream de logs en tiempo real...";
+            
+            if (activeEventSource) {
+                activeEventSource.close();
+                activeEventSource = null;
+            }
 
-                            // Imprimir nuevos logs
-                            while (printedLogsCount < logs.length) {
-                                const line = document.createElement("div");
-                                const logText = logs[printedLogsCount];
-                                line.textContent = `> ${logText}`;
+            const sseUrl = `../api/api-cloud-video.php?action=stream-logs&job_id=${jobId}`;
+            const es = new EventSource(sseUrl);
+            activeEventSource = es;
 
-                                if (logText.includes("[FFmpeg]")) {
-                                    line.style.color = "var(--neon-cyan)";
-                                } else if (logText.includes("[Gemini Flash]") || logText.includes("[Subtítulos]")) {
-                                    line.style.color = "var(--neon-magenta)";
-                                } else if (logText.includes("[Cloud Run]") || logText.includes("[Auto-Editor]")) {
-                                    line.style.color = "#ffa500";
-                                } else if (logText.includes("[Storage]")) {
-                                    line.style.color = "#39FF14";
-                                } else if (logText.includes("[Error]")) {
-                                    line.style.color = "#ff4d4d";
-                                }
+            es.addEventListener("open", () => {
+                statusText.textContent = "Estado: Conectado vía SSE (Cero Latencia)";
+            });
 
-                                screen.appendChild(line);
-                                screen.scrollTop = screen.scrollHeight;
-                                printedLogsCount++;
+            es.addEventListener("log", (e) => {
+                try {
+                    const parsed = JSON.parse(e.data);
+                    const logText = parsed.log || '';
+                    const line = document.createElement("div");
+                    line.textContent = `> ${logText}`;
+
+                    if (logText.includes("[FFmpeg]")) {
+                        line.style.color = "var(--neon-cyan)";
+                    } else if (logText.includes("[Gemini Flash]") || logText.includes("[Subtítulos]")) {
+                        line.style.color = "var(--neon-magenta)";
+                    } else if (logText.includes("[Cloud Run]") || logText.includes("[Auto-Editor]")) {
+                        line.style.color = "#ffa500";
+                    } else if (logText.includes("[Storage]")) {
+                        line.style.color = "#39FF14";
+                    } else if (logText.includes("[Error]")) {
+                        line.style.color = "#ff4d4d";
+                    }
+
+                    screen.appendChild(line);
+                    screen.scrollTop = screen.scrollHeight;
+
+                    if (parsed.status === 'running') {
+                        statusText.textContent = "Estado: Procesando en Cloud Run Job...";
+                    }
+                } catch (err) {
+                    console.error("Error parseando log SSE:", err);
+                }
+            });
+
+            es.addEventListener("status", (e) => {
+                try {
+                    const res = JSON.parse(e.data);
+                    if (res.status === 'completed') {
+                        statusText.textContent = "Estado: ¡Completado exitosamente en GCP!";
+                        acceptBtn.style.display = "block";
+                        acceptBtn.innerHTML = `<i class="fa-solid fa-check"></i> Cargar Resultado (${res.result_file})`;
+
+                        acceptBtn.onclick = () => {
+                            cerrarConsolaEditor();
+                            const nameDisplay = document.getElementById("editor-project-name");
+                            if (nameDisplay && res.result_file) {
+                                nameDisplay.textContent = res.result_file;
                             }
+                            alert(`¡Video "${res.result_file}" procesado y listo en la línea de tiempo!`);
+                        };
+                    } else if (res.status === 'failed') {
+                        statusText.textContent = "Estado: Error en la ejecución de GCP";
+                    }
+                    es.close();
+                    activeEventSource = null;
+                } catch (err) {
+                    console.error("Error en evento de status SSE:", err);
+                }
+            });
 
-                            if (job.status === 'running') {
-                                statusText.textContent = "Estado: Procesando en Cloud Run Job...";
-                            } else if (job.status === 'completed') {
-                                clearInterval(activePollingInterval);
-                                activePollingInterval = null;
-                                statusText.textContent = "Estado: ¡Completado exitosamente en GCP!";
-                                acceptBtn.style.display = "block";
-                                acceptBtn.innerHTML = `<i class="fa-solid fa-check"></i> Cargar Resultado (${job.result_file})`;
-
-                                acceptBtn.onclick = () => {
-                                    cerrarConsolaEditor();
-                                    const nameDisplay = document.getElementById("editor-project-name");
-                                    if (nameDisplay) {
-                                        nameDisplay.textContent = job.result_file;
-                                    }
-                                    alert(`¡Video "${job.result_file}" procesado y listo en la línea de tiempo!`);
-                                };
-                            } else if (job.status === 'failed') {
-                                clearInterval(activePollingInterval);
-                                activePollingInterval = null;
-                                statusText.textContent = "Estado: Error en la ejecución de GCP";
-                            }
-                        }
-                    })
-                    .catch(() => {});
-            }, 1200);
+            es.addEventListener("error", (e) => {
+                // Fallback automático a polling si el navegador o proxy rechaza SSE
+                console.warn("SSE desconectado o no soportado, activando fallback a polling:", e);
+                es.close();
+                activeEventSource = null;
+                iniciarPollingFallback(jobId, screen, statusText, acceptBtn);
+            });
 
         } else {
             screen.innerHTML += `<div style="color:#ff4d4d;">> Error: ${data.message}</div>`;
@@ -443,6 +508,54 @@ function ejecutarLimpiezaIA(accion, extraParams = {}) {
         screen.innerHTML += `<div style="color:#ff4d4d;">> Error de conexión con el Dispatcher de Cloud Run: ${err.message}</div>`;
         statusText.textContent = "Estado: Error de Red";
     });
+}
+
+function iniciarPollingFallback(jobId, screen, statusText, acceptBtn) {
+    if (activePollingInterval) clearInterval(activePollingInterval);
+    let printedLogsCount = 0;
+
+    activePollingInterval = setInterval(() => {
+        fetch(`../api/api-cloud-video.php?action=job-status&job_id=${jobId}`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.status === 'success' && res.job) {
+                    const job = res.job;
+                    const logs = job.logs || [];
+
+                    while (printedLogsCount < logs.length) {
+                        const line = document.createElement("div");
+                        const logText = logs[printedLogsCount];
+                        line.textContent = `> ${logText}`;
+                        if (logText.includes("[FFmpeg]")) line.style.color = "var(--neon-cyan)";
+                        else if (logText.includes("[Gemini Flash]")) line.style.color = "var(--neon-magenta)";
+                        else if (logText.includes("[Cloud Run]")) line.style.color = "#ffa500";
+                        else if (logText.includes("[Storage]")) line.style.color = "#39FF14";
+                        else if (logText.includes("[Error]")) line.style.color = "#ff4d4d";
+
+                        screen.appendChild(line);
+                        screen.scrollTop = screen.scrollHeight;
+                        printedLogsCount++;
+                    }
+
+                    if (job.status === 'completed') {
+                        clearInterval(activePollingInterval);
+                        activePollingInterval = null;
+                        statusText.textContent = "Estado: ¡Completado exitosamente en GCP!";
+                        acceptBtn.style.display = "block";
+                        acceptBtn.innerHTML = `<i class="fa-solid fa-check"></i> Cargar Resultado (${job.result_file})`;
+                        acceptBtn.onclick = () => {
+                            cerrarConsolaEditor();
+                            alert(`¡Video "${job.result_file}" procesado!`);
+                        };
+                    } else if (job.status === 'failed') {
+                        clearInterval(activePollingInterval);
+                        activePollingInterval = null;
+                        statusText.textContent = "Estado: Error en la ejecución de GCP";
+                    }
+                }
+            })
+            .catch(() => {});
+    }, 1500);
 }
 
 function cerrarConsolaEditor() {
