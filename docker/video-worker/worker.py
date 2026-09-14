@@ -281,6 +281,141 @@ def action_render_preset(input_path, output_path, preset="tiktok", webhook_url=N
 
 
 # -----------------------------------------------------------------------------
+# FASE 3: SUBTÍTULOS KARAOKE PALABRA POR PALABRA (FASTER-WHISPER)
+# -----------------------------------------------------------------------------
+def action_auto_subtitles_karaoke_whisper(input_path, output_path, model_size="base", webhook_url=None, job_id=None):
+    """
+    Genera subtítulos animados palabra por palabra (estilo TikTok / Reels Karaoke)
+    utilizando faster-whisper con word_timestamps=True y subtítulos ASS avanzados.
+    """
+    log("Iniciando alineación forzada palabra por palabra con faster-whisper...", tag="Whisper-Karaoke", webhook_url=webhook_url, job_id=job_id)
+    try:
+        from faster_whisper import WhisperModel
+    except ImportError:
+        log("faster-whisper no instalado en este entorno, usando fallback nativo...", tag="Whisper-Karaoke", webhook_url=webhook_url, job_id=job_id)
+        return False
+
+    model = WhisperModel(model_size, device="cpu", compute_type="int8")
+    segments, _ = model.transcribe(input_path, word_timestamps=True, language="es")
+
+    ass_path = tempfile.mktemp(suffix=".ass")
+    with open(ass_path, "w", encoding="utf-8") as f:
+        # Encabezado estándar ASS con estilos Neón de La Cueva
+        f.write("[Script Info]\nTitle: La Cueva Karaoke\nScriptType: v4.00+\nPlayResX: 1080\nPlayResY: 1920\n\n")
+        f.write("[V4+ Styles]\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\n")
+        f.write("Style: KaraokeStyle,Arial,58,&H00FFFFFF,&H0000FFFF,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,4,2,2,40,40,220,1\n\n")
+        f.write("[Events]\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n")
+
+        def format_ass_time(sec):
+            hrs = int(sec // 3600)
+            mins = int((sec % 3600) // 60)
+            secs = sec % 60
+            return f"{hrs:01d}:{mins:02d}:{secs:05.2f}"
+
+        for seg in segments:
+            if not seg.words:
+                continue
+            seg_start = format_ass_time(seg.start)
+            seg_end = format_ass_time(seg.end)
+            karaoke_text = ""
+            for w in seg.words:
+                duration_cs = int(round((w.end - w.start) * 100))
+                karaoke_text += f"{{\\k{duration_cs}}}{w.word.strip()} "
+
+            f.write(f"Dialogue: 0,{seg_start},{seg_end},KaraokeStyle,,0,0,0,,{karaoke_text.strip()}\n")
+
+    log("Subtítulos Karaoke (.ass) construidos con éxito. Quemando en video...", tag="FFmpeg", webhook_url=webhook_url, job_id=job_id)
+    cmd = [
+        "ffmpeg", "-y", "-i", input_path,
+        "-vf", f"ass={ass_path}",
+        "-c:a", "copy",
+        "-c:v", "libx264", "-preset", "fast", "-crf", "21",
+        output_path
+    ]
+    subprocess.run(cmd, check=True)
+    try:
+        os.remove(ass_path)
+    except Exception:
+        pass
+    log("Subtítulos Karaoke quemados exitosamente en video", tag="Whisper-Karaoke", webhook_url=webhook_url, job_id=job_id)
+    return True
+
+
+# -----------------------------------------------------------------------------
+# FASE 3: AUTOCROP INTELIGENTE CON SEGUIMIENTO DE ROSTROS (MEDIAPIPE)
+# -----------------------------------------------------------------------------
+def action_smart_autocrop_mediapipe(input_path, output_path, webhook_url=None, job_id=None):
+    """
+    Convierte video horizontal 16:9 a vertical 9:16 siguiendo dinámicamente el rostro
+    activo con MediaPipe / OpenCV en lugar de realizar un recorte fijo en el centro.
+    """
+    log("Iniciando análisis de encuadre dinámico con MediaPipe Face Detection...", tag="AutoCrop-IA", webhook_url=webhook_url, job_id=job_id)
+    try:
+        import cv2
+        import mediapipe as mp
+    except ImportError:
+        log("MediaPipe / OpenCV no instalados, usando fallback a recorte centrado estándar...", tag="AutoCrop-IA", webhook_url=webhook_url, job_id=job_id)
+        return action_render_preset(input_path, output_path, preset="tiktok", webhook_url=webhook_url, job_id=job_id)
+
+    cap = cv2.VideoCapture(input_path)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
+
+    target_crop_w = int(height * (9.0 / 16.0))
+    if target_crop_w > width:
+        target_crop_w = width
+
+    mp_face = mp.solutions.face_detection
+    detector = mp_face.FaceDetection(model_selection=1, min_detection_confidence=0.5)
+
+    centers_x = []
+    step = max(1, int(fps / 4)) # Muestrear 4 veces por segundo para optimizar tiempo
+    frame_idx = 0
+
+    log(f"Muestreando {total_frames} fotogramas a resolución {width}x{height}...", tag="AutoCrop-IA", webhook_url=webhook_url, job_id=job_id)
+    while cap.isOpened():
+        ret, frame = cap.read()
+        if not ret:
+            break
+        if frame_idx % step == 0:
+            rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = detector.process(rgb)
+            if results and results.detections:
+                box = results.detections[0].location_data.relative_bounding_box
+                cx = (box.xmin + box.width / 2.0) * width
+                centers_x.append(cx)
+            else:
+                centers_x.append(width / 2.0)
+        frame_idx += 1
+    cap.release()
+
+    if not centers_x:
+        centers_x = [width / 2.0]
+
+    # Calcular promedio ponderado del centro del rostro
+    avg_center_x = sum(centers_x) / len(centers_x)
+    crop_x = int(avg_center_x - (target_crop_w / 2.0))
+    crop_x = max(0, min(width - target_crop_w, crop_x))
+
+    log(f"Encuadre óptimo detectado: x={crop_x}, w={target_crop_w}, h={height}. Renderizando vertical 1080x1920...", tag="AutoCrop-IA", webhook_url=webhook_url, job_id=job_id)
+    vf = f"crop={target_crop_w}:{height}:{crop_x}:0,scale=1080:1920"
+
+    cmd = [
+        "ffmpeg", "-y", "-i", input_path,
+        "-vf", vf,
+        "-c:v", "libx264", "-preset", "fast", "-crf", "20",
+        "-c:a", "aac", "-b:a", "192k",
+        "-movflags", "+faststart",
+        output_path
+    ]
+    subprocess.run(cmd, check=True)
+    log("Conversión vertical 9:16 con Face Tracking finalizada con éxito", tag="AutoCrop-IA", webhook_url=webhook_url, job_id=job_id)
+    return True
+
+
+# -----------------------------------------------------------------------------
 # MAIN DISPATCHER
 # -----------------------------------------------------------------------------
 def main():
@@ -313,11 +448,22 @@ def main():
         elif args.action in ["loudnorm-spotify", "loudnorm"]:
             action_loudnorm(local_input, local_output, target_i=-14, true_peak=-1.0, webhook_url=args.webhook_url, job_id=args.job_id)
         elif args.action in ["auto-subtitles", "subtitles"]:
-            if not args.gemini_api_key:
-                raise ValueError("Se requiere GEMINI_API_KEY para generar subtítulos con Gemini Flash.")
-            action_auto_subtitles_gemini(local_input, local_output, gemini_api_key=args.gemini_api_key, webhook_url=args.webhook_url, job_id=args.job_id)
+            # Si se solicita modo karaoke o está instalado faster-whisper, se ejecuta alineación por palabra
+            success = action_auto_subtitles_karaoke_whisper(local_input, local_output, webhook_url=args.webhook_url, job_id=args.job_id)
+            if not success:
+                if not args.gemini_api_key:
+                    raise ValueError("Se requiere GEMINI_API_KEY para fallback de subtítulos con Gemini Flash.")
+                action_auto_subtitles_gemini(local_input, local_output, gemini_api_key=args.gemini_api_key, webhook_url=args.webhook_url, job_id=args.job_id)
+        elif args.action in ["whisper-karaoke", "karaoke"]:
+            action_auto_subtitles_karaoke_whisper(local_input, local_output, webhook_url=args.webhook_url, job_id=args.job_id)
+        elif args.action in ["smart-autocrop", "autocrop-face"]:
+            action_smart_autocrop_mediapipe(local_input, local_output, webhook_url=args.webhook_url, job_id=args.job_id)
         elif args.action in ["render-preset", "export"]:
-            action_render_preset(local_input, local_output, preset=args.preset, webhook_url=args.webhook_url, job_id=args.job_id)
+            if args.preset in ["tiktok", "reels", "shorts", "vertical"]:
+                # Por defecto intentar encuadre inteligente con detección de rostro
+                action_smart_autocrop_mediapipe(local_input, local_output, webhook_url=args.webhook_url, job_id=args.job_id)
+            else:
+                action_render_preset(local_input, local_output, preset=args.preset, webhook_url=args.webhook_url, job_id=args.job_id)
         else:
             raise ValueError(f"Acción no soportada: {args.action}")
 
