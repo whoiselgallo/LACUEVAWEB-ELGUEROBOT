@@ -1358,6 +1358,21 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <button class="btn-neon" onclick="agregarTextoLienzo()" style="width:100%; font-size:0.75rem; padding:8px;"><i class="fa-solid fa-plus"></i> Añadir Capa de Texto</button>
                     </div>
 
+                    <!-- SMART TYPOGRAPHY & THE DARKROOM BUTTONS -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; display:flex; flex-direction:column; gap:6px;">
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; padding:8px; border-color:var(--neon-magenta); color:var(--neon-magenta);" onclick="generarPosterAutomatico('youtube-hero')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Poster Automático (Smart Typography)
+                        </button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-neon" style="flex:1; font-size:0.7rem; padding:6px;" onclick="guardarSesionDarkroom()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Sesión
+                            </button>
+                            <button class="btn-neon" style="flex:1; font-size:0.7rem; padding:6px; border-color:#39FF14; color:#39FF14;" onclick="exportarEstandarizadoDarkroom()">
+                                <i class="fa-solid fa-layer-group"></i> Exportar 3 Formatos
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- DESCARGAR/LIMPIAR -->
                     <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; display:flex; flex-direction:column; gap:8px;">
                         <div style="display:flex; gap:8px;">
@@ -1957,6 +1972,7 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             calculateLeads();
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="../js/dashboard-pro.js?v=<?= time() ?>"></script>
     <script src="../js/editor-canva.js?v=<?= time() ?>"></script>
     <script src="../js/avatar-engine.js?v=<?= time() ?>"></script>

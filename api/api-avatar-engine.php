@@ -158,45 +158,83 @@ try {
     }
 
     // -----------------------------------------------------------------------------
-    // ACCIÓN: GENERAR AVATAR HUMANOIDE AISLADO (COMIC NEÓN)
+    // ACCIÓN: GENERAR AVATAR V2 - INYECCIÓN BIOMÉTRICA (FLUX.1 + IP-ADAPTER + REMBG)
     // -----------------------------------------------------------------------------
-    if ($action === 'generate') {
+    if ($action === 'generate-v2' || $action === 'generate') {
         $nombre = sanitize_input($input['nombre'] ?? 'El Güero');
-        $actividad = sanitize_input($input['actividad'] ?? 'sentado');
-        $ropa = sanitize_input($input['ropa'] ?? 'casual');
+        $actividad = sanitize_input($input['actividad'] ?? 'sentado en el estudio');
+        $ropa = sanitize_input($input['ropa'] ?? 'casual streetwear');
+        $ipAdapterWeight = isset($input['ip_adapter_weight']) ? (float)$input['ip_adapter_weight'] : 0.85;
 
-        // Buscar rasgos base en la BD
+        // 1. Recuperar perfil biométrico y fotos desde Neon PostgreSQL
         $stmt = $db->prepare("SELECT * FROM avatars WHERE LOWER(nombre) = LOWER(?)");
         $stmt->execute([$nombre]);
         $profile = $stmt->fetch(PDO::FETCH_ASSOC);
 
+        $fotoFrente = $profile['foto_frente'] ?? '';
+        $avatarId = $profile['id'] ?? null;
         $rasgos = $profile['rasgos_faciales'] ?? "Personaje icónico de La Cueva del Güero";
 
-        // Prompt altamente exigente para lograr un estilo de logotipo vectorial / mascota limpia
-        $promptConsolidado = "Premium flat vector logo, mascot design of '$nombre', $actividad pose, wearing $ropa outfit. Style: bold outline, clean SVG paths, solid flat colors, highly detailed cartoon character, neon cyber-punk accents, $rasgos. STRICT RULES: Isolated on solid transparent white background, zero drop shadows, no gradients in background, no table, no microphone, no chair, 2d vector icon, sticker aesthetic, no photorealism, professional branding design.";
+        // 2. Construir Prompt de Estilo Vectorial Neón (sin describir la cara, la cara la inyecta el tensor)
+        $promptHibrido = "Premium 2d vector art, mascot logo style of {$nombre}, {$actividad} in a podcast studio, wearing {$ropa}. Vibrant cyberpunk neon lighting (cyan and magenta accents), bold clean outlines, solid flat colors, highly detailed sticker aesthetic, dynamic shading, Mexicali street style.";
+        $negativePrompt = "photorealistic, 3d render, blurry, messy lines, text, watermarks, distorted face, low quality";
 
-        // Mapear a imágenes locales si existe coincidencia exacta
-        $avatarUrl = '';
-        $lowerNombre = strtolower($nombre);
-        $lowerActividad = strtolower($actividad);
+        $replicateToken = getEnvVar('REPLICATE_API_TOKEN', '');
+        $generatedUrl = '';
+        $isBiometricInjected = false;
 
-        if ((strpos($lowerNombre, 'barraza') !== false || strpos($lowerNombre, 'perro') !== false) && strpos($lowerActividad, 'pie') !== false) {
-            // Devuelve la imagen pre-procesada de pie
-            $avatarUrl = '../images/avatar-alan-barraza.png';
-        } else {
-            // Intentar usar Google Imagen 3 via Gemini API (Nano Banana) si la clave existe
+        // 3. Ejecución en Replicate (Flux.1 Dev + IP-Adapter) si existe token
+        if (!empty($replicateToken) && !empty($fotoFrente) && $fotoFrente !== 'registrado') {
+            try {
+                $replicatePayload = [
+                    'version' => 'black-forest-labs/flux-dev',
+                    'input' => [
+                        'prompt' => $promptHibrido,
+                        'negative_prompt' => $negativePrompt,
+                        'image' => $fotoFrente, // Foto frente Base64 o URL
+                        'ip_adapter_weight' => $ipAdapterWeight,
+                        'num_inference_steps' => 28,
+                        'output_format' => 'png'
+                    ]
+                ];
+
+                $ch = curl_init('https://api.replicate.com/v1/predictions');
+                curl_setopt_array($ch, [
+                    CURLOPT_POST => true,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_HTTPHEADER => [
+                        'Authorization: Bearer ' . $replicateToken,
+                        'Content-Type: application/json',
+                        'Prefer: wait'
+                    ],
+                    CURLOPT_POSTFIELDS => json_encode($replicatePayload),
+                    CURLOPT_TIMEOUT => 60
+                ]);
+                $repResponse = curl_exec($ch);
+                curl_close($ch);
+                $repData = json_decode($repResponse, true);
+
+                if (isset($repData['output'])) {
+                    $output = $repData['output'];
+                    $generatedUrl = is_array($output) ? $output[0] : $output;
+                    $isBiometricInjected = true;
+                }
+            } catch (Exception $e) {
+                error_log("Replicate IP-Adapter error: " . $e->getMessage());
+            }
+        }
+
+        // Fallback a Google Imagen 3 si no se usó Replicate
+        if (empty($generatedUrl)) {
             $geminiApiKey = get_gemini_api_key() ?: getEnvVar('GOOGLE_API_KEY');
-            $generatedSuccessfully = false;
-
             if (!empty($geminiApiKey)) {
                 $ch = curl_init("https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:generateImages?key=" . $geminiApiKey);
                 $payload = [
-                    'prompt' => $promptConsolidado,
+                    'prompt' => $promptHibrido . " STRICT RULES: Isolated on transparent white background, mascot sticker vector, bold outlines, no background elements.",
                     'numberOfImages' => 1,
                     'outputMimeType' => 'image/png',
                     'aspectRatio' => '1:1'
                 ];
-                
                 curl_setopt_array($ch, [
                     CURLOPT_POST => true,
                     CURLOPT_RETURNTRANSFER => true,
@@ -204,45 +242,115 @@ try {
                     CURLOPT_POSTFIELDS => json_encode($payload),
                     CURLOPT_TIMEOUT => 35
                 ]);
-                
                 $response = curl_exec($ch);
-                $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                 curl_close($ch);
-                
-                if ($http_code === 200) {
-                    $resData = json_decode($response, true);
-                    if (isset($resData['generatedImages'][0]['image']['imageBytes'])) {
-                        $imgData = base64_decode($resData['generatedImages'][0]['image']['imageBytes']);
-                        $avatarDir = __DIR__ . '/../images/avatars';
-                        if (!is_dir($avatarDir)) {
-                            @mkdir($avatarDir, 0755, true);
-                        }
-                        $filename = 'avatar_' . uniqid() . '.png';
-                        if (file_put_contents($avatarDir . '/' . $filename, $imgData)) {
-                            $avatarUrl = 'images/avatars/' . $filename;
-                            $generatedSuccessfully = true;
-                        }
-                    }
+                $resData = json_decode($response, true);
+                if (isset($resData['generatedImages'][0]['image']['imageBytes'])) {
+                    $imgData = base64_decode($resData['generatedImages'][0]['image']['imageBytes']);
+                    $avatarDir = __DIR__ . '/../images/avatars';
+                    if (!is_dir($avatarDir)) @mkdir($avatarDir, 0755, true);
+                    $filename = 'avatar_' . uniqid() . '.png';
+                    file_put_contents($avatarDir . '/' . $filename, $imgData);
+                    $generatedUrl = 'images/avatars/' . $filename;
                 }
-            }
-
-            // Fallback a Pollinations.ai si no hay API Key o falla el request
-            if (!$generatedSuccessfully) {
-                $encodedPrompt = urlencode($promptConsolidado);
-                $avatarUrl = "https://image.pollinations.ai/prompt/{$encodedPrompt}?width=800&height=800&nologo=true&private=true&enhance=true";
             }
         }
 
+        // Fallback final resiliente
+        if (empty($generatedUrl)) {
+            $encodedPrompt = urlencode($promptHibrido . " isolated transparent background sticker vector");
+            $generatedUrl = "https://image.pollinations.ai/prompt/{$encodedPrompt}?width=800&height=800&nologo=true&private=true&enhance=true";
+        }
+
+        // 4. Registrar el asset transparente generado en isolated_assets
+        if ($avatarId) {
+            $stmtAsset = $db->prepare("
+                INSERT INTO isolated_assets (avatar_id, tipo, nombre, url_asset, es_transparente, metadata_asset)
+                VALUES (?, 'sujeto', ?, ?, TRUE, ?::jsonb)
+            ");
+            $metaJson = json_encode([
+                'prompt' => $promptHibrido,
+                'ip_adapter_weight' => $ipAdapterWeight,
+                'biometric_injected' => $isBiometricInjected
+            ]);
+            $stmtAsset->execute([$avatarId, "Avatar {$nombre} ({$actividad})", $generatedUrl, $metaJson]);
+        }
+
         json_response([
-            'success'   => true,
+            'success' => true,
             'character' => $nombre,
             'actividad' => $actividad,
-            'ropa'      => $ropa,
-            'style'     => 'Comic Neón (La Cueva del Güero)',
-            'background' => 'Transparent PNG (Isolated Humanoid)',
-            'prompt'    => $promptConsolidado,
-            'avatar_url' => $avatarUrl
+            'ropa' => $ropa,
+            'biometric_injected' => $isBiometricInjected,
+            'ip_adapter_weight' => $ipAdapterWeight,
+            'avatar_url' => $generatedUrl,
+            'prompt' => $promptHibrido
         ], 200);
+        exit();
+    }
+
+    // -----------------------------------------------------------------------------
+    // ACCIÓN: GUARDAR / RECUPERAR SESIÓN DE LIENZO THE DARKROOM (FABRIC.JS)
+    // -----------------------------------------------------------------------------
+    if ($action === 'save-canvas-session') {
+        $avatarId = !empty($input['avatar_id']) ? (int)$input['avatar_id'] : null;
+        $nombreProyecto = sanitize_input($input['nombre_proyecto'] ?? 'Poster La Cueva');
+        $canvasState = $input['canvas_state'] ?? null;
+
+        if (!$canvasState) {
+            json_response(['error' => 'canvas_state es requerido'], 400);
+            exit();
+        }
+
+        $stmt = $db->prepare("
+            INSERT INTO canvas_sessions (avatar_id, nombre_proyecto, canvas_state, versiones_historicas)
+            VALUES (?, ?, ?::jsonb, ?::jsonb)
+            RETURNING id
+        ");
+        $stmt->execute([
+            $avatarId,
+            $nombreProyecto,
+            json_encode($canvasState),
+            json_encode(['timestamp' => time(), 'action' => 'initial_save'])
+        ]);
+        $sessionId = $stmt->fetchColumn();
+
+        json_response(['success' => true, 'session_id' => $sessionId], 200);
+        exit();
+    }
+
+    if ($action === 'get-canvas-session') {
+        $sessionId = sanitize_input($input['session_id'] ?? '');
+        $stmt = $db->prepare("SELECT * FROM canvas_sessions WHERE id = ?::uuid");
+        $stmt->execute([$sessionId]);
+        $session = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$session) {
+            json_response(['error' => 'Sesión no encontrada'], 404);
+            exit();
+        }
+
+        json_response(['success' => true, 'session' => $session], 200);
+        exit();
+    }
+
+    // -----------------------------------------------------------------------------
+    // ACCIÓN: LISTAR ASSETS AISLADOS (PROPS, FONDOS, SUJETOS)
+    // -----------------------------------------------------------------------------
+    if ($action === 'list-assets') {
+        $tipo = sanitize_input($input['tipo'] ?? '');
+        $sql = "SELECT * FROM isolated_assets";
+        $params = [];
+        if (!empty($tipo)) {
+            $sql .= " WHERE tipo = ?";
+            $params[] = $tipo;
+        }
+        $sql .= " ORDER BY id DESC";
+        $stmt = $db->prepare($sql);
+        $stmt->execute($params);
+        $assets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        json_response(['success' => true, 'assets' => $assets], 200);
         exit();
     }
 
