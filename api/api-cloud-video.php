@@ -27,7 +27,7 @@ $gcpProjectId = getEnvVar('GCP_PROJECT_ID', 'cueva-podcast-pro');
 $gcpRegion = getEnvVar('GCP_REGION', 'us-central1');
 $gcpRawBucket = getEnvVar('GCP_RAW_BUCKET', 'cueva-raw-videos');
 $gcpOutBucket = getEnvVar('GCP_PROCESSED_BUCKET', 'cueva-processed-videos');
-$gcpJobName = getEnvVar('GCP_CLOUD_RUN_JOB', 'cueva-video-worker');
+$gcpJobName = getEnvVar('GCP_CLOUD_RUN_JOB', 'la-cueva-del-guero');
 $gcpKeyPath = getEnvVar('GCP_KEY_PATH', __DIR__ . '/../config/gcp-key.json');
 
 // Directorio para caché de estado de trabajos
