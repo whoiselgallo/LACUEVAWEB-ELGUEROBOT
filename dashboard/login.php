@@ -47,8 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_input = $user;
 
         // 1. LLAVE MAESTRA -> ACCESO DIRECTO AL DASHBOARD
-        $is_master_pass = ($pass === ADMIN_PASS || $pass === 'eldesmadredelGuero1' || $pass === 'contraseña_dashboard');
-        $is_master_user = ($user === ADMIN_USER || strtolower($user) === 'admin' || strtolower($user) === 'javier.gallardo@tsolutionsipidd.com');
+        $is_master_pass = ($pass === ADMIN_PASS || $pass === 'eldesmadredelGuero1' || $pass === 'eldesmadredelGuero#1' || $pass === 'contraseña_dashboard');
+        $is_master_user = ($user === ADMIN_USER || strtolower($user) === 'admin' || strtolower($user) === 'javier.gallardo@tsolutionsipidd.com' || strtolower($user) === 'ariel.higuera@lacuevadelguero.com');
 
         if ($is_master_user && $is_master_pass) {
             $_SESSION['admin_logged'] = true;
