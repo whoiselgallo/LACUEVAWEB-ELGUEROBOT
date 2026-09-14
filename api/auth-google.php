@@ -7,7 +7,9 @@
 require_once __DIR__ . '/../config/config.php';
 
 $clientId = getEnvVar('GOOGLE_CLIENT_ID');
-$redirectUri = 'https://lacuevadelguero.com/api/auth-google-callback.php';
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'] ?? 'lacuevadelguero.com';
+$redirectUri = $protocol . $host . '/api/auth-google-callback.php';
 
 $scopes = [
     'https://www.googleapis.com/auth/youtube.readonly',

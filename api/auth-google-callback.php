@@ -19,7 +19,9 @@ if (!$code) {
 
 $clientId = getEnvVar('GOOGLE_CLIENT_ID');
 $clientSecret = getEnvVar('GOOGLE_CLIENT_SECRET');
-$redirectUri = 'https://lacuevadelguero.com/api/auth-google-callback.php';
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'] ?? 'lacuevadelguero.com';
+$redirectUri = $protocol . $host . '/api/auth-google-callback.php';
 
 // Intercambiar código por token
 $ch = curl_init('https://oauth2.googleapis.com/token');

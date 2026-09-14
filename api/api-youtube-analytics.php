@@ -120,7 +120,42 @@ if (file_exists($tokenFile)) {
     }
 }
 
-// 2. Si falló OAuth o no está configurado, raspar la pestaña /videos pública de tu canal (Datos Reales de tu canal público)
+// 2. Si no hay OAuth, intentar consultar directamente YouTube Data API v3 oficial con API Key
+if (!$realStats) {
+    $apiKey = getEnvVar('YOUTUBE_API_KEY') ?: getEnvVar('GOOGLE_API_KEY') ?: getEnvVar('GEMINI_API_KEY');
+    if (!empty($apiKey)) {
+        $ytUrl = 'https://www.googleapis.com/youtube/v3/channels?' . http_build_query([
+            'part' => 'statistics,snippet',
+            'forHandle' => 'LacuevadelGueroPodcast',
+            'key' => $apiKey
+        ]);
+        $ch = curl_init($ytUrl);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 6
+        ]);
+        $ytRes = curl_exec($ch);
+        $ytCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        if ($ytCode === 200) {
+            $ytData = json_decode($ytRes, true);
+            if (!empty($ytData['items'][0]['statistics'])) {
+                $chStats = $ytData['items'][0]['statistics'];
+                $subCount = (int)($chStats['subscriberCount'] ?? 0);
+                $viewCount = (int)($chStats['viewCount'] ?? 0);
+                if ($subCount > 0 || $viewCount > 0) {
+                    $subscribers = $subCount;
+                    $views = $viewCount;
+                    $realStats = true;
+                    $conexionTipo = 'Real (YouTube Data API v3)';
+                }
+            }
+        }
+    }
+}
+
+// 3. Si falló API Key/OAuth, intentar raspar la pestaña pública del canal
 if (!$realStats) {
     $channelUrl = 'https://www.youtube.com/@LacuevadelGueroPodcast/videos';
     $ctx = stream_context_create([
