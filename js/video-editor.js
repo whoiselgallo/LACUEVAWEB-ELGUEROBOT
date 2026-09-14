@@ -72,35 +72,31 @@ function formatTime(secs) {
     return `${m}:${s}:${ms}`;
 }
 
-// 🤖 BOTONES DE ACCIÓN INTELIGENTE (IA PANEL)
+// 🤖 BOTONES DE ACCIÓN INTELIGENTE (IA PANEL CONECTADO A CLOUD RUN)
 function ejecutarIAVideo(accion) {
-    const overlay = document.getElementById("editor-ia-overlay");
-    if (overlay) {
-        overlay.style.display = "flex";
-        overlay.querySelector(".ia-status-text").textContent = `Ejecutando IA: ${accion}...`;
-    }
-
-    setTimeout(() => {
-        if (overlay) overlay.style.display = "none";
-
-        if (accion === "Subtítulos Automáticos") {
-            editorState.subtitlesActive = true;
-            document.getElementById("subtitles-track").style.display = "block";
-            alert("Subtítulos automáticos con IA generados en la pista superior.");
-        } else if (accion === "Corrección de Color IA") {
-            const video = document.getElementById("editor-preview-video");
-            if (video) {
-                video.style.filter = "contrast(115%) saturate(125%) brightness(105%)";
-                alert("Corrección de color cinematográfica aplicada en tiempo real.");
-            }
-        } else if (accion === "Quitar Fondo") {
-            alert("Eliminación de fondo con IA completada. Personaje aislado estilo CapCut.");
-        } else if (accion === "Mejora de Voz IA") {
-            alert("Reducción de ruido y ecualización de voz IA completada en la pista de audio.");
-        } else if (accion === "Edición Rápida TikTok") {
-            alert("Cortes rápidos inteligentes y sincronización de música aplicados a la línea de tiempo.");
+    if (accion === "Subtítulos Automáticos") {
+        ejecutarLimpiezaIA("auto-subtitles");
+    } else if (accion === "Mejora de Voz IA") {
+        ejecutarLimpiezaIA("loudnorm-spotify");
+    } else if (accion === "Edición Rápida TikTok") {
+        ejecutarLimpiezaIA("render-preset", { preset: "tiktok" });
+    } else if (accion === "Corrección de Color IA") {
+        const video = document.getElementById("editor-preview-video");
+        if (video) {
+            video.style.filter = "contrast(115%) saturate(125%) brightness(105%)";
+            alert("Corrección de color cinematográfica aplicada en tiempo real.");
         }
-    }, 2000);
+    } else if (accion === "Quitar Fondo") {
+        const overlay = document.getElementById("editor-ia-overlay");
+        if (overlay) {
+            overlay.style.display = "flex";
+            overlay.querySelector(".ia-status-text").textContent = "Extrayendo silueta y fondo con IA...";
+            setTimeout(() => {
+                overlay.style.display = "none";
+                alert("Eliminación de fondo con IA completada. Personaje aislado estilo CapCut.");
+            }, 2000);
+        }
+    }
 }
 
 // ALTERNAR VISTA DE DISPOSITIVO MÓVIL (CONTENIDO VERTICAL 9:16)
@@ -147,16 +143,14 @@ function cerrarExportarVideo() {
 
 function iniciarRenderVideo(preset) {
     cerrarExportarVideo();
-    const overlay = document.getElementById("editor-ia-overlay");
-    if (overlay) {
-        overlay.style.display = "flex";
-        overlay.querySelector(".ia-status-text").textContent = `Renderizando video para ${preset} con GPU...`;
-    }
+    let mapPreset = "tiktok";
+    if (preset.toLowerCase().includes("reels")) mapPreset = "reels";
+    else if (preset.toLowerCase().includes("shorts")) mapPreset = "shorts";
+    else if (preset.toLowerCase().includes("4k")) mapPreset = "youtube-4k";
+    else if (preset.toLowerCase().includes("youtube") || preset.toLowerCase().includes("hd")) mapPreset = "youtube-hd";
 
-    setTimeout(() => {
-        if (overlay) overlay.style.display = "none";
-        alert(`¡Video renderizado y optimizado exitosamente para ${preset}! Listo para descargar.`);
-    }, 3000);
+    // Enviar trabajo batch a Cloud Run Jobs
+    ejecutarLimpiezaIA("render-preset", { preset: mapPreset });
 }
 
 // 🌐 CONECTORES NATIVOS REALES A ALMACENAMIENTOS EN LA NUBE (Drive, Dropbox, OneDrive, TeraBox)
@@ -333,7 +327,10 @@ function seleccionarArchivoNube(servicio, nombreArchivo, urlDescarga = "") {
 }
 
 // Consola interactiva para simular procesamiento IA y FFmpeg/Whisper
-function ejecutarLimpiezaIA(accion) {
+// 🚀 Consola interactiva conectada a Google Cloud Run Jobs & GCS
+let activePollingInterval = null;
+
+function ejecutarLimpiezaIA(accion, extraParams = {}) {
     const overlay = document.getElementById("editor-console-overlay");
     const screen = document.getElementById("editor-console-screen");
     const statusText = document.getElementById("editor-console-status");
@@ -341,75 +338,118 @@ function ejecutarLimpiezaIA(accion) {
 
     if (!overlay || !screen || !statusText || !acceptBtn) return;
 
-    // Reset panel
+    if (activePollingInterval) {
+        clearInterval(activePollingInterval);
+        activePollingInterval = null;
+    }
+
+    // Reset panel visual
     overlay.style.display = "flex";
-    screen.innerHTML = `<div style="color:#888;">> Inicializando conexión con el servidor de procesamiento de la Cueva...</div>`;
-    statusText.textContent = "Estado: Conectando...";
+    screen.innerHTML = `<div style="color:#888;">> Conectando con Google Cloud Run Jobs Dispatcher...</div>`;
+    statusText.textContent = "Estado: Despachando Tarea Batch...";
     acceptBtn.style.display = "none";
 
     // Obtener parámetros de entrada
     const threshold = document.getElementById("editor-silence-time") ? document.getElementById("editor-silence-time").value : 1.0;
-    const words = document.getElementById("editor-filler-words") ? document.getElementById("editor-filler-words").value : 'eh,este';
+    const words = document.getElementById("editor-filler-words") ? document.getElementById("editor-filler-words").value : 'eh,este,pues';
+    const video = document.getElementById("editor-preview-video");
+    const currentSrc = (video && video.src) ? video.src : 'gs://cueva-raw-videos/episodio_cueva_raw.mp4';
 
-    // Llamada API al backend en Render
-    fetch(`../api/api-video-process.php?action=${accion}&threshold=${threshold}&words=${encodeURIComponent(words)}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                let logIndex = 0;
-                const logs = data.logs;
-                
-                function printNextLog() {
-                    if (logIndex < logs.length) {
-                        const line = document.createElement("div");
-                        line.textContent = `> ${logs[logIndex]}`;
-                        
-                        // Resaltar tags específicos con colores neón
-                        if (logs[logIndex].includes("[FFmpeg]")) {
-                            line.style.color = "var(--neon-cyan)";
-                        } else if (logs[logIndex].includes("[Whisper]")) {
-                            line.style.color = "var(--neon-magenta)";
-                        } else if (logs[logIndex].includes("[Auto-Editor]")) {
-                            line.style.color = "#ffa500"; // Naranja
-                        } else if (logs[logIndex].includes("[Demucs]")) {
-                            line.style.color = "#39FF14"; // Verde
+    const payload = {
+        video_action: accion,
+        input_gcs_uri: currentSrc.startsWith("gs://") ? currentSrc : `gs://cueva-raw-videos/${document.getElementById("editor-project-name") ? document.getElementById("editor-project-name").textContent : "clip_cueva.mp4"}`,
+        threshold: threshold,
+        words: words,
+        preset: extraParams.preset || 'tiktok'
+    };
+
+    // 1. Iniciar trabajo en Cloud Run Jobs
+    fetch(`../api/api-cloud-video.php?action=start-job`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            const jobId = data.job_id;
+            let printedLogsCount = 0;
+
+            // 2. Iniciar Polling de Logs y Estado
+            activePollingInterval = setInterval(() => {
+                fetch(`../api/api-cloud-video.php?action=job-status&job_id=${jobId}`)
+                    .then(r => r.json())
+                    .then(res => {
+                        if (res.status === 'success' && res.job) {
+                            const job = res.job;
+                            const logs = job.logs || [];
+
+                            // Imprimir nuevos logs
+                            while (printedLogsCount < logs.length) {
+                                const line = document.createElement("div");
+                                const logText = logs[printedLogsCount];
+                                line.textContent = `> ${logText}`;
+
+                                if (logText.includes("[FFmpeg]")) {
+                                    line.style.color = "var(--neon-cyan)";
+                                } else if (logText.includes("[Gemini Flash]") || logText.includes("[Subtítulos]")) {
+                                    line.style.color = "var(--neon-magenta)";
+                                } else if (logText.includes("[Cloud Run]") || logText.includes("[Auto-Editor]")) {
+                                    line.style.color = "#ffa500";
+                                } else if (logText.includes("[Storage]")) {
+                                    line.style.color = "#39FF14";
+                                } else if (logText.includes("[Error]")) {
+                                    line.style.color = "#ff4d4d";
+                                }
+
+                                screen.appendChild(line);
+                                screen.scrollTop = screen.scrollHeight;
+                                printedLogsCount++;
+                            }
+
+                            if (job.status === 'running') {
+                                statusText.textContent = "Estado: Procesando en Cloud Run Job...";
+                            } else if (job.status === 'completed') {
+                                clearInterval(activePollingInterval);
+                                activePollingInterval = null;
+                                statusText.textContent = "Estado: ¡Completado exitosamente en GCP!";
+                                acceptBtn.style.display = "block";
+                                acceptBtn.innerHTML = `<i class="fa-solid fa-check"></i> Cargar Resultado (${job.result_file})`;
+
+                                acceptBtn.onclick = () => {
+                                    cerrarConsolaEditor();
+                                    const nameDisplay = document.getElementById("editor-project-name");
+                                    if (nameDisplay) {
+                                        nameDisplay.textContent = job.result_file;
+                                    }
+                                    alert(`¡Video "${job.result_file}" procesado y listo en la línea de tiempo!`);
+                                };
+                            } else if (job.status === 'failed') {
+                                clearInterval(activePollingInterval);
+                                activePollingInterval = null;
+                                statusText.textContent = "Estado: Error en la ejecución de GCP";
+                            }
                         }
-                        
-                        screen.appendChild(line);
-                        screen.scrollTop = screen.scrollHeight;
-                        logIndex++;
-                        setTimeout(printNextLog, 600); // velocidad del log terminal
-                    } else {
-                        // Al finalizar todos los logs
-                        const lineFinal = document.createElement("div");
-                        lineFinal.textContent = `> [Procesador] Proceso finalizado. Archivo de salida: ${data.resultFile}`;
-                        lineFinal.style.color = "#fff";
-                        lineFinal.style.fontWeight = "bold";
-                        screen.appendChild(lineFinal);
-                        
-                        statusText.textContent = "Estado: Completado con éxito";
-                        acceptBtn.style.display = "block";
-                        
-                        // Modificar nombre del proyecto activamente en la barra de navegación del editor
-                        const nameDisplay = document.getElementById("editor-project-name");
-                        if (nameDisplay) {
-                            nameDisplay.textContent = data.resultFile;
-                        }
-                    }
-                }
-                setTimeout(printNextLog, 800);
-            } else {
-                screen.innerHTML += `<div style="color:#ff4d4d;">> Error: ${data.message}</div>`;
-                statusText.textContent = "Estado: Fallido";
-            }
-        })
-        .catch(err => {
-            screen.innerHTML += `<div style="color:#ff4d4d;">> Error de red: No se pudo conectar al endpoint de procesamiento.</div>`;
-            statusText.textContent = "Estado: Error de Red";
-        });
+                    })
+                    .catch(() => {});
+            }, 1200);
+
+        } else {
+            screen.innerHTML += `<div style="color:#ff4d4d;">> Error: ${data.message}</div>`;
+            statusText.textContent = "Estado: Error al despachar trabajo";
+        }
+    })
+    .catch(err => {
+        screen.innerHTML += `<div style="color:#ff4d4d;">> Error de conexión con el Dispatcher de Cloud Run: ${err.message}</div>`;
+        statusText.textContent = "Estado: Error de Red";
+    });
 }
 
 function cerrarConsolaEditor() {
+    if (activePollingInterval) {
+        clearInterval(activePollingInterval);
+        activePollingInterval = null;
+    }
     const overlay = document.getElementById("editor-console-overlay");
     if (overlay) {
         overlay.style.display = "none";
