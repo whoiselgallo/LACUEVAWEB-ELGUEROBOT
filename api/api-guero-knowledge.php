@@ -21,7 +21,8 @@ require_once __DIR__ . '/../config/config.php';
 try {
     $db = db_connect();
 } catch (Exception $e) {
-    json_response(['error' => 'Error de conexión: ' . $e->getMessage()], 500);
+    error_log('Knowledge DB Error: ' . $e->getMessage());
+    json_response(['error' => 'Error de conexión a la base de datos'], 500);
     exit();
 }
 
@@ -305,10 +306,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
 
     } catch (PDOException $e) {
-        json_response(['error' => 'Error de base de datos: ' . $e->getMessage()], 500);
+        error_log('Knowledge POST DB Error: ' . $e->getMessage());
+        json_response(['error' => 'Error de base de datos al guardar el contenido'], 500);
         exit();
     } catch (Exception $e) {
-        json_response(['error' => $e->getMessage()], 500);
+        error_log('Knowledge POST Error: ' . $e->getMessage());
+        json_response(['error' => 'Error interno al guardar el contenido'], 500);
         exit();
     }
 }

@@ -12,9 +12,21 @@ services:
     plan: free
     region: oregon
     branch: main
+    healthCheckPath: /
     envVars:
+      # --- APP ---
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_NAME
+        value: La Cueva del Güero
+      - key: APP_VERSION
+        value: "2.0.2"
+      - key: APP_URL
+        sync: false
+
       # --- BASE DE DATOS (NEON.TECH) ---
-      # Configura estos valores en: Render Dashboard > Environment
       - key: DB_HOST
         sync: false
       - key: DB_PORT
@@ -26,12 +38,32 @@ services:
       - key: DB_PASS
         sync: false
 
-      # --- INTELIGENCIA ARTIFICIAL (DIFY.AI) ---
-      - key: DIFY_API_KEY
+      # --- DIFY AI ---
+      - key: DIFY_CHATBOT_API_KEY
+        sync: false
+      - key: DIFY_CHATBOT_URL
+        value: https://api.dify.ai/v1/chat-messages
+      - key: DIFY_WORKFLOW_API_KEY
+        sync: false
+      - key: DIFY_WORKFLOW_URL
+        value: https://api.dify.ai/v1/workflows/run
+      - key: DIFY_TIMEOUT
+        value: "60"
+
+      # --- GOOGLE GEMINI ---
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEYS
         sync: false
 
       # --- DASHBOARD DE ADMINISTRACIÓN ---
       - key: ADMIN_USER
-        sync: false
+        value: admin
       - key: ADMIN_PASS
+        sync: false
+
+      # --- GOOGLE OAUTH / DRIVE ---
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
         sync: false

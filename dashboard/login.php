@@ -4,7 +4,18 @@
  * Endpoint: /dashboard/login.php
  */
 
-session_start();
+session_set_cookie_params([
+    'lifetime' => 3600,
+    'path' => '/',
+    'secure' => (!empty($_SERVER['HTTPS']) || $_SERVER['SERVER_PORT'] == 443),
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../config/config.php';
 
 $error = '';
@@ -47,8 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_input = $user;
 
         // 1. LLAVE MAESTRA -> ACCESO DIRECTO AL DASHBOARD
-        $is_master_pass = ($pass === ADMIN_PASS || $pass === 'eldesmadredelGuero1' || $pass === 'eldesmadredelGuero#1' || $pass === 'contraseña_dashboard');
-        $is_master_user = ($user === ADMIN_USER || strtolower($user) === 'admin' || strtolower($user) === 'javier.gallardo@tsolutionsipidd.com' || strtolower($user) === 'ariel.higuera@lacuevadelguero.com');
+        $masterUser = trim((string) ADMIN_USER);
+        $masterPass = trim((string) ADMIN_PASS);
+        $is_master_user = ($masterUser !== '' && $user === $masterUser);
+        $is_master_pass = ($masterPass !== '' && $pass === $masterPass);
 
         if ($is_master_user && $is_master_pass) {
             $_SESSION['admin_logged'] = true;

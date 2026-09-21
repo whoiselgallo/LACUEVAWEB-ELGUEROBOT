@@ -18,11 +18,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once __DIR__ . '/../config/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
+    session_set_cookie_params([
+        'lifetime' => 3600,
+        'path' => '/',
+        'secure' => (!empty($_SERVER['HTTPS']) || $_SERVER['SERVER_PORT'] == 443),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
     session_start();
 }
 
-$input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
-$action = sanitize_input($input['action'] ?? 'login');
+$input = json_decode(file_get_contents('php://input'), true);
+if (!is_array($input)) {
+    $input = $_POST;
+}
+$action = strtolower(trim((string)($input['action'] ?? 'login')));
 
 try {
     $db = db_connect();
@@ -86,7 +96,11 @@ try {
         }
 
         // 1. VALIDAR SI INGRESA CON LA LLAVE MAESTRA DE SETUP
-        if (($userOrEmail === ADMIN_USER || $userOrEmail === 'admin') && $password === ADMIN_PASS) {
+        if (
+            ADMIN_PASS !== '' &&
+            ($userOrEmail === ADMIN_USER || $userOrEmail === 'admin') &&
+            $password === ADMIN_PASS
+        ) {
             json_response([
                 'success'            => true,
                 'require_onboarding' => true,
@@ -179,8 +193,8 @@ try {
 
 } catch (PDOException $e) {
     error_log('Auth DB Error: ' . $e->getMessage());
-    json_response(['error' => 'Error de base de datos en autenticación: ' . $e->getMessage()], 500);
+    json_response(['error' => 'Error de base de datos en autenticación'], 500);
 } catch (Exception $e) {
     error_log('Auth Error: ' . $e->getMessage());
-    json_response(['error' => 'Error de servidor: ' . $e->getMessage()], 500);
+    json_response(['error' => 'Error de servidor'], 500);
 }

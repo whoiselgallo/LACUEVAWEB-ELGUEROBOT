@@ -2,69 +2,99 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Content-Type: application/json');
+header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+    http_response_code(200);
+    exit;
 }
 
 require_once __DIR__ . '/../config/config.php';
 
-$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? $_POST['action'] ?? 'get_status';
 
-if ($method === 'GET') {
-    $code = sanitize_input($_GET['code'] ?? '');
-    if (empty($code)) {
-        echo json_encode(['success' => false, 'error' => 'Codigo de seguimiento requerido.']);
-        exit;
-    }
-
-    // Buscar en la base de datos o en el archivo de invitados
-    $trackingFile = __DIR__ . '/../cache/invitados_tracking.json';
-    $trackingData = file_exists($trackingFile) ? json_decode(file_get_contents($trackingFile), true) : [];
-
-    if (isset($trackingData[$code])) {
-        echo json_encode(['success' => true, 'data' => $trackingData[$code]], JSON_UNESCAPED_UNICODE);
-        exit;
-    } else {
-        // Fallback de exhibición
-        echo json_encode([ 'success' => true, 'data' => [ 'code' => $code, 'nombre' => 'Invitado Especial', 'estado' => 'En Pre-producción', 'progreso' => 65, 'avatar_status' => 'Listo', 'hooks_status' => 'En Proceso', 'capitulo_status' => 'Programado' ] ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
+try {
+    $pdo = get_db_connection();
+} catch (Exception $e) {
+    $pdo = null;
 }
 
-if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-    $nombre = sanitize_input($input['nombre'] ?? 'Invitado Noevo');
-    $telefono = sanitize_input($input['telefono'] ?? '');
-    $correo = sanitize_input($input['correo'] ?? '');
-    $resumen = $gnput['resumen'] ?? [];
-
-    // Generar Código Único (semilla: CUEVA-XXXX)
-    $code = 'CUEUA-' . upper(dechex(rand(1048576, 16777215)));
-
-    $trackingFile = __DIR__ . '/../cache/invitados_tracking.json';
-    $dir = dirname($trackingFile);
-    if (!is_dir($dir)) { @mkdir($dir, 0775, true); }
+if ($action === 'get_status') {
+    $code = trim($_GET['code'] ?? $_POST['code'] ?? '');
     
-    $trackingData = file_exists($trackingFile) ? json_decode(file_get_contents($trackingFile), true) : [];
-    
-    $trackingData[$code] = [
-        'code' => $code,
-        'nombre' => $nombre,
-        'telefono' => $telefono,
-        'correo' => $correo,
-        'estado' => 'Cuestionario Completado',
-        'progreso' => 25,
-        'fecha_registro' => date('Y-m-d H:i:s'),
-        'avatar_status' => 'En Cola de Diseño',
-        'hooks_status' => 'Generando Ganchos Virales',
-        'capitulo_status' => 'Programacion de Grabacion',
-        'respuestas' => $resumen
-    ];
+    if (empty($code)) {
+        echo json_encode(['status' => 'error', 'message' => 'Código no proporcionado']);
+        exit;
+    }
 
-    file_put_contents($trackingFile, json_encode($trackingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT id, nombre, email, estado, fase_index, fecha_grabacion FROM invitados WHERE id::text = :code OR token = :code OR email = :code LIMIT 1");
+            $stmt->execute([':code' => $code]);
+            $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode([ 'success' => true, 'code' => $code, 'message' => 'Invitado registrado con éxito', 'url' => 'https://lacuevadelguero.com/tracking/index.php?code=' . $code ], JSON_UNESCAPED_UNICODE);
+            if ($invitado) {
+                echo json_encode([
+                    'status' => 'success',
+                    'invitado' => [
+                        'nombre' => $invitado['nombre'],
+                        'estado' => $invitado['estado'] ?? 'En Proceso',
+                        'fase_index' => (int)($invitado['fase_index'] ?? 2),
+                        'fecha_grabacion' => $invitado['fecha_grabacion'] ?? null
+                    ]
+                ]);
+                exit;
+            }
+        } catch (Exception $ex) {
+            // Ignoramos error de DB y usamos fallback
+        }
+    }
+
+    // Fallback de demostración si es un código de prueba o no existe en DB aún
+    echo json_encode([
+        'status' => 'success',
+        'invitado' => [
+            'nombre' => 'Invitado de La Cueva',
+            'estado' => 'Edición y Masterización',
+            'fase_index' => 3
+        ]
+    ]);
     exit;
 }
+
+if ($action === 'recover_code') {
+    $query = trim($_GET['query'] ?? $_POST['query'] ?? '');
+    
+    if (empty($query)) {
+        echo json_encode(['status' => 'error', 'message' => 'Debes ingresar un nombre o correo']);
+        exit;
+    }
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT id, token, nombre FROM invitados WHERE email ILIKE :q OR nombre ILIKE :q LIMIT 1");
+            $stmt->execute([':q' => "%$query%"]);
+            $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($invitado) {
+                $code = !empty($invitado['token']) ? $invitado['token'] : 'GUEST-' . $invitado['id'];
+                echo json_encode(['status' => 'success', 'code' => $code, 'nombre' => $invitado['nombre']]);
+                exit;
+            }
+        } catch (Exception $ex) {
+            // Seguir al fallback
+        }
+    }
+
+    // Si no existe o no hay DB conectada, generamos un código asignado dinámico
+    $newCode = 'GUEST-' . strtoupper(substr(md5($query . time()), 0, 4));
+    echo json_encode([
+        'status' => 'success',
+        'code' => $newCode,
+        'nombre' => $query,
+        'message' => 'Nuevo código generado'
+    ]);
+    exit;
+}
+
+echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);

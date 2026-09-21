@@ -6,6 +6,7 @@
    - ✅ Protección DOM mejorada
    - ✅ Soporte touch para móviles
    - ✅ Compatibilidad cross-browser
+   - ✅ Integración de Tracking en vivo para Invitados
    ============================================================ */
 
 console.log("🐾 [PAW] Cargando PAW Agent...");
@@ -171,30 +172,24 @@ function togglePawMinimize() {
     if (modal) modal.remove();
 }
 
-/* ---------------------- EVENTOS (FIX CRÍTICO) ---------------------- */
+/* ---------------------- EVENTOS ---------------------- */
 
 function setupPawEvents() {
     const container = document.getElementById('pawAgentContainer');
     if (!container) return;
 
-    // 🔥 FIX CRÍTICO: Botón de minimizar DEBE tener stopPropagation()
-    // para evitar que el click se propague al contenedor
     const minimizeBtn = container.querySelector('.paw-minimize-btn');
     if (minimizeBtn) {
         minimizeBtn.addEventListener('click', (e) => {
-            e.stopPropagation();  // ← CRUCIAL: Detener propagación
+            e.stopPropagation();
             e.preventDefault();
             togglePawMinimize();
         });
     }
 
-    // Click en el contenedor cuando está minimizado -> restaurar
-    // PERO SOLO si no fue en el botón de minimizar (ya manejado arriba)
     container.addEventListener('click', (e) => {
-        // Si fue en el botón de minimizar, ya se manejó arriba
         if (e.target.closest('.paw-minimize-btn')) return;
 
-        // Si está minimizado y no fue en un elemento interactivo, restaurar
         if (pawAgentState.isMinimized && !e.target.closest('.paw-toe, .paw-chat-area, select, input, button')) {
             restorePawAgent();
         }
@@ -251,7 +246,6 @@ function updatePawVisitTypeUI(type) {
         badge.textContent = label;
         badge.className = `paw-visit-badge paw-visit-${type}`;
     }
-    // Sincronizar el select dropdown en el panel inferior
     const selectEl = document.getElementById('pawVisitType');
     if (selectEl) {
         selectEl.value = type;
@@ -264,7 +258,9 @@ function handleToeClick(index, toe) {
     const options = [
         { label: 'Suscribirse', action: 'suscribirse' },
         { label: 'Crear Avatar', action: 'avatar' },
-        { label: 'Colocar en el Mapa', action: 'mapa' }
+        { label: 'Colocar en el Mapa', action: 'mapa' },
+        { label: 'Tracking de Invitado', action: 'tracking' },
+        { label: 'Seguidor', action: 'seguidor' }
     ];
 
     if (index < options.length) {
@@ -282,7 +278,6 @@ function executePawAction(action, toe) {
             break;
         case 'avatar':
             addPawMessage("Abriendo panel creador de avatar...", "bot");
-            // Placeholder for avatar creation logic
             setTimeout(() => {
                 addPawMessage("Avatar generado exitosamente. ¡Ya puedes colocarte en el mapa!", "bot");
                 localStorage.setItem('paw_avatar_ready', 'true');
@@ -296,22 +291,22 @@ function executePawAction(action, toe) {
                 addPawMessage("Primero debes Crear Avatar para poder colocarte en el mapa.", "bot");
             }
             break;
+        case 'tracking':
+            addPawMessage("¡Simón! Puedes revisar el estado de tu episodio en vivo aquí: [Ver Mi Tracking](/tracking/index.html)", "bot");
+            break;
+        case 'seguidor':
+            changeVisitType('follower');
+            addPawMessage("¡Qué onda, parte de la manada! Puedes pedirme recomendaciones de episodios o tirar línea.", "bot");
+            break;
         default:
             console.warn("Acción desconocida:", action);
     }
 }
 
 function formatPawMessage(text) {
-    // 1. Reemplazar enlaces Markdown [Texto](Enlace) por etiquetas <a>
     let html = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" style="color:#00ffff; text-decoration:underline; font-weight:600; text-shadow:0 0 5px rgba(0,255,255,0.4);" target="_blank">$1</a>');
-    
-    // 2. Reemplazar URLs crudas que empiecen con http o https por enlaces
     html = html.replace(/(?<!href=")(https?:\/\/[^\s<]+)/g, '<a href="$1" style="color:#00ffff; text-decoration:underline; font-weight:600;" target="_blank">$1</a>');
-    
-    // 3. Convertir referencias sueltas a "storytelling-invitado.html" en enlaces clicables estilizados
     html = html.replace(/(?<!href=")(?<!">)(storytelling-invitado\.html)/g, '<a href="$1" style="color:#00ffff; text-decoration:underline; font-weight:600; text-shadow:0 0 5px rgba(0,255,255,0.4);" target="_blank">Formulario de Storytelling</a>');
-    
-    // 4. Cambiar saltos de línea por <br>
     return html.replace(/\n/g, '<br>');
 }
 
@@ -332,115 +327,82 @@ function addPawMessage(text, sender = "user") {
     chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-  async function sendMessageFromPaw() {
-      const input = document.getElementById('pawChatInput');
-      if (!input || !input.value.trim()) return;
-  
-      const message = input.value.trim();
-      addPawMessage(message, "user");
-      input.value = '';
-  
-      const chatArea = document.getElementById('pawChatBody') || document.querySelector('.paw-chat-body');
-      if (!chatArea) return;
+async function sendMessageFromPaw() {
+    const input = document.getElementById('pawChatInput');
+    if (!input || !input.value.trim()) return;
 
-      if (pawAgentState.formStep === 1) {
-          pawAgentState.formData.name = message;
-          pawAgentState.formStep = 2;
-          addPawMessage("¡Chido! Ahora, pasame tu email:", "bot");
-          return;
-      } else if (pawAgentState.formStep === 2) {
-          pawAgentState.formData.email = message;
-          pawAgentState.formStep = 0;
-          localStorage.setItem('paw_sub_name', pawAgentState.formData.name);
-          localStorage.setItem('paw_sub_email', pawAgentState.formData.email);
-          addPawMessage(`¡Ya estás, ${pawAgentState.formData.name}! Te hemos suscrito con el correo ${pawAgentState.formData.email}.`, "bot");
-          
-          const toes = document.querySelectorAll('.paw-toe');
-          if (toes && toes.length > 0) {
-              toes[0].setAttribute('data-label', `¡Hola, ${pawAgentState.formData.name}!`);
-          }
-          return;
-      }
+    const message = input.value.trim();
+    addPawMessage(message, "user");
+    input.value = '';
 
-      // Crear un indicador de carga neón en el chat
-      const loader = document.createElement('div');
-      loader.className = 'paw-message paw-msg-bot';
-      loader.innerHTML = '<span style="color:#00FFFF; text-shadow:0 0 5px #00FFFF; animation: pulse 1s infinite;">El Güero está escribiendo...</span>';
-      chatArea.appendChild(loader);
-      chatArea.scrollTop = chatArea.scrollHeight;
+    const chatArea = document.getElementById('pawChatBody') || document.querySelector('.paw-chat-body');
+    if (!chatArea) return;
 
-      try {
-          const response = await fetch(`${window.location.origin}/api/api-el-guero-bot.php`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                  query: message,
-                  visitType: pawAgentState.visitType || 'guest',
-                  user: 'usuario_paw_web'
-              })
-          });
-
-          // Quitar indicador de carga
-          loader.remove();
-
-          if (!response.ok) {
-              throw new Error(`HTTP ${response.status}`);
-          }
-
-          const data = await response.json();
-          if (data && data.answer) {
-              addPawMessage(data.answer, "bot");
-
-              // DETECTAR ACTIVACIÓN DE ACCESO DE INVITADO:
-              // Si el bot provee el link para registrarse como invitado, habilitamos el token local.
-              if (data.answer.indexOf('storytelling-invitado.html') !== -1) {
-                  localStorage.setItem('paw_guest_access', 'true');
-                  console.log("🔑 [PAW] Acceso a Storytelling Invitado activado localmente.");
-              }
-          } else {
-              addPawMessage("Ese compa no respondió bien, algo falló en la API.", "bot");
-          }
-
-      } catch (err) {
-          console.error("Error en Paw Agent chat:", err);
-          loader.remove();
-          addPawMessage("Tuvimos una falla al hablar con el Güero Bot. Revisa tu conexión.", "bot");
-      }
-  }
-
-/* ---------------------- MODAL DE BÚSQUEDA ---------------------- */
-
-function openPawSearchModal() {
-    const container = document.getElementById('pawAgentContainer');
-    if (!container) return;
-
-    let modal = document.querySelector('.modal-busqueda');
-    if (modal) modal.remove();
-
-    modal = document.createElement('div');
-    modal.className = 'modal-busqueda';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <h3>Buscar Invitado</h3>
-            <input type="text" id="pawSearchInput" placeholder="Nombre del invitado...">
-            <button id="pawSearchBtn">Buscar</button>
-            <button id="pawCloseSearchBtn">Cerrar</button>
-        </div>
-    `;
-
-    container.appendChild(modal);
-
-    document.getElementById('pawCloseSearchBtn').addEventListener('click', () => {
-        modal.remove();
-    });
-
-    document.getElementById('pawSearchBtn').addEventListener('click', () => {
-        const searchTerm = document.getElementById('pawSearchInput').value.trim();
-        if (searchTerm) {
-            addPawMessage(`Buscando: ${searchTerm}`, "bot");
-            modal.remove();
+    if (pawAgentState.formStep === 1) {
+        pawAgentState.formData.name = message;
+        pawAgentState.formStep = 2;
+        addPawMessage("¡Chido! Ahora, pasame tu email:", "bot");
+        return;
+    } else if (pawAgentState.formStep === 2) {
+        pawAgentState.formData.email = message;
+        pawAgentState.formStep = 0;
+        localStorage.setItem('paw_sub_name', pawAgentState.formData.name);
+        localStorage.setItem('paw_sub_email', pawAgentState.formData.email);
+        addPawMessage(`¡Ya estás, ${pawAgentState.formData.name}! Te hemos suscrito con el correo ${pawAgentState.formData.email}.`, "bot");
+        
+        const toes = document.querySelectorAll('.paw-toe');
+        if (toes && toes.length > 0) {
+            toes[0].setAttribute('data-label', `¡Hola, ${pawAgentState.formData.name}!`);
         }
-    });
+        return;
+    }
+
+    // Atajo si el usuario pregunta por tracking directamente en el chat
+    if (message.toLowerCase().includes('tracking') || message.toLowerCase().includes('mi episodio') || message.toLowerCase().includes('mi código') || message.toLowerCase().includes('mi codigo')) {
+        addPawMessage("¡Simón! Puedes revisar o generar tu código de seguimiento aquí: [Ver Tracking de Invitado](/tracking/index.html)", "bot");
+        return;
+    }
+
+    const loader = document.createElement('div');
+    loader.className = 'paw-message paw-msg-bot';
+    loader.innerHTML = '<span style="color:#00FFFF; text-shadow:0 0 5px #00FFFF;">El Güero está escribiendo...</span>';
+    chatArea.appendChild(loader);
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    try {
+        const response = await fetch(`${window.location.origin}/api/api-el-guero-bot.php`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                query: message,
+                visitType: pawAgentState.visitType || 'guest',
+                user: 'usuario_paw_web'
+            })
+        });
+
+        loader.remove();
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data && data.answer) {
+            addPawMessage(data.answer, "bot");
+
+            if (data.answer.indexOf('storytelling-invitado.html') !== -1) {
+                localStorage.setItem('paw_guest_access', 'true');
+                console.log("🔑 [PAW] Acceso a Storytelling Invitado activado localmente.");
+            }
+        } else {
+            addPawMessage("Ese compa no respondió bien, algo falló en la API.", "bot");
+        }
+
+    } catch (err) {
+        console.error("Error en Paw Agent chat:", err);
+        loader.remove();
+        addPawMessage("Tuvimos una falla al hablar con el Güero Bot. Revisa tu conexión.", "bot");
+    }
 }
 
 /* ---------------------- NOTIFICACIONES ---------------------- */
