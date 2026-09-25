@@ -7,12 +7,12 @@
 set -e
 
 # ── CONFIGURACIÓN ──────────────────────────────────────────────────────
-NEON_URL="postgresql://neondb_owner:npg_eOUvM7qXj0SZ@ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require"
-CLOUD_HOST="136.114.160.76"
-CLOUD_PORT="5432"
-CLOUD_USER="postgres"
-CLOUD_DB="lacueva_db"
-CLOUD_PASS="eldesmadredelGuero#1"
+NEON_URL="${NEON_URL:?Set NEON_URL in the environment}"
+CLOUD_HOST="${CLOUD_HOST:?Set CLOUD_HOST in the environment}"
+CLOUD_PORT="${CLOUD_PORT:-5432}"
+CLOUD_USER="${CLOUD_USER:?Set CLOUD_USER in the environment}"
+CLOUD_DB="${CLOUD_DB:?Set CLOUD_DB in the environment}"
+CLOUD_PASS="${CLOUD_PASS:?Set CLOUD_PASS in the environment}"
 DUMP_FILE="/tmp/neon_backup_$(date +%Y%m%d_%H%M%S).dump"
 WEB_ROOT="/var/www/html"
 ENV_FILE="$WEB_ROOT/.env"

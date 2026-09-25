@@ -242,11 +242,11 @@ TOTAL: ~7500-10000 caracteres de contenido estructurado
 
 2. VARIABLES DE ENTORNO (Hostinger/cPanel):
    ──────────────────────────────────────
-   DIFY_API_KEY=app-uAuHKtsI6l82PIqdF7e7yiVL
-   DB_HOST=localhost
-   DB_NAME=u115767692_el_guero_bot
-   DB_USER=u115767692_lacueva
-   DB_PASS=eldesmadredelGuero1
+   DIFY_API_KEY=<DIFY_API_KEY_FROM_ENV>
+   DB_HOST=<DB_HOST>
+   DB_NAME=<DB_NAME>
+   DB_USER=<DB_USER>
+   DB_PASS=<DB_PASS_FROM_ENV>
 
 3. PERMISOS DE CARPETAS:
    ────────────────────

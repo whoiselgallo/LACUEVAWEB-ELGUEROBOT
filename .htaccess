@@ -10,8 +10,8 @@
 </IfModule>
 
 # 2. BLOQUEAR ARCHIVOS SENSIBLES
-# Bloquear acceso directo a archivos de configuración
-<FilesMatch "^(config\.php|\.env|\.env\..*|\.gitignore|\.git)$">
+# Bloquear acceso directo a archivos de configuración y secretos
+<FilesMatch "^(config\.php|\.env|\.env\..*|.*\.(pem|key|p12|crt|csr|jks|secret)|\.gitignore|\.git)$">
     Order Allow,Deny
     Deny from all
 </FilesMatch>

@@ -13,15 +13,15 @@ Centro de configuración única que contiene:
 
 ```php
 // ✅ Dify AI
-define('DIFY_API_KEY', 'app-uAuHKtsI6l82PIqdF7e7yiVL');
-define('DIFY_URL', 'https://api.dify.ai/v1/chat-messages');
+define('DIFY_API_KEY', getenv('DIFY_API_KEY'));
+define('DIFY_URL', getenv('DIFY_URL'));
 define('DIFY_TIMEOUT', 30);
 
 // ✅ Base de Datos
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'u115767692_el_guero_bot');
-define('DB_USER', 'u115767692_lacueva');
-define('DB_PASS', 'eldesmadredelGuero1');
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_NAME', getenv('DB_NAME'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
 define('DB_CHARSET', 'utf8mb4');
 
 // ✅ Funciones de conexión
@@ -263,16 +263,16 @@ Previene que se suban:
 
 ### Constantes Dify
 ```php
-define('DIFY_API_KEY', 'app-uAuHKtsI6l82PIqdF7e7yiVL');
-define('DIFY_URL', 'https://api.dify.ai/v1/chat-messages');
+define('DIFY_API_KEY', getenv('DIFY_API_KEY'));
+define('DIFY_URL', getenv('DIFY_URL'));
 ```
 
 ### Constantes BD
 ```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'u115767692_el_guero_bot');
-define('DB_USER', 'u115767692_lacueva');
-define('DB_PASS', 'eldesmadredelGuero1');
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_NAME', getenv('DB_NAME'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
 define('DB_CHARSET', 'utf8mb4');
 ```
 

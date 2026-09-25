@@ -12,7 +12,7 @@ services:
     plan: free
     region: oregon
     branch: main
-    healthCheckPath: /
+    healthCheckPath: /scripts/health-check.php
     envVars:
       # --- APP ---
       - key: APP_ENV
@@ -25,6 +25,10 @@ services:
         value: "2.0.2"
       - key: APP_URL
         sync: false
+
+      # --- HEALTH CHECK ---
+      - key: HEALTH_CHECK_PATH
+        value: /scripts/health-check.php
 
       # --- BASE DE DATOS (NEON.TECH) ---
       - key: DB_HOST

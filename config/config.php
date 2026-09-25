@@ -50,6 +50,47 @@ function getBoolEnvVar($name, $default = false) {
     return in_array($value, ['1', 'true', 'yes', 'on'], true);
 }
 
+function assert_runtime_config() {
+    $required = [
+        'DIFY_CHATBOT_API_KEY',
+        'DIFY_WORKFLOW_API_KEY',
+        'DB_HOST',
+        'DB_NAME',
+        'DB_USER',
+        'DB_PASS'
+    ];
+
+    $missing = [];
+    foreach ($required as $name) {
+        if (trim((string)getEnvVar($name, '')) === '') {
+            $missing[] = $name;
+        }
+    }
+
+    if (!empty($missing)) {
+        throw new RuntimeException('Faltan variables de entorno requeridas: ' . implode(', ', $missing));
+    }
+}
+
+function check_required_db_tables(array $tables) {
+    $db = db_connect();
+    $stmt = $db->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
+    $existing = array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    $missing = [];
+
+    foreach ($tables as $table) {
+        if (!in_array($table, $existing, true)) {
+            $missing[] = $table;
+        }
+    }
+
+    return [
+        'connected' => true,
+        'missing' => $missing,
+        'present' => array_values(array_intersect($tables, $existing))
+    ];
+}
+
 // Cargar variables desde el archivo .env si existe localmente
 $env_path = __DIR__ . '/../.env';
 if (file_exists($env_path)) {
@@ -106,22 +147,47 @@ define('ADMIN_PASS', getEnvVar('ADMIN_PASS', ''));
 // ═════════════════════════════════════════════════════════════════════════════════
 function db_connect() {
     try {
-        $isCloudSqlSocket = (strpos(DB_HOST, '/cloudsql/') === 0 || substr_count(DB_HOST, ':') === 2);
-        $isPostgres = ($isCloudSqlSocket || DB_PORT == '5432' || strpos(DB_HOST, 'neon.tech') !== false || strpos(DB_HOST, 'supabase') !== false);
+        $host = DB_HOST;
+        $port = DB_PORT;
+        $database = DB_NAME;
+        $user = DB_USER;
+        $pass = DB_PASS;
+
+        if (preg_match('/^postgresql:\/\//i', $host)) {
+            $parsed = parse_url($host);
+            if (is_array($parsed) && isset($parsed['host'])) {
+                $host = $parsed['host'];
+                $port = $parsed['port'] ?? $port;
+                $database = isset($parsed['path']) ? ltrim($parsed['path'], '/') : $database;
+                $user = $parsed['user'] ?? $user;
+                $pass = $parsed['pass'] ?? $pass;
+            }
+        }
+
+        $isCloudSqlSocket = (strpos($host, '/cloudsql/') === 0 || substr_count($host, ':') === 2);
+        $isPostgres = ($isCloudSqlSocket || $port == '5432' || strpos($host, 'neon.tech') !== false || strpos($host, 'supabase') !== false);
         
         if ($isCloudSqlSocket) {
-            $socketPath = (strpos(DB_HOST, '/cloudsql/') === 0) ? DB_HOST : '/cloudsql/' . DB_HOST;
-            $dsn = "pgsql:host={$socketPath};port=" . DB_PORT . ";dbname=" . DB_NAME;
+            $socketPath = (strpos($host, '/cloudsql/') === 0) ? $host : '/cloudsql/' . $host;
+            $dsn = "pgsql:host={$socketPath};port={$port};dbname={$database}";
         } elseif ($isPostgres) {
-            $dsn = 'pgsql:host=' . DB_HOST . 
-                   ';port=' . DB_PORT . 
-                   ';dbname=' . DB_NAME . 
+                 $dsn = 'pgsql:host=' . $host .
+                     ';port=' . $port .
+                     ';dbname=' . $database .
                    ';sslmode=require' .
                    ';connect_timeout=10';
+
+            if (strpos($host, 'neon.tech') !== false) {
+                $endpoint = preg_replace('/-pooler\./', '.', $host);
+                $endpoint = preg_replace('/\..*$/', '', $endpoint);
+                if ($endpoint !== '' && stripos($endpoint, 'ep-') === 0) {
+                    $dsn .= ';options=endpoint=' . $endpoint;
+                }
+            }
         } else {
-            $dsn = 'mysql:host=' . DB_HOST . 
-                   ';port=' . DB_PORT . 
-                   ';dbname=' . DB_NAME . 
+                 $dsn = 'mysql:host=' . $host .
+                     ';port=' . $port .
+                     ';dbname=' . $database .
                    ';charset=utf8mb4';
         }
         
@@ -132,7 +198,7 @@ function db_connect() {
             PDO::ATTR_PERSISTENT         => false
         ];
         
-        $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+        $pdo = new PDO($dsn, $user, $pass, $options);
         return $pdo;
     } catch (PDOException $e) {
         error_log('Database Connection Error: ' . $e->getMessage());

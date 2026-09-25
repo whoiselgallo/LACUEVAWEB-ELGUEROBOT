@@ -51,11 +51,11 @@ OPCIÓN A: A través de cPanel
 1. En cPanel, busca "Variables de Entorno" o "Environment Variables"
 2. Agrega estas variables:
 
-   DIFY_API_KEY = app-uAuHKtsI6l82PIqdF7e7yiVL
-   DB_HOST = localhost
-   DB_NAME = u115767692_el_guero_bot
-   DB_USER = u115767692_lacueva
-   DB_PASS = eldesmadredelGuero1
+   DIFY_API_KEY = <DIFY_API_KEY_FROM_HOSTINGER>
+   DB_HOST = <DB_HOST>
+   DB_NAME = <DB_NAME>
+   DB_USER = <DB_USER>
+   DB_PASS = <DB_PASS_FROM_HOSTINGER>
 
 3. Salva cada una
 
@@ -70,11 +70,11 @@ OPCIÓN B: Crear archivo .env (RECOMENDADO)
 
 ───────────────────────────────────────────────────────────────────────────────
 
-DIFY_API_KEY=app-uAuHKtsI6l82PIqdF7e7yiVL
-DB_HOST=localhost
-DB_NAME=u115767692_el_guero_bot
-DB_USER=u115767692_lacueva
-DB_PASS=eldesmadredelGuero1
+DIFY_API_KEY=<DIFY_API_KEY_FROM_HOSTINGER>
+DB_HOST=<DB_HOST>
+DB_NAME=<DB_NAME>
+DB_USER=<DB_USER>
+DB_PASS=<DB_PASS_FROM_HOSTINGER>
 
 ───────────────────────────────────────────────────────────────────────────────
 
@@ -141,7 +141,7 @@ public_html/
 
 2. Deberías ver:
    ✅ Archivo config.php existe
-   ✅ DIFY_API_KEY definida: app-uAuHKt...
+   ✅ DIFY_API_KEY definida: [oculta]
    ✅ Configuración BD
    ✅ Conexión a BD exitosa
    ✅ Tabla 'knowledge_base' existe
