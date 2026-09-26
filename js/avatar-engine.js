@@ -12,11 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarAvataresRegistrados() {
     try {
         const response = await fetch(`${API_AVATAR_URL}?action=list`);
+        if (!response.ok) return;
         const data = await response.json();
         const select = document.getElementById("avatarCharacterSelect");
         const gallery = document.getElementById("avatarGallery");
 
-        if (!data.success || !data.avatars) return;
+        if (!data || !data.success || !data.avatars) return;
 
         if (select) {
             select.innerHTML = '<option value="">-- Selecciona un personaje --</option>';

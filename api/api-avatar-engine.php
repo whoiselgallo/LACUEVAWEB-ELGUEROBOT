@@ -17,28 +17,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/../config/config.php';
 
+$db = null;
 try {
     $db = db_connect();
 
     // Auto-crear tabla de avatares si no existe (Self-healing)
-    $db->exec("
-        CREATE TABLE IF NOT EXISTS avatars (
-            id SERIAL PRIMARY KEY,
-            nombre VARCHAR(100) UNIQUE NOT NULL,
-            episodio VARCHAR(100),
-            foto_frente TEXT,
-            foto_perfil_izq TEXT,
-            foto_perfil_der TEXT,
-            imagen_limpia TEXT,
-            consentimiento_pdf TEXT,
-            rasgos_faciales TEXT,
-            estilo_casual TEXT,
-            estilo_deportivo TEXT,
-            estilo_formal TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ");
+    if ($db) {
+        $db->exec("
+            CREATE TABLE IF NOT EXISTS avatars (
+                id SERIAL PRIMARY KEY,
+                nombre VARCHAR(100) UNIQUE NOT NULL,
+                episodio VARCHAR(100),
+                foto_frente TEXT,
+                foto_perfil_izq TEXT,
+                foto_perfil_der TEXT,
+                imagen_limpia TEXT,
+                consentimiento_pdf TEXT,
+                rasgos_faciales TEXT,
+                estilo_casual TEXT,
+                estilo_deportivo TEXT,
+                estilo_formal TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ");
+    }
+} catch (Throwable $e) {
+    error_log('Avatar Engine DB Warning (Offline mode): ' . $e->getMessage());
+    $db = null;
+}
 
+try {
     $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
     
     // Soporte para la verificación de conexión de Dify (ping/pong)
@@ -47,14 +55,21 @@ try {
         exit();
     }
     
-    $action = sanitize_input($input['action'] ?? 'list');
+    $action = sanitize_input($input['action'] ?? ($_GET['action'] ?? 'list'));
 
     // -----------------------------------------------------------------------------
     // ACCIÓN: LISTAR PERSONAJES REGISTRADOS
     // -----------------------------------------------------------------------------
     if ($action === 'list') {
-        $stmt = $db->query("SELECT id, nombre, episodio, imagen_limpia, rasgos_faciales, created_at FROM avatars ORDER BY id DESC");
-        $avatars = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $avatars = [];
+        if ($db) {
+            try {
+                $stmt = $db->query("SELECT id, nombre, episodio, imagen_limpia, rasgos_faciales, created_at FROM avatars ORDER BY id DESC");
+                $avatars = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+            } catch (Throwable $ex) {
+                $avatars = [];
+            }
+        }
         json_response(['success' => true, 'avatars' => $avatars], 200);
         exit();
     }
@@ -356,7 +371,7 @@ try {
 
     json_response(['error' => 'Acción no válida'], 400);
 
-} catch (PDOException $e) {
-    error_log('Avatar API Error: ' . $e->getMessage());
-    json_response(['error' => 'Error de base de datos en Avatar Engine: ' . $e->getMessage()], 500);
+} catch (Throwable $e) {
+    error_log('Avatar API Warning: ' . $e->getMessage());
+    json_response(['success' => false, 'error' => 'Aviso en Avatar Engine: ' . $e->getMessage()], 200);
 }

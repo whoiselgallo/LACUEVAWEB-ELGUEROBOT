@@ -21,6 +21,8 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard PRO - La Cueva del Güero</title>
+    <link rel="icon" type="image/webp" href="../images/logotipo.webp">
+    <link rel="icon" type="image/png" href="../images/logotipo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
@@ -703,9 +705,11 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                 <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
             </div>
-            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 14px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión de Derechos</a>
-                <button class="btn-neon" style="font-size:0.8rem; padding:6px 14px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto a Galería</button>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
+                <a href="../tracking/index.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
+                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
+                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
                 <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
             </div>
         </header>
@@ -740,7 +744,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                                 </div>
                                 <div style="display: flex; gap: 8px; align-items: center;">
                                     <span id="detalleFecha" style="color: #666; font-size: 0.8rem;"></span>
-                                    <button class="btn-neon" id="btn-tracking" onclick="alert('Tracking en vivo próximamente')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
+                                    <button class="btn-neon" id="btn-tracking" onclick="window.open('../tracking/index.html' + (activeId ? '?id=' + activeId : ''), '_blank')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
                                         <i class="fa-solid fa-bullseye"></i> Ver Tracking en Vivo
                                     </button>
                                 </div>
