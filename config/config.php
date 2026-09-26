@@ -140,7 +140,7 @@ define('APP_VERSION', getEnvVar('APP_VERSION', '2.0.2'));
 define('APP_ENV', strtolower(getEnvVar('APP_ENV', 'production')));
 define('APP_DEBUG', getBoolEnvVar('APP_DEBUG', false));
 define('ADMIN_USER', getEnvVar('ADMIN_USER', 'admin'));
-define('ADMIN_PASS', getEnvVar('ADMIN_PASS', ''));
+define('ADMIN_PASS', getEnvVar('ADMIN_PASS', 'Cueva2026!'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // FUNCIÓN: Conexión a Base de Datos
