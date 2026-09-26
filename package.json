@@ -1,0 +1,21 @@
+{
+  "name": "lacuevaweb-elguerobot",
+  "version": "2.5.0",
+  "description": "Ecosistema Digital La Cueva del Güero & El Güero Bot",
+  "main": "index.html",
+  "scripts": {
+    "dev": "php -S localhost:8000",
+    "start": "php -S localhost:8000",
+    "serve": "php -S localhost:8000"
+  },
+  "keywords": [
+    "podcast",
+    "gemini",
+    "php",
+    "ffmpeg",
+    "dashboard",
+    "cyberpunk"
+  ],
+  "author": "La Cueva del Güero",
+  "license": "ISC"
+}
