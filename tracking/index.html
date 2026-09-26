@@ -238,6 +238,10 @@
       }
     });
 
+    function getTrackingApiUrl() {
+      return window.location.pathname.includes('/tracking') ? '../api/api-guest-tracking.php' : '/api/api-guest-tracking.php';
+    }
+
     async function consultarTracking() {
       const code = document.getElementById('guestCodeInput').value.trim();
       if (!code) {
@@ -246,7 +250,7 @@
       }
 
       try {
-        const res = await fetch(`../api/api-guest-tracking.php?action=get_status&code=${encodeURIComponent(code)}`);
+        const res = await fetch(`${getTrackingApiUrl()}?action=get_status&code=${encodeURIComponent(code)}`);
         const data = await res.json();
 
         if (data.status === 'success') {
@@ -274,7 +278,10 @@
       document.getElementById('guestBadgeStatus').textContent = `Estado: ${(invitado.estado || 'En Proceso').toUpperCase()}`;
 
       // Configurar enlace de WhatsApp
-      const fullUrl = `${window.location.origin}${window.location.pathname}?code=${encodeURIComponent(codigoActual)}`;
+      const baseUrl = (window.location.hostname === 's.lacuevadelguero.com')
+        ? 'https://s.lacuevadelguero.com/'
+        : `${window.location.origin}${window.location.pathname}`;
+      const fullUrl = `${baseUrl}?code=${encodeURIComponent(codigoActual)}`;
       const waMsg = encodeURIComponent(`¡Qué onda, ${invitado.nombre || 'compa'}! Aquí puedes ver el tracking en vivo de tu episodio en La Cueva del Güero 🎙️🔥:\n${fullUrl}`);
       document.getElementById('btnShareWa').href = `https://wa.me/?text=${waMsg}`;
 
@@ -362,11 +369,14 @@
       resDiv.innerHTML = '<span style="color:#00ffff;">Buscando código...</span>';
 
       try {
-        const res = await fetch(`../api/api-guest-tracking.php?action=recover_code&query=${encodeURIComponent(valor)}`);
+        const res = await fetch(`${getTrackingApiUrl()}?action=recover_code&query=${encodeURIComponent(valor)}`);
         const data = await res.json();
 
         if (data.status === 'success') {
-          const fullLink = `${window.location.origin}${window.location.pathname}?code=${encodeURIComponent(data.code)}`;
+          const baseUrl = (window.location.hostname === 's.lacuevadelguero.com')
+            ? 'https://s.lacuevadelguero.com/'
+            : `${window.location.origin}${window.location.pathname}`;
+          const fullLink = `${baseUrl}?code=${encodeURIComponent(data.code)}`;
           resDiv.innerHTML = `
             <div style="background: rgba(0,255,255,0.1); border: 1px solid #00ffff; border-radius: 12px; padding: 15px; margin-top: 15px;">
               <span style="color:#00ff00; font-weight:bold;">¡Código Encontrado / Generado!</span>

@@ -94,3 +94,4 @@ temp/
 .env.dusk.local
 .env.testing
 .phpunit.result.cache
+.vercel

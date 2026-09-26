@@ -707,7 +707,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             </div>
             <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
-                <a href="../tracking/index.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
+                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
                 <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
                 <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
                 <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
@@ -744,7 +744,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                                 </div>
                                 <div style="display: flex; gap: 8px; align-items: center;">
                                     <span id="detalleFecha" style="color: #666; font-size: 0.8rem;"></span>
-                                    <button class="btn-neon" id="btn-tracking" onclick="window.open('../tracking/index.html' + (activeId ? '?id=' + activeId : ''), '_blank')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
+                                    <button class="btn-neon" id="btn-tracking" onclick="const trackUrl = window.location.hostname.includes('lacuevadelguero.com') ? 'https://s.lacuevadelguero.com/' : '../tracking/index.html'; window.open(trackUrl + (activeId ? '?id=' + activeId : ''), '_blank')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
                                         <i class="fa-solid fa-bullseye"></i> Ver Tracking en Vivo
                                     </button>
                                 </div>

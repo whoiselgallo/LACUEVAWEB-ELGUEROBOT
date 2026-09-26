@@ -292,7 +292,8 @@ function executePawAction(action, toe) {
             }
             break;
         case 'tracking':
-            addPawMessage("¡Simón! Puedes revisar el estado de tu episodio en vivo aquí: [Ver Mi Tracking](/tracking/index.html)", "bot");
+            const trackLink = window.location.hostname.includes('lacuevadelguero.com') ? 'https://s.lacuevadelguero.com/' : '/tracking/index.html';
+            addPawMessage(`¡Simón! Puedes revisar el estado de tu episodio en vivo aquí: [Ver Mi Tracking](${trackLink})`, "bot");
             break;
         case 'seguidor':
             changeVisitType('follower');
@@ -359,7 +360,8 @@ async function sendMessageFromPaw() {
 
     // Atajo si el usuario pregunta por tracking directamente en el chat
     if (message.toLowerCase().includes('tracking') || message.toLowerCase().includes('mi episodio') || message.toLowerCase().includes('mi código') || message.toLowerCase().includes('mi codigo')) {
-        addPawMessage("¡Simón! Puedes revisar o generar tu código de seguimiento aquí: [Ver Tracking de Invitado](/tracking/index.html)", "bot");
+        const trackLink = window.location.hostname.includes('lacuevadelguero.com') ? 'https://s.lacuevadelguero.com/' : '/tracking/index.html';
+        addPawMessage(`¡Simón! Puedes revisar o generar tu código de seguimiento aquí: [Ver Tracking de Invitado](${trackLink})`, "bot");
         return;
     }
 
