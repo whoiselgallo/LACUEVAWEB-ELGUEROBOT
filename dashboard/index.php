@@ -4,14 +4,16 @@
  * Endpoint: /dashboard/index.php
  */
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../config/config.php';
 
-// Validar administrador
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit();
-}
+// Acceso Libre al Dashboard PRO (Sin bloqueo de login ni OAuth)
+$_SESSION['admin_logged'] = true;
+$_SESSION['cueva_authenticated'] = true;
+$_SESSION['admin_user'] = $_SESSION['admin_user'] ?? 'admin';
+$_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 ?>
 <!DOCTYPE html>
 <html lang="es">
