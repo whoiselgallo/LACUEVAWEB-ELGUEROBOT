@@ -21,8 +21,11 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard PRO - La Cueva del Güero</title>
-    <link rel="icon" type="image/webp" href="../images/logotipo.webp">
-    <link rel="icon" type="image/png" href="../images/logotipo.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/webp" href="/images/logotipo.webp">
+    <link rel="icon" type="image/png" href="/images/logotipo.png">
+    <link rel="apple-touch-icon" href="/images/logotipo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
