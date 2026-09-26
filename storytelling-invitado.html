@@ -1,192 +1,373 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Storytelling Invitado – La Cueva del Güero</title>
+  <title>Plática con El Güero | Cuestionario Oficial de 33 Preguntas</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="shortcut icon" href="/favicon.ico">
-  <link rel="icon" type="image/webp" href="images/logotipo.webp">
   <link rel="icon" type="image/png" href="images/logotipo.png">
   <link rel="apple-touch-icon" href="images/logotipo.png">
-
-  <!-- Estilos base del sitio -->
+  
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/paw-agent.css">
-
-  <!-- CSS específico de este formulario -->
-  <link rel="stylesheet" href="css/storytelling-invitado.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
-        crossorigin="anonymous" 
-        referrerpolicy="no-referrer" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Permanent+Marker&display=swap" rel="stylesheet">
+  
   <style>
     body {
-      background: #0a0a0a;
-      color: #e6e6e6;
-      font-family: 'Architects Daughter', cursive;
+      background: #06060c;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .chat-interview-card {
+      width: 100%;
+      max-width: 780px;
+      background: rgba(12, 12, 22, 0.95);
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(255, 0, 255, 0.1);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 3%;
+      background: linear-gradient(90deg, #00ffff, #39ff14, #ff00ff);
+      transition: width 0.4s ease;
+    }
+    .chat-messages {
+      flex: 1;
       padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
-    h1 {
-      text-align: center;
-      color: #FF00FF;
-      text-shadow: 0 0 15px #FF00FF;
-      margin-bottom: 5px;
+    .msg {
+      max-width: 84%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      line-height: 1.45;
+      font-size: 0.98rem;
+      animation: fadeIn 0.3s ease;
     }
-    .subtitulo {
-      text-align: center;
-      color: #00FFFF;
-      text-shadow: 0 0 8px #00FFFF;
-      margin-bottom: 30px;
+    .msg-bot {
+      align-self: flex-start;
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid #00ffff;
+      color: #e2f8ff;
+      border-bottom-left-radius: 2px;
     }
-    .botones {
+    .msg-user {
+      align-self: flex-end;
+      background: rgba(255, 0, 255, 0.18);
+      border: 1px solid #ff00ff;
+      color: #ffe6ff;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-input-bar {
+      padding: 12px 18px;
+      background: rgba(0, 0, 0, 0.85);
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 25px;
+      align-items: center;
     }
-    .botones button {
-      padding: 12px 20px;
-      background: #111;
-      border: 1px solid #00FFFF;
-      color: #00FFFF;
-      border-radius: 8px;
-      cursor: pointer;
+    .chat-input {
+      flex: 1;
+      background: rgba(10, 10, 20, 0.9);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
       font-size: 1rem;
-      transition: 0.2s;
+      outline: none;
     }
-    .botones button:hover {
-      background: #00FFFF;
-      color: #111;
-      box-shadow: 0 0 15px #00FFFF;
+    .chat-input:focus {
+      border-color: #39ff14;
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
     }
-    .panel {
-      display: none;
+    .btn-send, .btn-mic {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .panel.visible {
-      display: block;
+    .btn-send {
+      background: linear-gradient(135deg, #00ffff, #39ff14);
+      color: #000;
     }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #00FFFF;
-      text-decoration: none;
+    .btn-mic {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
     }
-    .back-link:hover {
-      text-shadow: 0 0 8px #00FFFF;
+    .btn-mic.recording {
+      background: #ff0055;
+      border-color: #ff0055;
+      animation: pulse 1s infinite;
     }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
   </style>
 </head>
 <body>
-  <script>
-    // Validar acceso exclusivo como invitado identificado por la pata del bot
-    if (localStorage.getItem('paw_guest_access') !== 'true') {
-      document.body.innerHTML = `
-        <div style="background:#0a0a0a; color:#fff; font-family:'Outfit', sans-serif; display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; margin:0; text-align:center;">
-          <div style="background:rgba(15,15,15,0.8); border:1px solid #FF00FF; box-shadow:0 0 20px rgba(255,0,255,0.3); padding:40px; border-radius:12px; max-width:400px; box-sizing:border-box;">
-            <h2 style="color:#FF00FF; text-shadow:0 0 10px #FF00FF; margin-bottom:15px;">🔒 Acceso Restringido</h2>
-            <p style="color:#ddd; margin-bottom:25px; line-height:1.5;">Por seguridad, debes identificarte primero como invitado conversando con el Güero Bot en la página principal.</p>
-            <a href="index.html" style="display:inline-block; padding:12px 20px; background:#00FFFF; border:none; color:#111; font-weight:bold; border-radius:8px; text-decoration:none; box-shadow:0 0 10px rgba(0,255,255,0.3); transition:0.2s;">Volver al Inicio</a>
-          </div>
+
+  <div class="chat-interview-card">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="images/logotipo.png" alt="El Güero" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #00ffff;">
+        <div>
+          <h3 style="margin: 0; color: #00ffff; font-size: 1.1rem;">Plática con El Güero 🐾</h3>
+          <span id="actIndicator" style="color: #ff00ff; font-size: 0.8rem; font-weight: bold;">Identificación Oficial</span>
         </div>
-      `;
-      document.body.style.padding = "0";
-      window.stop(); // Detener el renderizado del resto del documento
+      </div>
+      <div style="text-align: right;">
+        <span id="progressText" style="color: #39ff14; font-weight: 800; font-size: 0.95rem;">1 / 33</span>
+      </div>
+    </div>
+    
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-bar">
+      <button class="btn-mic" id="btnMic" onclick="toggleVoiceRecording()" title="Dictar por voz"><i class="fa-solid fa-microphone"></i></button>
+      <input type="text" id="chatInput" class="chat-input" placeholder="Escribe o dicta tu respuesta carnal..." onkeydown="if(event.key==='Enter') enviarRespuesta()">
+      <button class="btn-send" onclick="enviarRespuesta()"><i class="fa-solid fa-paper-plane"></i> Responder</button>
+    </div>
+  </div>
+
+  <script>
+    const PREGUNTAS = [
+      // Identificación Inicial (1 a 3)
+      { num: 1, acto: "Identificación Oficial", bot: "¡Qué onda carnal! 🐾 *mueve la cola* Pásale a La Cueva del Güero. Antes de afilar los micrófonos con El Junior y El Gallo... <b>¿Cuál es tu nombre completo?</b>" },
+      { num: 2, acto: "Identificación Oficial", bot: "¡Eso! ¿Y cuál es tu <b>petardo, alias o apodo</b>? (¿Cómo te conoce la raza en el bajo mundo?)" },
+      { num: 3, acto: "Identificación Oficial", bot: "<b>¿Tienes correo y WhatsApp?</b> Pásamelos para mandarte tu código de tracking y coordinar tu fecha de grabación." },
+
+      // Bloque 1: El Barrio y Raíces (4 a 10)
+      { num: 4, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 1: <b>¿A qué te dedicas actualmente?</b> Cuéntame tu mero jale del día a día." },
+      { num: 5, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 2: <b>¿Cómo te defines en 3 palabras?</b>" },
+      { num: 6, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 3: <b>¿De qué colonia o barrio eres?</b> ¿Dónde te forjaste?" },
+      { num: 7, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 4: <b>¿Qué significa para ti el Barrio?</b>" },
+      { num: 8, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 5: <b>¿Cuál es la mayor enseñanza que te ha regalado el barrio?</b>" },
+      { num: 9, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 6: <b>¿Qué quería ser de niño el tú de 10 años?</b>" },
+      { num: 10, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 7: <b>¿Hubo alguien que se burló o te dijo que no podrías conseguir tu sueño? ¿Quién fue?</b>" },
+
+      // Bloque 2: Madrazos y Sacrificios (11 a 17)
+      { num: 11, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 8: <b>¿Qué es lo más peligroso que has hecho en tu vida?</b>" },
+      { num: 12, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 9: <i>El camino y los madrazos</i>: <b>¿Qué es lo más humillante que te han pedido hacer en un jale (trabajo)? ¿Cuál fue tu reacción?</b>" },
+      { num: 13, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 10: <i>En el camino a veces perdemos el rumbo</i>: <b>¿Cuál ha sido el peor error que cometiste en tu carrera, ese que casi hace que renuncies a tus sueños?</b>" },
+      { num: 14, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 11: Si en este momento te dijera <i>'solo te quedan 24 horas de vida'</i>: <b>¿En qué las utilizarías?</b>" },
+      { num: 15, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 12: <b>¿Eres feliz o aún te faltan sueños por realizar?</b>" },
+      { num: 16, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 13: <b>¿Cuáles son esas cosas que tuviste que sacrificar para poder estar en este punto de tu carrera?</b>" },
+      { num: 17, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 14: <b>¿Cuál fue tu primer logro?</b> Ese momento en donde dijiste: <i>'chingón, me siento orgulloso de mí y de lo que logré'</i>." },
+
+      // Bloque 3: Mentalidad y Flow (18 a 22)
+      { num: 18, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 15: Si tuvieras una máquina del tiempo: <b>¿A dónde viajarías y por qué?</b>" },
+      { num: 19, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 16: <b>¿Qué le dirías hoy si te encontraras de frente a tu yo de hace 10 años?</b>" },
+      { num: 20, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 17: <i>La mentalidad y el flow</i>: <b>¿Tu secreto para el éxito en una palabra? ¿Cómo le hiciste para llegar a donde estás?</b>" },
+      { num: 21, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 18: En estos momentos: <b>¿Estás cumpliendo lo que soñaste ser?</b>" },
+      { num: 22, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 19: <b>¿Qué te hace diferente a los demás? ¿Tienes identificado ese don que te hace especial?</b>" },
+
+      // Bloque 4: Anecdotario y Confesiones (23 a 31)
+      { num: 23, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 20: <b>Algo chusco o chistoso que te haya pasado</b>, que cada que lo recuerdas te hace reír." },
+      { num: 24, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 21: <b>¿Esa canción que escuchas y te pones 'bélico'?</b>" },
+      { num: 25, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 22: <i>Confesión incómoda</i>: <b>Cuéntanos eso que siempre has querido decir, pero no te atreves a sacarlo de tu ronco pecho. Danos la exclusiva.</b>" },
+      { num: 26, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 23: <b>¿Qué es lo que más te molesta de la gente o de la vida?</b>" },
+      { num: 27, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 24: <b>¿Cómo te gustaría que la gente te recuerde cuando ya no estés en este mundo?</b>" },
+      { num: 28, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 25: <b>¿Cuál consideras que es tu mayor defecto?</b>" },
+      { num: 29, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 26: <i>Todos tenemos algo que nos gusta pero nos da pena</i>: <b>¿Cuál es tu gusto culposo?</b>" },
+      { num: 30, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 27: <b>¿A qué le tienes miedo y cómo lo enfrentas?</b>" },
+      { num: 31, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 28: <i>Dinámica / Reto</i>: <b>Si tuvieras que elegir solo una opción: ¿Fama sin dinero o Dinero sin fama? ¿Por qué?</b>" },
+
+      // Bloque 5: El Mensaje Final (32 a 33)
+      { num: 32, acto: "Bloque 5: El Mensaje Final", bot: "Pregunta 29: <b>¿Algo más que quieras que mencionemos o platiquemos en el episodio?</b>" },
+      { num: 33, acto: "Bloque 5: El Mensaje Final", bot: "Pregunta 30: <i>Es momento de la ayuda</i>: <b>¿Qué le dirías a esa persona que está pasando por un mal momento, para que no tire la toalla y se motive a seguir adelante?</b>" }
+    ];
+
+    let currentIndex = 0;
+    let respuestas = JSON.parse(localStorage.getItem('cueva_33_preguntas') || '{}');
+    let recognition = null;
+
+    window.onload = () => {
+      const guardadas = Object.keys(respuestas).length;
+      if (guardadas > 0 && guardadas < PREGUNTAS.length) {
+        currentIndex = guardadas;
+      }
+      renderChat();
+    };
+
+    function renderChat() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+
+      for (let i = 0; i <= currentIndex && i < PREGUNTAS.length; i++) {
+        addBotBubble(PREGUNTAS[i].bot);
+        if (respuestas[i + 1]) {
+          addUserBubble(respuestas[i + 1]);
+        }
+      }
+
+      updateProgress();
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function addBotBubble(text) {
+      const div = document.createElement('div');
+      div.className = 'msg msg-bot';
+      div.innerHTML = text;
+      document.getElementById('chatMessages').appendChild(div);
+    }
+
+    function addUserBubble(text) {
+      const div = document.createElement('div');
+      div.className = 'msg msg-user';
+      div.textContent = text;
+      document.getElementById('chatMessages').appendChild(div);
+    }
+
+    function updateProgress() {
+      const total = PREGUNTAS.length;
+      const act = PREGUNTAS[Math.min(currentIndex, total - 1)].acto;
+      document.getElementById('actIndicator').textContent = act;
+      document.getElementById('progressText').textContent = `${Math.min(currentIndex + 1, total)} / ${total}`;
+      const pct = Math.min(((currentIndex + 1) / total) * 100, 100);
+      document.getElementById('progressBar').style.width = `${pct}%`;
+    }
+
+    async function enviarRespuesta() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      addUserBubble(val);
+      respuestas[currentIndex + 1] = val;
+      localStorage.setItem('cueva_33_preguntas', JSON.stringify(respuestas));
+      input.value = '';
+
+      currentIndex++;
+
+      if (currentIndex < PREGUNTAS.length) {
+        setTimeout(() => {
+          addBotBubble(PREGUNTAS[currentIndex].bot);
+          updateProgress();
+          const chat = document.getElementById('chatMessages');
+          chat.scrollTop = chat.scrollHeight;
+        }, 400);
+      } else {
+        finalizarEntrevista();
+      }
+    }
+
+    async function finalizarEntrevista() {
+      addBotBubble("¡A huevo carnal! 🐾 *salta de emoción* ¡Completaste las 33 preguntas de la plática! Estoy procesando tu expediente oficial de invitado...");
+      
+      const payload = {
+        nombre: respuestas[1] || 'Invitado La Cueva',
+        alias: respuestas[2] || '',
+        contacto: respuestas[3] || '',
+        ocupacion: respuestas[4] || '',
+        barrio: respuestas[6] || '',
+        respuestas: respuestas
+      };
+
+      try {
+        const res = await fetch('/api/api-invitados-save.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const code = data.code || ('GUEST-' + Math.floor(1000 + Math.random() * 9000));
+
+        setTimeout(() => {
+          addBotBubble(`
+            <div style="background: rgba(57,255,20,0.12); border: 1px solid #39ff14; padding: 18px; border-radius: 12px; margin-top: 10px;">
+              <h3 style="color:#39ff14; margin:0 0 8px 0;">🎉 ¡EXPEDIENTE GENERADO CON ÉXITO!</h3>
+              <p>Tu código único de seguimiento es: <b style="color:#00ffff; font-size:1.35rem; letter-spacing:1px;">${code}</b></p>
+              <p style="margin: 10px 0;">Tu ficha ya está en manos de El Junior y El Gallo en el panel de producción.</p>
+              <a href="https://s.lacuevadelguero.com/?code=${code}" target="_blank" style="display:inline-block; background:#00ffff; color:#000; padding:10px 18px; border-radius:8px; font-weight:bold; text-decoration:none; margin-top:6px;">🚀 Ver Mi Tracking en Vivo</a>
+            </div>
+          `);
+          localStorage.removeItem('cueva_33_preguntas');
+        }, 1000);
+      } catch (err) {
+        addBotBubble("¡Expediente guardado! Avisale a Junior por WhatsApp con tu nombre para agendar tu fecha de grabación.");
+      }
+    }
+
+    function toggleVoiceRecording() {
+      const btn = document.getElementById('btnMic');
+      const input = document.getElementById('chatInput');
+
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Tu navegador no soporta dictado por voz. Te recomendamos usar Google Chrome en tu celular o compu.');
+        return;
+      }
+
+      if (recognition) {
+        recognition.stop();
+        recognition = null;
+        btn.classList.remove('recording');
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        btn.classList.add('recording');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = (input.value ? input.value + ' ' : '') + transcript;
+      };
+
+      recognition.onerror = () => {
+        btn.classList.remove('recording');
+        recognition = null;
+      };
+
+      recognition.onend = () => {
+        btn.classList.remove('recording');
+        recognition = null;
+      };
+
+      recognition.start();
     }
   </script>
-
-  <a href="index.html" class="back-link">← Volver a La Cueva</a>
-
-  <h1>🎙 Storytelling del Invitado</h1>
-  <p class="subtitulo">Presentación + Storytelling + Guion + Escaleta + Cue Cards</p>
-
-  <section id="contenedorStorytelling">
-    <form id="formStorytelling">
-      <!-- IDENTIDAD -->
-      <h2>Identidad del invitado</h2>
-
-      <label for="st_nombre">Nombre completo o artístico</label>
-      <input type="text" id="st_nombre" required>
-
-      <label for="st_ocupacion">Ocupación actual</label>
-      <input type="text" id="st_ocupacion" required>
-
-      <label for="st_frase">Frase que lo describe en una línea</label>
-      <input type="text" id="st_frase" required>
-
-      <label for="st_barrio">Barrio / ciudad de origen</label>
-      <input type="text" id="st_barrio" required>
-
-      <!-- HISTORIA BASE -->
-      <h2>Historia base</h2>
-
-      <label for="st_historia">Historia resumida (5–10 líneas)</label>
-      <textarea id="st_historia" rows="5" required></textarea>
-
-      <!-- STORYTELLING DETONANTE -->
-      <h2>Storytelling de apertura</h2>
-
-      <label for="st_anecdota">Anécdota detonante que lo representa</label>
-      <textarea id="st_anecdota" rows="4" required></textarea>
-
-      <label for="st_momento">Momento más decisivo de su vida</label>
-      <textarea id="st_momento" rows="4" required></textarea>
-
-      <label for="st_herida">Herida emocional / obstáculo fuerte</label>
-      <textarea id="st_herida" rows="4" required></textarea>
-
-      <label for="st_trayectoria">Trayectoria (cómo llegó hasta aquí)</label>
-      <textarea id="st_trayectoria" rows="4" required></textarea>
-
-      <!-- GUION DE PREGUNTAS -->
-      <h2>Guion de preguntas</h2>
-
-      <label for="st_incomodo">Temas incómodos / límites</label>
-      <textarea id="st_incomodo" rows="3"></textarea>
-
-      <label for="st_vulnerabilidad">Vulnerabilidades (qué lo hace sentir expuesto)</label>
-      <textarea id="st_vulnerabilidad" rows="3"></textarea>
-
-      <label for="st_pasiones">Pasiones / temas que ama hablar</label>
-      <textarea id="st_pasiones" rows="3"></textarea>
-
-      <label for="st_logros">Logros clave que deben salir en el episodio</label>
-      <textarea id="st_logros" rows="3"></textarea>
-
-      <!-- LOGÍSTICA -->
-      <h2>Logística</h2>
-
-      <label for="st_fecha">Fecha propuesta de grabación</label>
-      <input type="text" id="st_fecha" placeholder="DD/MM/AAAA">
-
-      <label for="st_contacto">Contacto (teléfono o correo)</label>
-      <input type="text" id="st_contacto">
-
-      <div class="botones">
-        <button type="button" id="st_generar">🚀 Generar paquete</button>
-        <button type="button" id="st_copiar">📋 Copiar resultado</button>
-        <button type="button" id="st_descargar">💾 Descargar TXT</button>
-        <button type="button" id="st_limpiar">🧹 Limpiar</button>
-      </div>
-      <div style="text-align:center; margin-top:15px; font-size:0.85rem; color:#aaa; line-height:1.6;">
-        Al participar, aceptas nuestro <a href="politica-privacidad.html" target="_blank" style="color:#00ffff; text-decoration:none; border-bottom:1px dashed #00ffff; padding-bottom:1px; margin-right:10px;">Aviso de Privacidad</a> y la <a href="cesion-derechos.html" target="_blank" style="color:#ff00ff; text-decoration:none; border-bottom:1px dashed #ff00ff; padding-bottom:1px;"><i class="fa-solid fa-file-contract"></i> Carta de Cesión de Imagen y Voz</a>.
-      </div>
-    </form>
-  </section>
-
-  <section id="st_resultado" class="panel">
-    <h2>Resultado – Paquete completo del episodio</h2>
-    <div id="st_bloques"></div>
-  </section>
-
-  <!-- JS de página -->
-  <script src="js/storytelling-invitado-page.js"></script>
 </body>
 </html>
