@@ -1,38 +1,11 @@
 {
   "version": 2,
   "functions": {
-    "api/*.php": {
-      "runtime": "vercel-php@0.7.3"
-    },
-    "api/**/*.php": {
+    "api/index.php": {
       "runtime": "vercel-php@0.7.3"
     }
   },
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "has": [
-        {
-          "type": "host",
-          "value": "admin.lacuevadelguero.com"
-        }
-      ],
-      "src": "/login",
-      "dest": "/api/login.php"
-    },
-    {
-      "has": [
-        {
-          "type": "host",
-          "value": "admin.lacuevadelguero.com"
-        }
-      ],
-      "src": "/logout",
-      "dest": "/api/logout.php"
-    },
     {
       "has": [
         {
@@ -41,7 +14,7 @@
         }
       ],
       "src": "/(.*)",
-      "dest": "/api/dashboard.php"
+      "dest": "/api/index.php"
     },
     {
       "has": [
@@ -54,24 +27,20 @@
       "dest": "/tracking/index.html"
     },
     {
+      "src": "/api/(.*)",
+      "dest": "/api/index.php"
+    },
+    {
       "src": "/tracking",
       "dest": "/tracking/index.html"
     },
     {
-      "src": "/dashboard/login",
-      "dest": "/api/login.php"
-    },
-    {
-      "src": "/dashboard/logout",
-      "dest": "/api/logout.php"
-    },
-    {
       "src": "/dashboard/(.*)",
-      "dest": "/api/dashboard.php"
+      "dest": "/api/index.php"
     },
     {
       "src": "/dashboard",
-      "dest": "/api/dashboard.php"
+      "dest": "/api/index.php"
     },
     {
       "src": "/(.*)",
