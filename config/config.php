@@ -401,7 +401,7 @@ function call_gemini_generate($payload, $apiKey = null) {
         return ['success' => false, 'error' => 'No hay claves de API de Gemini configuradas.'];
     }
 
-    $models = ['gemini-3.6-flash', 'gemini-3-flash-preview'];
+    $models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
     $lastError = '';
 
     foreach ($models as $model) {

@@ -7,13 +7,31 @@
   },
   "routes": [
     {
-      "has": [
-        {
-          "type": "host",
-          "value": "admin.lacuevadelguero.com"
-        }
-      ],
-      "src": "/(.*)",
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/images/(.*)",
+      "dest": "/images/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/favicon.png",
+      "dest": "/favicon.png"
+    },
+    {
+      "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
     {
@@ -27,7 +45,13 @@
       "dest": "/tracking/index.html"
     },
     {
-      "src": "/api/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.lacuevadelguero.com"
+        }
+      ],
+      "src": "/(.*)",
       "dest": "/api/index.php"
     },
     {
