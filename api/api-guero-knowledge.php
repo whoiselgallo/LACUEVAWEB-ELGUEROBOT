@@ -249,6 +249,74 @@ $FALLBACK_INVITADOS = [
             'razon' => 'Perspectiva femenina auténtica y liderazgo de barrio.'
         ],
         'ponderacion' => ['score_total' => 95, 'criterios' => []]
+    ],
+    10 => [
+        'id' => 10,
+        'nombre' => "La Pocha",
+        'created_at' => "2026-09-29 20:00:00",
+        'alias' => "La Pocha",
+        'ocupacion' => "Comerciante, Emprendedora y Personaje Urbano",
+        'barrio' => "Pueblo Nuevo / La Línea, Mexicali",
+        'trayectoria' => "Vida forjada entre el otro lado y Mexicali, rompiendo esquemas con comercio independiente, estilo chicano y puro flow cachanilla.",
+        'herida' => "El rechazo en ambos lados de la frontera y levantarse de la ruina económica con puro trabajo honesto.",
+        'molestia' => "La gente alzada que se avergüenza de sus raíces y los desleales.",
+        'frase' => "En la frontera nadie nos regala nada: o le chingas con orgullo o te quedas en el camino.",
+        'storytelling_enfoque' => "Identidad fronteriza, cultura de barrio y resiliencia femenina desde Pueblo Nuevo.",
+        'reto' => "Cruzar el cerco, perderlo todo y reconstruirse como pilar de su familia y comunidad.",
+        'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA DEL GÜERO\nInvitado: La Pocha (Personaje Urbano de Mexicali)\nTema: Vida de frontera, cultura chicana y el poder de no rajarse\n\n[00:00 - 05:00] Hook & Intro: El origen del apodo 'La Pocha' y el choque de dos mundos en la línea\n[05:00 - 15:00] Bloque 1: Creciendo en Pueblo Nuevo, el spanglish y los primeros jales pesados\n[15:00 - 28:00] Bloque 2: Los madrazos de la vida: perderlo todo en el otro lado y empezar de cero en Mexicali\n[28:00 - 40:00] Bloque 3: Negocios de frontera, códigos de respeto y el don de conectar con la gente\n[40:00 - 48:00] Bloque 4: Dinámica en cabina, confesión incómoda sin censura y canción bélica\n[48:00 - 52:00] Cierre & Reflexión: Mensaje a las morras y vatos que están pasando por la lumbre",
+        'guion' => "GUIÓN BROADCAST - LA CUEVA DEL GÜERO\nInvitado: La Pocha | Conducción: El Güero & Junior\n\nEl Güero: ¡Qué onda manada! Hoy la mesa vibra pesado porque tenemos a una morra que representa la pura esencia de la frontera: auténtica, entrona y sin pelos en la lengua. ¡Bienvenida a la Cueva, mi querida Pocha!\n\nJunior: ¡Qué onda Pocha! Todo Mexicali y el valle te ubican. Cuéntanos directo: ¿de dónde nació el apodo de 'La Pocha' y cómo fue crecer con un pie en Calexico y el otro en Pueblo Nuevo?\n\nLa Pocha: ¡Qué onda Güero, qué onda Junior! Pues la neta me decían así desde morra porque hablaba mocho, pero ese spanglish y esa mezcla es lo que me dio la fuerza para salir adelante en los dos lados...\n\nEl Güero: En el cuestionario nos platicaste de un momento donde sentiste que tocabas fondo. Cuéntale a la raza qué se siente tener que reinventarse cuando todos dudan de ti...\n\nLa Pocha: Se siente gacho, pero de la lumbre sales templado. Yo me dije: 'Aquí no hay tiempo de llorar, hay que chingarle al doble'.\n\nJunior: Y la neta, ¿cuál es el secreto para mantener la humildad cuando te empieza a ir bien?\n\nLa Pocha: Nunca olvidar de dónde vienes, carnal. El barrio te da escuela, pero tú decides si caminas derecho.",
+        'cue_cards' => "CUE CARDS DE CABINA - HOSTS\n• TARJETA 1 (HOOK): Origen del apodo 'La Pocha' y anécdotas de Pueblo Nuevo y la garita.\n• TARJETA 2 (RESILIENCIA): El golpe más duro en el trabajo y cómo levantó su propio negocio.\n• TARJETA 3 (DINÁMICA): Activar reto en cabina y mención especial a patrocinadores de la Cueva.\n• TARJETA 4 (CIERRE): Mensaje motivacional de poder femenino y superación fronteriza.",
+        'curaduria' => [
+            'nivel' => 'ALTO',
+            'badge' => '🟢 NIVEL ALTO',
+            'formato' => 'Invitado Principal al Canal (Episodio Completo 45+ min)',
+            'color' => '#39FF14',
+            'razon' => 'Personaje urbano icónico de Mexicali. Potencia narrativa de frontera, autenticidad y resiliencia.'
+        ],
+        'ponderacion' => [
+            'score_total' => 98,
+            'criterios' => [
+                ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 9.0, 'justificacion' => 'Puro arraigo fronterizo en Pueblo Nuevo y La Línea.'],
+                ['nombre' => 'Potencia Emocional & Resiliencia', 'score' => 9.0, 'justificacion' => 'Historia de superación y reinvención económica.'],
+                ['nombre' => 'Carisma & Dinámica en Set', 'score' => 9.0, 'justificacion' => 'Lenguaje directo, chispa y anécdotas sin filtro.'],
+                ['nombre' => 'Mensaje Motivacional', 'score' => 9.0, 'justificacion' => 'Empoderamiento y lealtad comunitaria.']
+            ]
+        ],
+        'respuestas' => [
+            1 => "La Pocha",
+            2 => "La Pocha",
+            3 => "lapocha@lacuevadelguero.com",
+            4 => "Comerciante, Emprendedora y Creadora",
+            5 => "Firme, alegre, trabajadora",
+            6 => "Colonia Pueblo Nuevo / La Línea, Mexicali",
+            7 => "La familia elegida y la escuela donde se aprende el respeto",
+            8 => "A no rajarse por nada y defender a los tuyos",
+            9 => "Tener mis propios negocios y ayudar a mi jefa",
+            10 => "Muchos me dijeron que por ser mujer y pocha no iba a poder",
+            11 => "Aventarme sola al otro lado a buscar la chuleta",
+            12 => "Que me hicieran menos por hablar spanglish en un jale",
+            13 => "Confiar en personas que me robaron mi inversión inicial",
+            14 => "Armar una carne asada con mi familia y mi gente de barrio",
+            15 => "Soy muy feliz y bendecida, pero voy por más metas",
+            16 => "Años de juventud, desveladas y días sin descanso",
+            17 => "Abrir mi propio local y ver sonreír a mi familia",
+            18 => "A los años 2000 en Mexicali para abrazar a mis abuelos",
+            19 => "No tengas miedo morra, todo lo que sueñas se va a cumplir",
+            20 => "Huevos y disciplina",
+            21 => "Sí, viviendo a mi manera y con la frente en alto",
+            22 => "El carisma y que no me le achicopalo a nadie",
+            23 => "La vez que se me cayó la peluca en pleno baile en Calexico",
+            24 => "Corridos pesados y rap chicano",
+            25 => "Que me sé de memoria todas las rolas de Selena y Paquita la del Barrio",
+            26 => "Los hipócritas y los que no pagan lo que deben",
+            27 => "Como una mujer entrona que nunca se rajó",
+            28 => "Muy desconfiada a veces",
+            29 => "Los churros locos y los tacos de noche",
+            30 => "A la soledad, pero me refugio en mi trabajo y mi fe",
+            31 => "Reto de destreza en vivo",
+            32 => "Un saludo a toda la banda de Pueblo Nuevo y la frontera",
+            33 => "Acuérdate que después de la tormenta sale el sol cachanilla. ¡Con todo y pa'delante!"
+        ]
     ]
 ];
 

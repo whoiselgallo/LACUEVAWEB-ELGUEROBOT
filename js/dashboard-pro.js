@@ -88,7 +88,8 @@ const INVITADOS_DEFAULT = [
     { id: 6, nombre: "Guillermina Ayala Quiñonez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Empleada doméstica. Historia humana conmovedora del barrio Libertad.' } },
     { id: 7, nombre: "Sergio Rene Coronado Vega", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.' } },
     { id: 8, nombre: "Sergio Noe Escobar Perez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Llantero hondureño. Migración, superación y trabajo honesto en la frontera.' } },
-    { id: 9, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } }
+    { id: 9, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } },
+    { id: 10, nombre: "La Pocha", created_at: "2026-09-29", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Personaje urbano icónico de Mexicali. Vida de frontera, cultura chicana y resiliencia.' } }
 ];
 
 async function cargarRegistros() {
