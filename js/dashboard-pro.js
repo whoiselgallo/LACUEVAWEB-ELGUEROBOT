@@ -290,6 +290,7 @@ async function mostrarDetalle(id) {
         // STORYTELLING Y TEMA DE BLOG
         activeData.storytelling = typeof reg.storytelling === 'string' ? reg.storytelling : JSON.stringify(reg.storytelling || {});
         inicializarTemaBlog(reg);
+        renderBloquesNormales();
 
     } catch (error) {
         console.warn("Aviso al cargar detalle de la API, usando datos locales:", error);

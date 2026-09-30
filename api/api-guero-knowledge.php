@@ -1,9 +1,9 @@
 <?php
 /**
  * ═════════════════════════════════════════════════════════════════════════════════
- * API - Guardar Storytelling y Conocimiento del Güero (PostgreSQL / Neon)
+ * API - Guardar Storytelling y Conocimiento del Güero (PostgreSQL / Neon & JSON Resilient)
  * Endpoint: /api/api-guero-knowledge.php
- * Con soporte resiliente para base de datos y fallback offline
+ * Con soporte resiliente para base de datos, envíos recientes y fallback offline
  * ═════════════════════════════════════════════════════════════════════════════════
  */
 
@@ -19,16 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/../config/config.php';
 
-// Intentar conectar a BD de forma segura sin abortar con HTTP 500
+// Intentar conectar a BD de forma segura
 $db = null;
 try {
     $db = db_connect();
 } catch (Exception $e) {
-    error_log('Knowledge DB Warning (Using fallback): ' . $e->getMessage());
+    error_log('Knowledge DB Warning (Using resilient fallback): ' . $e->getMessage());
     $db = null;
 }
 
-// Fallbacks de Invitados Registrados
+// Fallbacks de Invitados Registrados (Fichas Maestras)
 $FALLBACK_INVITADOS = [
     2 => [
         'id' => 2,
@@ -41,15 +41,26 @@ $FALLBACK_INVITADOS = [
         'herida' => "La pérdida de su primer estudio por un incendio y tener que empezar desde cero sin apoyo.",
         'molestia' => "La falta de lealtad y los compas que se cuelgan del éxito ajeno.",
         'frase' => "La lealtad no se platica, se demuestra en la lumbre.",
+        'storytelling_enfoque' => "Resiliencia y lealtad en la música fronteriza desde la Libertad.",
+        'reto' => "El incendio del primer estudio y reconstruir su carrera sin apoyo.",
         'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA\nInvitado: Leo Camacho Higuera\nTema: Resiliencia y lealtad en la música fronteriza\n\n[00:00 - 03:00] Hook & Intro: El incendio que casi lo retira\n[03:00 - 15:00] Bloque 1: Creciendo en la Libertad y el primer micrófono\n[15:00 - 30:00] Bloque 2: El golpe duro y reconstruir la visión\n[30:00 - 45:00] Bloque 3: Produciendo en Mexicali y consejos a las nuevas generaciones\n[45:00 - 50:00] Cierre y reflexiones de La Cueva",
         'guion' => "GUIÓN BROADCAST - LA CUEVA DEL GÜERO\nInvitado: Leo Camacho Higuera\n\nEl Güero: ¡Qué onda manada! Hoy tenemos sentado en la mesa a un compa que le ha tocado picar piedra en serio: Leo Camacho.\n\nJunior: Bienvenido a la Cueva, carnal. La neta queríamos empezar con la pregunta directa: ¿qué sentiste el día que viste tu estudio en cenizas?\n\nLeo: Fue el momento donde tuve que decidir si me rendía o le metía el doble de ganas...",
         'cue_cards' => "CUE CARDS DE CABINA\n• Tarjeta 1: Preguntar sobre el origen del apodo y primeros años en la Libertad.\n• Tarjeta 2: Momento clave del incendio (conectar con la vulnerabilidad).\n• Tarjeta 3: Mencionar patrocinador oficial de la Cueva.\n• Tarjeta 4: Pregunta final sobre qué consejo le daría a su yo de hace 10 años.",
         'curaduria' => [
             'nivel' => 'ALTO',
             'badge' => '🟢 NIVEL ALTO',
-            'formato' => 'Invitado Principal al Canal',
+            'formato' => 'Invitado Principal al Canal (Episodio Completo)',
             'color' => '#39FF14',
             'razon' => 'Expediente de alta potencia narrativa y lealtad de barrio.'
+        ],
+        'ponderacion' => [
+            'score_total' => 96,
+            'criterios' => [
+                ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 9.0, 'justificacion' => 'Raíces sólidas en la Colonia Libertad.'],
+                ['nombre' => 'Potencia Emocional & Resiliencia', 'score' => 9.0, 'justificacion' => 'Historia de reconstrucción tras el incendio.'],
+                ['nombre' => 'Confesión & Dinámica en Set', 'score' => 8.5, 'justificacion' => 'Anécdotas directas sin censura.'],
+                ['nombre' => 'Mensaje Motivacional', 'score' => 9.0, 'justificacion' => 'Lealtad y superación para las nuevas generaciones.']
+            ]
         ]
     ],
     3 => [
@@ -63,6 +74,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "El rechazo inicial de las productoras en CDMX y la soledad del inicio.",
         'molestia' => "Los presupuestos inflados que no llegan a los creadores reales.",
         'frase' => "El cine no es de cámaras caras, es de ojos despiertos.",
+        'storytelling_enfoque' => "Cine independiente y visión cinematográfica en la frontera.",
+        'reto' => "Romper barreras frente a la industria centralista.",
         'escaleta' => "ESCALETA - Javi Domz (JeyB)\n[00:00 - 05:00] Hook de impacto visual\n[05:00 - 20:00] La lucha por filmar en Mexicali\n[20:00 - 40:00] De la frontera para el mundo\n[40:00 - 50:00] Cierre",
         'guion' => "GUIÓN - Javi Domz en La Cueva\n\nEl Güero: Hoy está con nosotros JeyB, el compa detrás del lente más pesado de la baja...",
         'cue_cards' => "CUE CARDS\n• Preguntar sobre el proyecto de largometraje en Mexicali.\n• Detonador: ¿Vale la pena irse a CDMX o quedarse en el norte?",
@@ -72,6 +85,14 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Storytelling visual y dirección cinematográfica de alto impacto.'
+        ],
+        'ponderacion' => [
+            'score_total' => 95,
+            'criterios' => [
+                ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 8.8, 'justificacion' => 'Cine fronterizo auténtico.'],
+                ['nombre' => 'Potencia Emocional', 'score' => 8.9, 'justificacion' => 'Superación del rechazo en CDMX.'],
+                ['nombre' => 'Mensaje Motivacional', 'score' => 9.0, 'justificacion' => 'Crear con lo que tienes a la mano.']
+            ]
         ]
     ],
     4 => [
@@ -85,6 +106,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "Ver las injusticias del sistema legal cuando la gente de a pie no tiene defensa.",
         'molestia' => "La burocracia insensible que olvida al ser humano.",
         'frase' => "El derecho tiene que servir al pueblo, no a los escritorios.",
+        'storytelling_enfoque' => "Justicia real vs burocracia desde el tribunal estatal.",
+        'reto' => "Mantener la integridad en un sistema complejo.",
         'escaleta' => "ESCALETA - Marcelo Maciel\n[00:00 - 05:00] Hook: Ley vs Realidad de calle\n[05:00 - 25:00] Casos difíciles en la frontera\n[25:00 - 45:00] Ética y justicia real\n[45:00 - 50:00] Cierre",
         'guion' => "GUIÓN - Marcelo Maciel\nEl Güero: Marcelo, bienvenido a decir la neta del sistema...",
         'cue_cards' => "CUE CARDS\n• Pregunta clave: ¿Hay justicia real para el barrio?\n• Anécdota del caso más retador.",
@@ -94,6 +117,12 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Tribunal estatal de justicia administrativa y visión social del barrio.'
+        ],
+        'ponderacion' => [
+            'score_total' => 94,
+            'criterios' => [
+                ['nombre' => 'Autenticidad & Conexión', 'score' => 9.0, 'justificacion' => 'Defensa legal de la gente trabajadora.']
+            ]
         ]
     ],
     5 => [
@@ -107,6 +136,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "Quiebras económicas que casi le cuestan la salud familiar.",
         'molestia' => "Los que prometen atajos fáciles para el dinero.",
         'frase' => "El billete se suda, el respeto se gana.",
+        'storytelling_enfoque' => "Comercio de barrio y décadas de trabajo en la Carbajal.",
+        'reto' => "Levantarse de quiebras económicas familiares.",
         'escaleta' => "ESCALETA - Aurelio Gonzalez\n[00:00 - 10:00] La Carbajal y los primeros pesos\n[10:00 - 30:00] Negocios de frontera\n[30:00 - 50:00] Aprendizajes de vida",
         'guion' => "GUIÓN - Aurelio Gonzalez\nEl Güero: Hoy nos acompaña don Aurelio de la Carbajal...",
         'cue_cards' => "CUE CARDS\n• Historia del primer puesto comercial.\n• Claves para aguantar las crisis fronterizas.",
@@ -116,7 +147,8 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Negocios y trayectoria comercial en la frontera desde la Carbajal.'
-        ]
+        ],
+        'ponderacion' => ['score_total' => 95, 'criterios' => []]
     ],
     6 => [
         'id' => 6,
@@ -129,6 +161,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "La ausencia y la dureza de las jornadas dobles.",
         'molestia' => "Que no se valore el esfuerzo de las jefas de hogar.",
         'frase' => "Mientras haya salud, no hay trabajo que me raje.",
+        'storytelling_enfoque' => "El pilar de las madres de familia que sostienen el barrio.",
+        'reto' => "Jornadas dobles y sacar a los hijos adelante.",
         'escaleta' => "ESCALETA - Guillermina Ayala (Especial Jefas de Familia)\n[00:00 - 10:00] Madres que no se rajan\n[10:00 - 35:00] Historias de la Libertad\n[35:00 - 50:00] Mensaje a los hijos",
         'guion' => "GUIÓN - Doña Guille en La Cueva\nEl Güero: Este episodio es un homenaje a las que nunca se doblan...",
         'cue_cards' => "CUE CARDS\n• Anécdota de cómo sacó adelante a la familia.\n• Momento de mayor orgullo.",
@@ -138,7 +172,8 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Historia humana conmovedora y pilar de la comunidad.'
-        ]
+        ],
+        'ponderacion' => ['score_total' => 97, 'criterios' => []]
     ],
     7 => [
         'id' => 7,
@@ -151,6 +186,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "La falta de oportunidades para oficios técnicos calificados.",
         'molestia' => "El regateo al trabajo manual especializado.",
         'frase' => "Lo que bien se aprende, nunca se olvida.",
+        'storytelling_enfoque' => "El valor del oficio técnico y soporte urbano.",
+        'reto' => "El regateo y la dignificación del oficio.",
         'escaleta' => "ESCALETA - Sergio Rene Coronado\n[00:00 - 10:00] El valor del oficio técnico\n[10:00 - 30:00] Casos de éxito\n[30:00 - 45:00] Consejos",
         'guion' => "GUIÓN - Sergio Coronado\nEl Güero: Hoy vamos a hablar de la raza que hace que las cosas funcionen...",
         'cue_cards' => "CUE CARDS\n• Preguntas rápidas de cabina y 3 hooks virales.",
@@ -160,7 +197,8 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Entrevista Corta / Segmento (10 min)',
             'color' => '#00FFFF',
             'razon' => 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.'
-        ]
+        ],
+        'ponderacion' => ['score_total' => 78, 'criterios' => []]
     ],
     8 => [
         'id' => 8,
@@ -173,6 +211,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "El trayecto migratorio y dejar a su familia atrás.",
         'molestia' => "Los prejuicios contra el migrante trabajador.",
         'frase' => "Mexicali me abrió los brazos porque vine a trabajar, no a pedir.",
+        'storytelling_enfoque' => "Migración, superación y trabajo honesto en la frontera.",
+        'reto' => "El cruce migratorio y abrir su propio taller desde cero.",
         'escaleta' => "ESCALETA - Sergio Noe Escobar\n[00:00 - 10:00] El camino desde Honduras a Mexicali\n[10:00 - 30:00] Del llantero chalán al dueño del negocio\n[30:00 - 50:00] Amor por la tierra cachanilla",
         'guion' => "GUIÓN - Sergio Noe en La Cueva\nEl Güero: Este compa es el claro ejemplo de que el que quiere jalar, sale adelante en cualquier parte del mundo...",
         'cue_cards' => "CUE CARDS\n• Historia del cruce y llegada a Mexicali.\n• Cómo abrió su primer taller.",
@@ -182,7 +222,8 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Migración, superación y trabajo honesto en la frontera.'
-        ]
+        ],
+        'ponderacion' => ['score_total' => 96, 'criterios' => []]
     ],
     9 => [
         'id' => 9,
@@ -195,6 +236,8 @@ $FALLBACK_INVITADOS = [
         'herida' => "La indiferencia de las autoridades ante las necesidades básicas de la colonia.",
         'molestia' => "Las promesas de campaña que nunca se cumplen.",
         'frase' => "Si el barrio no se une, nadie va a venir a salvarnos.",
+        'storytelling_enfoque' => "Liderazgo femenino y defensa comunitaria en Puertas del Sol.",
+        'reto' => "Organizar a la comunidad frente a la indiferencia de las autoridades.",
         'escaleta' => "ESCALETA - Yessica Fierro\n[00:00 - 10:00] Puertas del Sol: Retos de una colonia viva\n[10:00 - 30:00] Liderazgo femenino de barrio\n[30:00 - 50:00] Unión comunitaria",
         'guion' => "GUIÓN - Yessica Fierro en La Cueva\nEl Güero: Hoy tenemos una voz firme que no se calla nada: Jessy de Puertas del Sol...",
         'cue_cards' => "CUE CARDS\n• Logros comunitarios en Puertas del Sol.\n• Mensaje a las mujeres de barrio.",
@@ -204,106 +247,185 @@ $FALLBACK_INVITADOS = [
             'formato' => 'Invitado Principal al Canal',
             'color' => '#39FF14',
             'razon' => 'Perspectiva femenina auténtica y liderazgo de barrio.'
-        ]
+        ],
+        'ponderacion' => ['score_total' => 95, 'criterios' => []]
     ]
 ];
 
+// Función para obtener envíos guardados en JSON local
+function obtenerEnviosJSON() {
+    $file = __DIR__ . '/../images/formularios/cuestionarios_envios.json';
+    if (file_exists($file)) {
+        $content = file_get_contents($file);
+        $data = json_decode($content, true);
+        if (is_array($data)) {
+            return $data;
+        }
+    }
+    return [];
+}
+
 // ═════════════════════════════════════════════════════════════════════════════════
-// 1. LISTAR EPISODIOS (GET)
+// 1. LISTAR REGISTROS (GET ?listar=true)
 // ═════════════════════════════════════════════════════════════════════════════════
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['listar'] ?? false)) {
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['listar']) || isset($_GET['list']))) {
+    $listaFinal = [];
+    $seenNames = [];
+
+    // 1.1 Leer registros desde Neon PostgreSQL (si hay conexión)
     if ($db) {
         try {
-            $stmt = $db->query("SELECT id, nombre, storytelling, created_at FROM knowledge_base WHERE tipo='storytelling' ORDER BY id ASC");
+            $stmt = $db->query("SELECT id, nombre, storytelling, created_at FROM knowledge_base WHERE tipo='storytelling' ORDER BY id DESC");
             $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (!empty($rows)) {
-                $list = [];
-                foreach ($rows as $r) {
-                    $story = json_decode($r['storytelling'] ?? '{}', true);
-                    $list[] = [
+            foreach ($rows as $r) {
+                $normName = mb_strtolower(trim($r['nombre']));
+                if (!isset($seenNames[$normName])) {
+                    $story = json_decode($r['storytelling'] ?? '{}', true) ?: [];
+                    $curaduria = $story['curaduria'] ?? [
+                        'nivel' => 'ALTO',
+                        'badge' => '🟢 NIVEL ALTO',
+                        'formato' => 'Invitado Principal al Canal',
+                        'color' => '#39FF14',
+                        'razon' => 'Ficha cargada en base de datos Neon.'
+                    ];
+                    $score = $story['ponderacion']['score_total'] ?? 95;
+
+                    $listaFinal[] = [
                         'id' => $r['id'],
                         'nombre' => $r['nombre'],
-                        'created_at' => $r['created_at'],
-                        'curaduria' => $story['curaduria'] ?? [
-                            'nivel' => 'ALTO',
-                            'badge' => '🟢 NIVEL ALTO',
-                            'formato' => 'Invitado Principal al Canal',
-                            'color' => '#39FF14',
-                            'razon' => 'Ficha cargada en base de datos.'
-                        ],
-                        'ponderacion_score' => $story['ponderacion']['score_total'] ?? 0
+                        'created_at' => $r['created_at'] ?? date('Y-m-d H:i:s'),
+                        'curaduria' => $curaduria,
+                        'ponderacion_score' => $score
                     ];
+                    $seenNames[$normName] = true;
                 }
-                echo json_encode($list, JSON_UNESCAPED_UNICODE);
-                exit();
             }
         } catch (Exception $e) {
-            // Continuar al fallback
+            error_log('DB Read Error in Listar: ' . $e->getMessage());
         }
     }
 
-    // Fallback JSON con la lista predeterminada
-    $fallbackList = array_values(array_map(function($inv) {
-        return [
-            'id' => $inv['id'],
-            'nombre' => $inv['nombre'],
-            'created_at' => $inv['created_at'],
-            'curaduria' => $inv['curaduria'],
-            'ponderacion_score' => 95
-        ];
-    }, $FALLBACK_INVITADOS));
+    // 1.2 Leer envíos recientes del almacenamiento persistente JSON
+    $enviosJSON = obtenerEnviosJSON();
+    foreach ($enviosJSON as $envio) {
+        $name = $envio['nombre'] ?? '';
+        $normName = mb_strtolower(trim($name));
+        if (!empty($name) && !isset($seenNames[$normName])) {
+            $curaduria = $envio['curaduria'] ?? [
+                'nivel' => 'ALTO',
+                'badge' => '🟢 NIVEL ALTO',
+                'formato' => 'Invitado Principal al Canal',
+                'color' => '#39FF14',
+                'razon' => 'Entrevista de 33 preguntas registrada.'
+            ];
+            $score = $envio['ponderacion']['score_total'] ?? 96;
 
-    echo json_encode($fallbackList, JSON_UNESCAPED_UNICODE);
+            $listaFinal[] = [
+                'id' => $envio['id'] ?? (100 + count($listaFinal)),
+                'nombre' => $name,
+                'created_at' => $envio['created_at'] ?? date('Y-m-d H:i:s'),
+                'curaduria' => $curaduria,
+                'ponderacion_score' => $score
+            ];
+            $seenNames[$normName] = true;
+        }
+    }
+
+    // 1.3 Agregar los 8 registros clásicos de demostración si no existen ya
+    foreach ($FALLBACK_INVITADOS as $fall) {
+        $normName = mb_strtolower(trim($fall['nombre']));
+        if (!isset($seenNames[$normName])) {
+            $listaFinal[] = [
+                'id' => $fall['id'],
+                'nombre' => $fall['nombre'],
+                'created_at' => $fall['created_at'],
+                'curaduria' => $fall['curaduria'],
+                'ponderacion_score' => $fall['ponderacion']['score_total'] ?? 95
+            ];
+            $seenNames[$normName] = true;
+        }
+    }
+
+    echo json_encode($listaFinal, JSON_UNESCAPED_UNICODE);
     exit();
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════
-// 2. ACCIONES POST (OBTENER DETALLE Y ACTUALIZAR)
+// 2. ACCIONES POST (DETALLE Y ACTUALIZACIÓN)
 // ═════════════════════════════════════════════════════════════════════════════════
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true) ?: $_POST;
     $action = $input['action'] ?? 'get';
-    $id = intval($input['id'] ?? 0);
+    $id = $input['id'] ?? 0;
+    $nombreReq = trim($input['nombre'] ?? '');
 
     if ($action === 'get') {
-        if ($db) {
+        // 2.1 Buscar en PostgreSQL
+        if ($db && is_numeric($id) && intval($id) > 0) {
             try {
                 $stmt = $db->prepare("SELECT * FROM knowledge_base WHERE id = ?");
-                $stmt->execute([$id]);
+                $stmt->execute([intval($id)]);
                 $reg = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($reg) {
-                    $story = json_decode($reg['storytelling'] ?? '{}', true);
-                    $reg['escaleta'] = $story['escaleta'] ?? '';
-                    $reg['guion'] = $story['guion'] ?? '';
-                    $reg['cue_cards'] = $story['cue_cards'] ?? '';
-                    $reg['alias'] = $story['alias'] ?? '';
+                    $story = json_decode($reg['storytelling'] ?? '{}', true) ?: [];
+                    $reg['escaleta'] = $story['escaleta'] ?? ($reg['escaleta'] ?? '');
+                    $reg['guion'] = $story['guion'] ?? ($reg['guion'] ?? '');
+                    $reg['cue_cards'] = $story['cue_cards'] ?? ($reg['cue_cards'] ?? '');
+                    $reg['alias'] = $story['alias'] ?? ($reg['alias'] ?? '');
+                    $reg['storytelling_enfoque'] = $story['storytelling_enfoque'] ?? ($reg['storytelling_enfoque'] ?? '');
+                    $reg['reto'] = $story['reto'] ?? ($reg['reto'] ?? '');
+                    $reg['frase'] = $story['frase'] ?? ($reg['frase'] ?? '');
                     $reg['curaduria'] = $story['curaduria'] ?? [
                         'nivel' => 'ALTO',
                         'badge' => '🟢 NIVEL ALTO',
-                        'color' => '#39FF14'
+                        'color' => '#39FF14',
+                        'formato' => 'Invitado Principal al Canal'
                     ];
+                    $reg['ponderacion'] = $story['ponderacion'] ?? ['score_total' => 95, 'criterios' => []];
+                    $reg['respuestas'] = $story['respuestas'] ?? [];
                     echo json_encode(['registro' => $reg], JSON_UNESCAPED_UNICODE);
                     exit();
                 }
             } catch (Exception $e) {
-                // Continuar al fallback
+                // Seguir a fallback
             }
         }
 
-        // Retornar fallback si no está en BD o DB no disponible
-        if (isset($FALLBACK_INVITADOS[$id])) {
-            echo json_encode(['registro' => $FALLBACK_INVITADOS[$id]], JSON_UNESCAPED_UNICODE);
+        // 2.2 Buscar en envíos recientes JSON
+        $envios = obtenerEnviosJSON();
+        foreach ($envios as $env) {
+            if ((isset($env['id']) && strval($env['id']) === strval($id)) || (!empty($nombreReq) && strcasecmp($env['nombre'], $nombreReq) === 0)) {
+                echo json_encode(['registro' => $env], JSON_UNESCAPED_UNICODE);
+                exit();
+            }
+        }
+
+        // 2.3 Buscar en FALLBACK_INVITADOS
+        $intId = intval($id);
+        if (isset($FALLBACK_INVITADOS[$intId])) {
+            echo json_encode(['registro' => $FALLBACK_INVITADOS[$intId]], JSON_UNESCAPED_UNICODE);
             exit();
         }
 
-        // Generador dinámico para cualquier ID no registrado
+        foreach ($FALLBACK_INVITADOS as $fall) {
+            if (!empty($nombreReq) && strcasecmp($fall['nombre'], $nombreReq) === 0) {
+                echo json_encode(['registro' => $fall], JSON_UNESCAPED_UNICODE);
+                exit();
+            }
+        }
+
+        // 2.4 Generador de expediente en vivo para IDs no encontrados
         $mockReg = [
             'id' => $id ?: 1,
-            'nombre' => "Invitado de La Cueva #" . ($id ?: 1),
+            'nombre' => !empty($nombreReq) ? $nombreReq : "Invitado de La Cueva #" . ($id ?: 1),
             'alias' => "Compa de la Cueva",
             'ocupacion' => "Personaje Urbano de Mexicali",
             'barrio' => "Mexicali, B.C.",
+            'storytelling_enfoque' => "Historias de barrio y superación en la frontera.",
+            'reto' => "Los madrazos del camino y no rajarse.",
+            'frase' => "\"El barrio no se platica, se demuestra en los hechos.\"",
             'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA\n[00:00 - 05:00] Hook de impacto\n[05:00 - 25:00] Historia de vida y lucha\n[25:00 - 45:00] Reflexiones y anécdotas de barrio\n[45:00 - 50:00] Cierre y despedida",
             'guion' => "GUIÓN - LA CUEVA DEL GÜERO\nEl Güero: ¡Qué onda manada! Hoy tenemos una historia pesada en la mesa...\nJunior: Saludos a toda la gente conectada desde Mexicali y la frontera.",
             'cue_cards' => "CUE CARDS\n• Preguntar sobre el momento más difícil.\n• Anécdota principal.\n• Agradecimiento a patrocinadores.",
@@ -313,6 +435,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'color' => '#39FF14',
                 'formato' => 'Invitado Principal al Canal',
                 'razon' => 'Ficha generada para el panel de producción.'
+            ],
+            'ponderacion' => [
+                'score_total' => 95,
+                'criterios' => []
             ]
         ];
 

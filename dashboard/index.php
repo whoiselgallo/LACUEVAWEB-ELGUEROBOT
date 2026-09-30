@@ -30,6 +30,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>window.activeEventSource = null; window.activePollingInterval = null;</script>
     <style>
         :root {
             --bg-primary: #06060c;
@@ -2038,11 +2039,11 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <script src="../js/dashboard-pro.js?v=<?= time() ?>"></script>
-    <script src="../js/editor-canva.js?v=<?= time() ?>"></script>
-    <script src="../js/avatar-engine.js?v=<?= time() ?>"></script>
+    <script src="/js/dashboard-pro.js?v=<?= time() ?>"></script>
+    <script src="/js/editor-canva.js?v=<?= time() ?>"></script>
+    <script src="/js/avatar-engine.js?v=<?= time() ?>"></script>
     <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
-    <script src="../js/ffmpeg-wasm-helper.js?v=<?= time() ?>"></script>
-    <script src="../js/video-editor.js?v=<?= time() ?>"></script>
+    <script src="/js/ffmpeg-wasm-helper.js?v=<?= time() ?>"></script>
+    <script src="/js/video-editor.js?v=<?= time() ?>"></script>
 </body>
 </html>

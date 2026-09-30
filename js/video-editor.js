@@ -3,6 +3,13 @@
  * File: /js/video-editor.js
  */
 
+var activeWaveSurfer = null;
+var activeEventSource = null;
+var activePollingInterval = null;
+window.activeEventSource = null;
+window.activePollingInterval = null;
+window.activeWaveSurfer = null;
+
 document.addEventListener("DOMContentLoaded", () => {
     initVideoEditor();
 });
@@ -47,7 +54,25 @@ function initVideoEditor() {
     // Escuchar el input de subida de video del editor
     const fileInput = document.getElementById("editor-file-input");
     if (fileInput) {
-let activeWaveSurfer = null;
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                if (video) {
+                    video.src = url;
+                    video.load();
+                }
+                const nameDisplay = document.getElementById("editor-project-name");
+                if (nameDisplay) {
+                    nameDisplay.textContent = file.name;
+                }
+                // Inicializar onda de audio WaveSurfer
+                initWaveSurferInstance(url);
+                alert(`Archivo "${file.name}" cargado en la biblioteca y la línea de tiempo.`);
+            }
+        });
+    }
+}
 
 function initWaveSurferInstance(mediaUrlOrElement) {
     const container = document.getElementById("waveform");
@@ -85,26 +110,6 @@ function initWaveSurferInstance(mediaUrlOrElement) {
         });
     } catch (e) {
         console.warn("WaveSurfer no pudo inicializarse:", e);
-    }
-}
-
-        fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                if (video) {
-                    video.src = url;
-                    video.load();
-                }
-                const nameDisplay = document.getElementById("editor-project-name");
-                if (nameDisplay) {
-                    nameDisplay.textContent = file.name;
-                }
-                // Inicializar onda de audio WaveSurfer
-                initWaveSurferInstance(url);
-                alert(`Archivo "${file.name}" cargado en la biblioteca y la línea de tiempo.`);
-            }
-        });
     }
 }
 
@@ -475,8 +480,13 @@ function ejecutarLimpiezaIA(accion, extraParams = {}) {
         preset: extraParams.preset || 'tiktok'
     };
 
+    function getCloudVideoApiUrl(action, extraQuery = '') {
+        const base = window.location.pathname.includes('/dashboard') ? '../api/api-cloud-video.php' : '/api/api-cloud-video.php';
+        return `${base}?action=${action}${extraQuery}`;
+    }
+
     // 1. Iniciar trabajo en Cloud Run Jobs
-    fetch(`../api/api-cloud-video.php?action=start-job`, {
+    fetch(getCloudVideoApiUrl('start-job'), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -496,7 +506,7 @@ function ejecutarLimpiezaIA(accion, extraParams = {}) {
                 activeEventSource = null;
             }
 
-            const sseUrl = `../api/api-cloud-video.php?action=stream-logs&job_id=${jobId}`;
+            const sseUrl = getCloudVideoApiUrl('stream-logs', `&job_id=${encodeURIComponent(jobId)}`);
             const es = new EventSource(sseUrl);
             activeEventSource = es;
 
@@ -583,8 +593,10 @@ function iniciarPollingFallback(jobId, screen, statusText, acceptBtn) {
     if (activePollingInterval) clearInterval(activePollingInterval);
     let printedLogsCount = 0;
 
+    const base = window.location.pathname.includes('/dashboard') ? '../api/api-cloud-video.php' : '/api/api-cloud-video.php';
+
     activePollingInterval = setInterval(() => {
-        fetch(`../api/api-cloud-video.php?action=job-status&job_id=${jobId}`)
+        fetch(`${base}?action=job-status&job_id=${encodeURIComponent(jobId)}`)
             .then(r => r.json())
             .then(res => {
                 if (res.status === 'success' && res.job) {

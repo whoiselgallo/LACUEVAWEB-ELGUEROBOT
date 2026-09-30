@@ -13,10 +13,20 @@ require_once __DIR__ . '/../config/config.php';
 
 $action = $_GET['action'] ?? $_POST['action'] ?? 'get_status';
 
+$pdo = null;
 try {
-    $pdo = get_db_connection();
+    $pdo = db_connect();
 } catch (Exception $e) {
     $pdo = null;
+}
+
+function getEnviosLocales() {
+    $file = __DIR__ . '/../images/formularios/cuestionarios_envios.json';
+    if (file_exists($file)) {
+        $data = json_decode(file_get_contents($file), true);
+        if (is_array($data)) return $data;
+    }
+    return [];
 }
 
 if ($action === 'get_status') {
@@ -27,9 +37,10 @@ if ($action === 'get_status') {
         exit;
     }
 
+    // 1. Buscar en BD
     if ($pdo) {
         try {
-            $stmt = $pdo->prepare("SELECT id, nombre, email, estado, fase_index, fecha_grabacion FROM invitados WHERE id::text = :code OR token = :code OR email = :code LIMIT 1");
+            $stmt = $pdo->prepare("SELECT id, nombre, token, estado, fase_index, fecha_propuesta FROM invitados WHERE id::text = :code OR token = :code OR nombre ILIKE :code LIMIT 1");
             $stmt->execute([':code' => $code]);
             $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -38,25 +49,43 @@ if ($action === 'get_status') {
                     'status' => 'success',
                     'invitado' => [
                         'nombre' => $invitado['nombre'],
-                        'estado' => $invitado['estado'] ?? 'En Proceso',
-                        'fase_index' => (int)($invitado['fase_index'] ?? 2),
-                        'fecha_grabacion' => $invitado['fecha_grabacion'] ?? null
+                        'estado' => $invitado['estado'] ?? 'Ficha en Revisión',
+                        'fase_index' => (int)($invitado['fase_index'] ?? 1),
+                        'fecha_grabacion' => $invitado['fecha_propuesta'] ?? null
                     ]
                 ]);
                 exit;
             }
         } catch (Exception $ex) {
-            // Ignoramos error de DB y usamos fallback
+            // Seguir a fallback
         }
     }
 
-    // Fallback de demostración si es un código de prueba o no existe en DB aún
+    // 2. Buscar en envíos recientes JSON
+    $envios = getEnviosLocales();
+    foreach ($envios as $env) {
+        if ((isset($env['token']) && strcasecmp($env['token'], $code) === 0) || (isset($env['id']) && strval($env['id']) === strval($code)) || (isset($env['nombre']) && stripos($env['nombre'], $code) !== false)) {
+            echo json_encode([
+                'status' => 'success',
+                'invitado' => [
+                    'nombre' => $env['nombre'],
+                    'estado' => $env['estado'] ?? 'Cuestionario Recibido',
+                    'fase_index' => (int)($env['fase_index'] ?? 1),
+                    'fecha_grabacion' => date('d/m/Y', strtotime('+7 days'))
+                ]
+            ]);
+            exit;
+        }
+    }
+
+    // 3. Fallback de demostración amigable
     echo json_encode([
         'status' => 'success',
         'invitado' => [
             'nombre' => 'Invitado de La Cueva',
-            'estado' => 'Edición y Masterización',
-            'fase_index' => 3
+            'estado' => 'Cuestionario en Revisión de Producción',
+            'fase_index' => 1,
+            'fecha_grabacion' => date('d/m/Y', strtotime('+7 days'))
         ]
     ]);
     exit;
@@ -66,13 +95,13 @@ if ($action === 'recover_code') {
     $query = trim($_GET['query'] ?? $_POST['query'] ?? '');
     
     if (empty($query)) {
-        echo json_encode(['status' => 'error', 'message' => 'Debes ingresar un nombre o correo']);
+        echo json_encode(['status' => 'error', 'message' => 'Debes ingresar tu nombre']);
         exit;
     }
 
     if ($pdo) {
         try {
-            $stmt = $pdo->prepare("SELECT id, token, nombre FROM invitados WHERE email ILIKE :q OR nombre ILIKE :q LIMIT 1");
+            $stmt = $pdo->prepare("SELECT id, token, nombre FROM invitados WHERE nombre ILIKE :q LIMIT 1");
             $stmt->execute([':q' => "%$query%"]);
             $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -86,7 +115,16 @@ if ($action === 'recover_code') {
         }
     }
 
-    // Si no existe o no hay DB conectada, generamos un código asignado dinámico
+    $envios = getEnviosLocales();
+    foreach ($envios as $env) {
+        if (isset($env['nombre']) && stripos($env['nombre'], $query) !== false) {
+            $code = !empty($env['token']) ? $env['token'] : ('GUEST-' . ($env['id'] ?? '2026'));
+            echo json_encode(['status' => 'success', 'code' => $code, 'nombre' => $env['nombre']]);
+            exit;
+        }
+    }
+
+    // Si no existe, generamos un código asignado dinámico
     $newCode = 'GUEST-' . strtoupper(substr(md5($query . time()), 0, 4));
     echo json_encode([
         'status' => 'success',
