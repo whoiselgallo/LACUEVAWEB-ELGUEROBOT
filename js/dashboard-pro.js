@@ -137,7 +137,13 @@ function mostrarRegistros(registros) {
         const nombre = escapeHtml(reg.nombre || "Sin nombre");
         const fecha = formatDate(reg.created_at || "");
         const id = reg.id;
-        const score = reg.ponderacion_score || '';
+        let rawScore = reg.ponderacion_score || '';
+        let scoreDisplay = '';
+        if (rawScore) {
+            let n = parseInt(rawScore, 10);
+            if (n <= 100) n = Math.round(n * 3.3);
+            scoreDisplay = `${n} / 330`;
+        }
 
         // Extraer objeto curaduría si viene en el registro
         const curaduria = reg.curaduria || { nivel: 'ALTO', badge: '🟢 ALTO', color: '#39FF14' };
@@ -149,8 +155,8 @@ function mostrarRegistros(registros) {
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
                     <h3 style="margin:0; font-size:1rem;">${nombre}</h3>
                     <div style="display:flex; align-items:center; gap:6px;">
-                        ${score ? `<span style="font-weight:900; font-size:0.85rem; color:${badgeColor};">${score}</span>` : ''}
-                        <span style="font-size:0.7rem; font-weight:bold; color:${badgeColor}; border:1px solid ${badgeColor}; padding:2px 6px; border-radius:10px;">${badgeTag}</span>
+                        ${scoreDisplay ? `<span style="font-weight:900; font-size:0.75rem; color:${badgeColor}; border:1px solid ${badgeColor}40; padding:1px 5px; border-radius:6px; background:rgba(0,0,0,0.3);">${scoreDisplay}</span>` : ''}
+                        <span style="font-size:0.68rem; font-weight:bold; color:${badgeColor}; border:1px solid ${badgeColor}; padding:2px 6px; border-radius:10px;">${badgeTag}</span>
                     </div>
                 </div>
                 <p><i class="fa-regular fa-calendar-days"></i> ${fecha}</p>
@@ -222,54 +228,187 @@ async function mostrarDetalle(id) {
         const fraseEl = document.getElementById("detalle-frase");
         if (fraseEl) fraseEl.textContent = reg.frase || '"Frase pendiente de definir."';
 
-        // PONDERACIÓN DE CURADURÍA
-        const curaduria = reg.curaduria || {
-            nivel: 'ALTO', badge: '🟢 NIVEL ALTO', formato: 'Episodio Completo',
-            color: '#39FF14', razon: 'Ficha con información destacada.'
-        };
-        const ponderacion = reg.ponderacion || { score_total: 0, criterios: [] };
+        // PONDERACIÓN DE CURADURÍA - 33 PARÁMETROS (1 A 10 POR PREGUNTA, SUMATORIA 33 A 330)
+        let criterios33 = [];
+        const respuestasObj = reg.respuestas || {};
 
-        // Score badge
+        if (reg.ponderacion && Array.isArray(reg.ponderacion.criterios) && reg.ponderacion.criterios.length === 33) {
+            criterios33 = reg.ponderacion.criterios;
+        } else {
+            // Generar los 33 parámetros evaluados dinámicamente si vienen de registros heredados
+            const defRespuestas = {
+                1: reg.nombre || "Invitado",
+                2: reg.alias || reg.nombre ? reg.nombre.split(' ')[0] : "Compa",
+                3: reg.contacto || "contacto@lacuevadelguero.com",
+                4: reg.ocupacion || "Invitado Especial",
+                5: reg.definicion || "Auténtico, trabajador, de barrio",
+                6: reg.barrio || "Mexicali, B.C.",
+                7: reg.significado_barrio || "Familia y unión de comunidad",
+                8: reg.ensenanza_barrio || "Respeto y no rajarse en la lumbre",
+                9: reg.sueno_10 || "Salir adelante y superarse",
+                10: reg.burla || "Varios dudaron al inicio pero seguimos firmes",
+                11: reg.peligroso || "Vivir al límite y jugársela por los suyos",
+                12: reg.humillante || reg.herida || "Madrazos del jale y empezar desde abajo",
+                13: reg.peor_error || reg.reto || "Desviarse del rumbo y recomponer el camino",
+                14: reg.ultimas_24h || "Pasarlas con la familia y la gente del barrio",
+                15: reg.felicidad || "Feliz pero con más metas por alcanzar",
+                16: reg.sacrificios || "Tiempo, horas de sueño y sacrificios familiares",
+                17: reg.primer_logro || "Ver los primeros frutos del trabajo honesto",
+                18: reg.maquina_tiempo || "Viajar a los inicios para abrazar a los que ya no están",
+                19: reg.yo_10 || "Que no se rinda, que todo sacrificio valdrá la pena",
+                20: reg.secreto_exito || reg.frase || "Perseverancia y constancia",
+                21: reg.cumpliendo_sueno || "En el camino, viviendo algo mejor",
+                22: reg.don_especial || "La autenticidad y el carisma de barrio",
+                23: reg.chusco || "Anécdotas pesadas y desmadre con los compas",
+                24: reg.cancion_belica || reg.gustos || "Corridos y música de peso",
+                25: reg.confesion || reg.incomodo || "La neta sin filtro ni poses",
+                26: reg.molestia || "La hipocresía, las mentiras y la falta de humildad",
+                27: reg.recordar || "Como una persona derecha que nunca se rajó",
+                28: reg.defecto || "Desesperado y a veces terco",
+                29: reg.gusto_culposo || "Comida callejera y música romántica a escondidas",
+                30: reg.miedo || "Al estancamiento, enfrentándolo con trabajo diario",
+                31: reg.dinamica || "Reto de destreza y preguntas punzantes en cabina",
+                32: reg.mencion_extra || "Un saludo fraternal a la banda del barrio",
+                33: reg.mensaje_ayuda || reg.frase || "El sol siempre vuelve a brillar, ¡nunca tires la toalla!"
+            };
+
+            const PREGUNTAS_TITULOS = [
+                { acto: 'Identificación', titulo: 'Nombre Completo' },
+                { acto: 'Identificación', titulo: 'Petardo / Alias de Barrio' },
+                { acto: 'Identificación', titulo: 'Contacto (Correo & WhatsApp)' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Ocupación Actual & Jale Diario' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Definición en 3 Palabras' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Colonia / Barrio de Origen' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Significado del Barrio' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Mayor Enseñanza de la Calle' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Qué Quería Ser de Niño a los 10 Años' },
+                { acto: 'Bloque 1: Raíces', titulo: 'Obstáculos & Quien se Burló de su Sueño' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Lo Más Peligroso Vivido' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Lo Más Humillante en un Jale' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Peor Error en su Carrera / Rumbo Perdido' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Últimas 24 Horas de Vida' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Estado de Felicidad & Metas Pendientes' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Sacrificios para Llegar a este Punto' },
+                { acto: 'Bloque 2: Madrazos', titulo: 'Primer Logro Chingón & Orgullo' },
+                { acto: 'Bloque 3: Mentalidad', titulo: 'Viaje en la Máquina del Tiempo' },
+                { acto: 'Bloque 3: Mentalidad', titulo: 'Mensaje a su Yo de Hace 10 Años' },
+                { acto: 'Bloque 3: Mentalidad', titulo: 'Secreto del Éxito & Mentalidad de Triunfo' },
+                { acto: 'Bloque 3: Mentalidad', titulo: 'Cumpliendo lo Soñado de Niño' },
+                { acto: 'Bloque 3: Mentalidad', titulo: 'Don Especial & Diferenciador' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Anécdota Chusca / Graciosa' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Canción Bélica Favorita' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Confesión Incómoda & Exclusiva' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Lo Que Más le Molesta en la Vida' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Cómo Quiere ser Recordado (Legado)' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Mayor Defecto Reconocido' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Gusto Culposo Oculto' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Miedo Profundo & Cómo lo Enfrenta' },
+                { acto: 'Bloque 4: Anécdotas', titulo: 'Dinámica / Reto Elegido en Cabina' },
+                { acto: 'Bloque 5: Cierre', titulo: 'Mención Extra para el Episodio' },
+                { acto: 'Bloque 5: Cierre', titulo: 'Mensaje Motivacional (No Tirar la Toalla)' }
+            ];
+
+            for (let i = 1; i <= 33; i++) {
+                const p = PREGUNTAS_TITULOS[i - 1];
+                const resp = String(respuestasObj[i] || defRespuestas[i] || '').trim();
+                const len = resp.length;
+                let sc = 8;
+                let just = `Respuesta de barrio: "${resp}"`;
+
+                if (len === 0 || ['.', 'nada', 'no', 'nose', 'no se', 'ninguno'].includes(resp.toLowerCase())) {
+                    sc = 4;
+                    just = len > 0 ? `Respuesta breve: "${resp}". Requiere dinamización del Güero.` : "Pregunta pendiente de responder.";
+                } else if (len < 15) {
+                    sc = 7;
+                } else if (len < 40) {
+                    sc = 8;
+                } else if (len < 90) {
+                    sc = 9;
+                } else {
+                    sc = 10;
+                    just = `Profundidad narrativa sobresaliente: "${resp}"`;
+                }
+
+                criterios33.push({
+                    num: i,
+                    nombre: `Pregunta ${i}: ${p.titulo}`,
+                    acto: p.acto,
+                    score: sc,
+                    max: 10,
+                    respuesta: resp,
+                    justificacion: just
+                });
+            }
+        }
+
+        // Calcular sumatoria total (Escala 33 a 330)
+        let totalCalculado = criterios33.reduce((acc, c) => acc + (c.score || 0), 0);
+        if (totalCalculado < 33) totalCalculado = 33;
+        if (totalCalculado > 330) totalCalculado = 330;
+
+        const nivelAuto = (totalCalculado >= 260) ? 'ALTO' : ((totalCalculado >= 165) ? 'MEDIO' : 'BAJO');
+        const badgeAuto = (nivelAuto === 'ALTO') ? '🟢 NIVEL ALTO' : ((nivelAuto === 'MEDIO') ? '🟡 NIVEL MEDIO' : '🔴 NIVEL BAJO');
+        const colorAuto = (nivelAuto === 'ALTO') ? '#39FF14' : ((nivelAuto === 'MEDIO') ? '#00FFFF' : '#FF00FF');
+        const formatoAuto = (nivelAuto === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : ((nivelAuto === 'MEDIO') ? 'Entrevista Corta / Segmento (10 - 15 min)' : 'Micro-contenido / Shorts (30 - 60 seg)');
+
+        const curaduria = reg.curaduria || {
+            nivel: nivelAuto, badge: badgeAuto, formato: formatoAuto,
+            color: colorAuto, razon: `Evaluación de 33 parámetros (1-10). Puntaje: ${totalCalculado}/330.`
+        };
+
+        // Score badge (33 a 330)
         const scoreBadge = document.getElementById("ponderacion-score-badge");
         if (scoreBadge) {
-            scoreBadge.textContent = ponderacion.score_total || '0.0';
+            scoreBadge.textContent = `${totalCalculado} / 330 PTS`;
             scoreBadge.style.color = curaduria.color || '#39FF14';
         }
 
         // Nivel badge
         const nivelBadge = document.getElementById("ponderacion-nivel-badge");
         if (nivelBadge) {
-            nivelBadge.textContent = curaduria.badge || '🟢 ALTO';
-            nivelBadge.style.color = curaduria.color;
-            nivelBadge.style.borderColor = curaduria.color;
-            nivelBadge.style.background = `${curaduria.color}15`;
+            nivelBadge.textContent = curaduria.badge || badgeAuto;
+            nivelBadge.style.color = curaduria.color || colorAuto;
+            nivelBadge.style.borderColor = curaduria.color || colorAuto;
+            nivelBadge.style.background = `${curaduria.color || colorAuto}15`;
         }
 
         // Formato
         const formatoEl = document.getElementById("ponderacion-formato");
-        if (formatoEl) formatoEl.textContent = curaduria.formato || '';
+        if (formatoEl) formatoEl.textContent = curaduria.formato || formatoAuto;
 
         // Panel border
         const ponderacionPanel = document.getElementById("ponderacion-panel");
-        if (ponderacionPanel) ponderacionPanel.style.borderColor = `${curaduria.color}50`;
+        if (ponderacionPanel) ponderacionPanel.style.borderColor = `${curaduria.color || colorAuto}50`;
 
-        // Renderizar criterios
+        // Renderizar los 33 criterios completos
         const criteriosEl = document.getElementById("ponderacion-criterios");
-        if (criteriosEl && ponderacion.criterios && ponderacion.criterios.length > 0) {
-            let criteriosHtml = '';
-            ponderacion.criterios.forEach((c, i) => {
-                const pct = Math.round((c.score / 9) * 100);
-                const barColor = c.score >= 7 ? '#39FF14' : (c.score >= 5 ? '#00FFFF' : '#FF00FF');
+        if (criteriosEl) {
+            let criteriosHtml = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:6px 10px; background:rgba(0,255,255,0.05); border-radius:6px;">
+                    <span style="font-size:0.8rem; color:#00ffff; font-weight:700;"><i class="fa-solid fa-list-check"></i> Desglose de 33 Preguntas Evaluadas</span>
+                    <span style="font-size:0.75rem; color:#aaa;">Puntaje Total: <b style="color:${curaduria.color || '#39FF14'};">${totalCalculado} / 330 pts</b></span>
+                </div>
+            `;
+
+            criterios33.forEach((c) => {
+                const sc = Math.min(Math.max(c.score || 1, 1), 10);
+                const pct = sc * 10;
+                const barColor = sc >= 8 ? '#39FF14' : (sc >= 6 ? '#00FFFF' : '#FF00FF');
+                const actoBadge = c.acto ? `<span style="font-size:0.65rem; padding:1px 6px; border-radius:4px; background:rgba(255,255,255,0.08); color:#aaa; margin-right:6px;">${escapeHtml(c.acto)}</span>` : '';
+
                 criteriosHtml += `
-                    <div style="margin-bottom: 10px; padding: 8px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; border-left: 3px solid ${barColor};">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-weight: 700; font-size: 0.8rem; color: #eee;">${i+1}. ${escapeHtml(c.nombre)}</span>
-                            <span style="font-weight: 900; font-size: 0.85rem; color: ${barColor};">${c.score}/9</span>
+                    <div style="margin-bottom: 8px; padding: 10px 12px; background: rgba(0,0,0,0.4); border-radius: 8px; border-left: 3px solid ${barColor};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <div style="display:flex; align-items:center;">
+                                ${actoBadge}
+                                <span style="font-weight: 700; font-size: 0.82rem; color: #eee;">${escapeHtml(c.nombre || `Pregunta ${c.num}`)}</span>
+                            </div>
+                            <span style="font-weight: 900; font-size: 0.9rem; color: ${barColor};">${sc} / 10</span>
                         </div>
-                        <div style="background: rgba(255,255,255,0.05); border-radius: 4px; height: 6px; margin-bottom: 5px; overflow: hidden;">
-                            <div style="height: 100%; width: ${pct}%; background: ${barColor}; border-radius: 4px; box-shadow: 0 0 8px ${barColor}40; transition: width 0.5s;"></div>
+                        <div style="background: rgba(255,255,255,0.08); border-radius: 4px; height: 5px; margin-bottom: 6px; overflow: hidden;">
+                            <div style="height: 100%; width: ${pct}% !important; background: ${barColor}; border-radius: 4px; box-shadow: 0 0 8px ${barColor}50; transition: width 0.4s;"></div>
                         </div>
-                        <p style="margin: 0; font-size: 0.75rem; color: #888; line-height: 1.3;">${escapeHtml(c.justificacion)}</p>
+                        <p style="margin: 0; font-size: 0.78rem; color: #bbb; line-height: 1.35;"><i class="fa-solid fa-comment-dots" style="color:${barColor}; font-size:0.7rem; margin-right:4px;"></i> ${escapeHtml(c.respuesta || c.justificacion || '')}</p>
                     </div>
                 `;
             });

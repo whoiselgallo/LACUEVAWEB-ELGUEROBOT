@@ -84,23 +84,101 @@ $storytellingEnfoque = "De {$barrio} para el mundo: Cómo {$nombre} forjó su ca
 $retoPrincipal = "Momento crítico: {$humillante} y la lección de {$peorError}.";
 $fraseGancho = !empty($mensajeAyuda) ? "\"{$mensajeAyuda}\"" : (!empty($ensenanzaBarrio) ? "\"{$ensenanzaBarrio}\"" : "\"La lealtad no se platica, se demuestra.\"");
 
-// Objeto de Curaduría
+// ═════════════════════════════════════════════════════════════════════════════════
+// EVALUACIÓN DE LOS 33 PARÁMETROS (ESCALA 1 A 10 POR PREGUNTA, SUMATORIA 33 A 330)
+// ═════════════════════════════════════════════════════════════════════════════════
+$PREGUNTAS_META = [
+    1 => ['acto' => 'Identificación', 'titulo' => 'Nombre Completo', 'val' => $nombre],
+    2 => ['acto' => 'Identificación', 'titulo' => 'Petardo / Alias de Barrio', 'val' => $alias],
+    3 => ['acto' => 'Identificación', 'titulo' => 'Contacto (Correo & WhatsApp)', 'val' => $contacto],
+    4 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Ocupación Actual & Jale Diario', 'val' => $ocupacion],
+    5 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Definición en 3 Palabras', 'val' => $definicion],
+    6 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Colonia / Barrio de Origen', 'val' => $barrio],
+    7 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Significado del Barrio', 'val' => $significadoBarrio],
+    8 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Mayor Enseñanza de la Calle', 'val' => $ensenanzaBarrio],
+    9 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Qué Quería Ser de Niño a los 10 Años', 'val' => $suenoNino],
+    10 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Obstáculos & Quien se Burló de su Sueño', 'val' => $obstaculo],
+    11 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Peligroso Vivido', 'val' => $peligroso],
+    12 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Humillante en un Jale (Los Madrazos)', 'val' => $humillante],
+    13 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Peor Error en su Carrera / Rumbo Perdido', 'val' => $peorError],
+    14 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Últimas 24 Horas de Vida', 'val' => $ultimas24h],
+    15 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Estado de Felicidad & Metas Pendientes', 'val' => $felicidad],
+    16 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Sacrificios para Llegar a este Punto', 'val' => $sacrificios],
+    17 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Primer Logro Chingón & Orgullo', 'val' => $primerLogro],
+    18 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Viaje en la Máquina del Tiempo', 'val' => $maquinaTiempo],
+    19 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Mensaje a su Yo de Hace 10 Años', 'val' => $yo10Anos],
+    20 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Secreto del Éxito & Mentalidad de Triunfo', 'val' => $secretoExito],
+    21 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Cumpliendo lo Soñado de Niño', 'val' => $cumpliendoSueno],
+    22 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Don Especial & Diferenciador', 'val' => $donEspecial],
+    23 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Anécdota Chusca / Graciosa', 'val' => $chusco],
+    24 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Canción Bélica Favorita', 'val' => $cancionBelica],
+    25 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Confesión Incómoda & Exclusiva', 'val' => $confesion],
+    26 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Lo Que Más le Molesta en la Vida', 'val' => $molestia],
+    27 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Cómo Quiere ser Recordado (Legado)', 'val' => $recordar],
+    28 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Mayor Defecto Reconocido', 'val' => $mayorDefecto],
+    29 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Gusto Culposo Oculto', 'val' => $gustoCulposo],
+    30 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Miedo Profundo & Cómo lo Enfrenta', 'val' => $miedo],
+    31 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Dinámica / Reto Elegido en Cabina', 'val' => $dinamica],
+    32 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mención Extra para el Episodio', 'val' => $mencionExtra],
+    33 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mensaje Motivacional (No Tirar la Toalla)', 'val' => $mensajeAyuda]
+];
+
+$criterios33 = [];
+$totalScore = 0;
+
+for ($i = 1; $i <= 33; $i++) {
+    $meta = $PREGUNTAS_META[$i];
+    $val = trim($meta['val'] ?? '');
+    $len = mb_strlen($val);
+    $norm = mb_strtolower($val);
+
+    if ($len === 0 || in_array($norm, ['.', 'nada', 'no', 'nose', 'no se', 'ninguno', 'sin palabras'])) {
+        $score = ($len === 0) ? 2 : 4;
+        $just = $len > 0 ? "Respuesta muy breve: \"$val\". El Güero y Junior dinamizarán este tema en set." : "Pregunta pendiente de profundizar.";
+    } elseif ($len < 15) {
+        $score = 7;
+        $just = "Respuesta puntual: \"$val\".";
+    } elseif ($len < 45) {
+        $score = 8;
+        $just = "Buen contexto de barrio: \"$val\".";
+    } elseif ($len < 100) {
+        $score = 9;
+        $just = "Gran autenticidad y detalle: \"$val\".";
+    } else {
+        $score = 10;
+        $just = "Profundidad narrativa sobresaliente: \"$val\".";
+    }
+
+    $totalScore += $score;
+    $criterios33[] = [
+        'num' => $i,
+        'nombre' => "Pregunta $i: " . $meta['titulo'],
+        'acto' => $meta['acto'],
+        'score' => $score,
+        'max' => 10,
+        'respuesta' => $val,
+        'justificacion' => $just
+    ];
+}
+
+$nivel = ($totalScore >= 260) ? 'ALTO' : (($totalScore >= 165) ? 'MEDIO' : 'BAJO');
+$badge = ($nivel === 'ALTO') ? '🟢 NIVEL ALTO' : (($nivel === 'MEDIO') ? '🟡 NIVEL MEDIO' : '🔴 NIVEL BAJO');
+$color = ($nivel === 'ALTO') ? '#39FF14' : (($nivel === 'MEDIO') ? '#00FFFF' : '#FF00FF');
+$formato = ($nivel === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : (($nivel === 'MEDIO') ? 'Entrevista Corta / Segmento (10 - 15 min)' : 'Micro-contenido / Shorts (30 - 60 seg)');
+
 $curaduria = [
-    'nivel' => 'ALTO',
-    'badge' => '🟢 NIVEL ALTO',
-    'formato' => 'Invitado Principal al Canal (Episodio Completo 45+ min)',
-    'color' => '#39FF14',
-    'razon' => 'Expediente completo de 33 preguntas con alta potencia narrativa, autenticidad de barrio y vivencias reales.'
+    'nivel' => $nivel,
+    'badge' => $badge,
+    'formato' => $formato,
+    'color' => $color,
+    'razon' => "Evaluación completa de 33 parámetros (Escala 1-10 por pregunta). Puntuación total: {$totalScore} / 330 pts."
 ];
 
 $ponderacion = [
-    'score_total' => 96,
-    'criterios' => [
-        ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 9.0, 'justificacion' => "Raíces sólidas en {$barrio}. Definición: {$definicion}."],
-        ['nombre' => 'Potencia Emocional & Resiliencia', 'score' => 8.8, 'justificacion' => "Superación de adversidades: {$ensenanzaBarrio}."],
-        ['nombre' => 'Confesión & Dinámica en Set', 'score' => 8.7, 'justificacion' => "Confesión exclusiva y reto en cabina: {$dinamica}."],
-        ['nombre' => 'Mensaje Motivacional & Comunidad', 'score' => 9.0, 'justificacion' => "Mensaje a la audiencia: {$mensajeAyuda}."]
-    ]
+    'score_total' => $totalScore,
+    'score_max' => 330,
+    'score_min' => 33,
+    'criterios' => $criterios33
 ];
 
 // Escaleta Broadcast

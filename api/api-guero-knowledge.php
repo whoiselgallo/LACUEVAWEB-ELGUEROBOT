@@ -320,6 +320,152 @@ $FALLBACK_INVITADOS = [
     ]
 ];
 
+// ═════════════════════════════════════════════════════════════════════════════════
+// FUNCIÓN CENTRAL: EVALUACIÓN Y NORMALIZACIÓN DE 33 PARÁMETROS (1-10, TOTAL 33-330)
+// ═════════════════════════════════════════════════════════════════════════════════
+function asegurar_evaluacion_33(&$reg) {
+    if (!is_array($reg)) return;
+
+    $PREGUNTAS_META = [
+        1 => ['acto' => 'Identificación', 'titulo' => 'Nombre Completo', 'k' => 'nombre'],
+        2 => ['acto' => 'Identificación', 'titulo' => 'Petardo / Alias de Barrio', 'k' => 'alias'],
+        3 => ['acto' => 'Identificación', 'titulo' => 'Contacto (Correo & WhatsApp)', 'k' => 'contacto'],
+        4 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Ocupación Actual & Jale Diario', 'k' => 'ocupacion'],
+        5 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Definición en 3 Palabras', 'k' => 'definicion'],
+        6 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Colonia / Barrio de Origen', 'k' => 'barrio'],
+        7 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Significado del Barrio', 'k' => 'significado_barrio'],
+        8 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Mayor Enseñanza de la Calle', 'k' => 'ensenanza_barrio'],
+        9 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Qué Quería Ser de Niño a los 10 Años', 'k' => 'sueno_10'],
+        10 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Obstáculos & Quien se Burló de su Sueño', 'k' => 'burla'],
+        11 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Peligroso Vivido', 'k' => 'peligroso'],
+        12 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Humillante en un Jale', 'k' => 'humillante'],
+        13 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Peor Error en su Carrera / Rumbo Perdido', 'k' => 'peor_error'],
+        14 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Últimas 24 Horas de Vida', 'k' => 'ultimas_24h'],
+        15 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Estado de Felicidad & Metas Pendientes', 'k' => 'felicidad'],
+        16 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Sacrificios para Llegar a este Punto', 'k' => 'sacrificios'],
+        17 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Primer Logro Chingón & Orgullo', 'k' => 'primer_logro'],
+        18 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Viaje en la Máquina del Tiempo', 'k' => 'maquina_tiempo'],
+        19 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Mensaje a su Yo de Hace 10 Años', 'k' => 'yo_10'],
+        20 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Secreto del Éxito & Mentalidad de Triunfo', 'k' => 'secreto_exito'],
+        21 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Cumpliendo lo Soñado de Niño', 'k' => 'cumpliendo_sueno'],
+        22 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Don Especial & Diferenciador', 'k' => 'don_especial'],
+        23 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Anécdota Chusca / Graciosa', 'k' => 'chusco'],
+        24 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Canción Bélica Favorita', 'k' => 'cancion_belica'],
+        25 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Confesión Incómoda & Exclusiva', 'k' => 'confesion'],
+        26 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Lo Que Más le Molesta en la Vida', 'k' => 'molestia'],
+        27 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Cómo Quiere ser Recordado (Legado)', 'k' => 'recordar'],
+        28 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Mayor Defecto Reconocido', 'k' => 'defecto'],
+        29 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Gusto Culposo Oculto', 'k' => 'gusto_culposo'],
+        30 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Miedo Profundo & Cómo lo Enfrenta', 'k' => 'miedo'],
+        31 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Dinámica / Reto Elegido en Cabina', 'k' => 'dinamica'],
+        32 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mención Extra para el Episodio', 'k' => 'mencion_extra'],
+        33 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mensaje Motivacional (No Tirar la Toalla)', 'k' => 'mensaje_ayuda']
+    ];
+
+    $resp = $reg['respuestas'] ?? [];
+    if (!is_array($resp)) $resp = [];
+
+    // Mapeos por defecto si no vienen respuestas numéricas
+    $defMap = [
+        1 => $reg['nombre'] ?? '',
+        2 => $reg['alias'] ?? ($reg['nombre'] ? explode(' ', $reg['nombre'])[0] : ''),
+        3 => $reg['contacto'] ?? 'contacto@lacuevadelguero.com',
+        4 => $reg['ocupacion'] ?? 'Invitado Especial',
+        5 => $reg['definicion'] ?? 'Auténtico, trabajador, de barrio',
+        6 => $reg['barrio'] ?? 'Mexicali, B.C.',
+        7 => $reg['significado_barrio'] ?? 'Familia y unión de comunidad',
+        8 => $reg['ensenanza_barrio'] ?? 'Respeto y no rajarse en la lumbre',
+        9 => $reg['sueno_10'] ?? 'Salir adelante y superarse',
+        10 => $reg['burla'] ?? 'Varios dudaron al inicio pero seguimos firmes',
+        11 => $reg['peligroso'] ?? 'Vivir al límite y jugársela por los suyos',
+        12 => $reg['humillante'] ?? ($reg['herida'] ?? 'Madrazos del jale y empezar desde abajo'),
+        13 => $reg['peor_error'] ?? ($reg['reto'] ?? 'Desviarse del rumbo y recomponer el camino'),
+        14 => $reg['ultimas_24h'] ?? 'Pasarlas con la familia y la gente del barrio',
+        15 => $reg['felicidad'] ?? 'Feliz pero con más metas por alcanzar',
+        16 => $reg['sacrificios'] ?? 'Tiempo, horas de sueño y sacrificios familiares',
+        17 => $reg['primer_logro'] ?? 'Ver los primeros frutos del trabajo honesto',
+        18 => $reg['maquina_tiempo'] ?? 'Viajar a los inicios para abrazar a los que ya no están',
+        19 => $reg['yo_10'] ?? 'Que no se rinda, que todo sacrificio valdrá la pena',
+        20 => $reg['secreto_exito'] ?? ($reg['frase'] ?? 'Perseverancia y constancia'),
+        21 => $reg['cumpliendo_sueno'] ?? 'En el camino, viviendo algo mejor',
+        22 => $reg['don_especial'] ?? 'La autenticidad y el carisma de barrio',
+        23 => $reg['chusco'] ?? 'Anécdotas pesadas y desmadre con los compas',
+        24 => $reg['cancion_belica'] ?? ($reg['gustos'] ?? 'Corridos y música de peso'),
+        25 => $reg['confesion'] ?? ($reg['incomodo'] ?? 'La neta sin filtro ni poses'),
+        26 => $reg['molestia'] ?? 'La hipocresía, las mentiras y la falta de humildad',
+        27 => $reg['recordar'] ?? 'Como una persona derecha que nunca se rajó',
+        28 => $reg['defecto'] ?? 'Desesperado y a veces terco',
+        29 => $reg['gusto_culposo'] ?? 'Comida callejera y música romántica a escondidas',
+        30 => $reg['miedo'] ?? 'Al estancamiento, enfrentándolo con trabajo diario',
+        31 => $reg['dinamica'] ?? 'Reto de destreza y preguntas punzantes en cabina',
+        32 => $reg['mencion_extra'] ?? 'Un saludo fraternal a la banda del barrio',
+        33 => $reg['mensaje_ayuda'] ?? ($reg['frase'] ?? 'El sol siempre vuelve a brillar, ¡nunca tires la toalla!')
+    ];
+
+    $criterios = [];
+    $total = 0;
+
+    for ($i = 1; $i <= 33; $i++) {
+        $meta = $PREGUNTAS_META[$i];
+        $val = trim(strval($resp[$i] ?? ($defMap[$i] ?? '')));
+        $len = mb_strlen($val);
+        $norm = mb_strtolower($val);
+
+        if ($len === 0 || in_array($norm, ['.', 'nada', 'no', 'nose', 'no se', 'ninguno', 'sin palabras'])) {
+            $score = ($len === 0) ? 3 : 4;
+            $just = $len > 0 ? "Respuesta breve: \"$val\". Requiere dinamización del Güero." : "Pregunta pendiente de profundizar.";
+        } elseif ($len < 15) {
+            $score = 7;
+            $just = "Respuesta puntual: \"$val\".";
+        } elseif ($len < 45) {
+            $score = 8;
+            $just = "Buen contexto de barrio: \"$val\".";
+        } elseif ($len < 100) {
+            $score = 9;
+            $just = "Gran autenticidad y detalle: \"$val\".";
+        } else {
+            $score = 10;
+            $just = "Profundidad narrativa sobresaliente: \"$val\".";
+        }
+
+        $total += $score;
+        $criterios[] = [
+            'num' => $i,
+            'nombre' => "Pregunta $i: " . $meta['titulo'],
+            'acto' => $meta['acto'],
+            'score' => $score,
+            'max' => 10,
+            'respuesta' => $val,
+            'justificacion' => $just
+        ];
+    }
+
+    if ($total < 33) $total = 33;
+    if ($total > 330) $total = 330;
+
+    $nivel = ($total >= 260) ? 'ALTO' : (($total >= 165) ? 'MEDIO' : 'BAJO');
+    $badge = ($nivel === 'ALTO') ? '🟢 NIVEL ALTO' : (($nivel === 'MEDIO') ? '🟡 NIVEL MEDIO' : '🔴 NIVEL BAJO');
+    $color = ($nivel === 'ALTO') ? '#39FF14' : (($nivel === 'MEDIO') ? '#00FFFF' : '#FF00FF');
+    $formato = ($nivel === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : (($nivel === 'MEDIO') ? 'Entrevista Corta / Segmento (10 - 15 min)' : 'Micro-contenido / Shorts (30 - 60 seg)');
+
+    $reg['curaduria'] = [
+        'nivel' => $nivel,
+        'badge' => $badge,
+        'color' => $color,
+        'formato' => $formato,
+        'razon' => "Evaluación de 33 parámetros (Escala 1 a 10). Puntaje: {$total} / 330 pts."
+    ];
+
+    $reg['ponderacion'] = [
+        'score_total' => $total,
+        'score_max' => 330,
+        'score_min' => 33,
+        'criterios' => $criterios
+    ];
+
+    $reg['ponderacion_score'] = $total;
+}
+
 // Función para obtener envíos guardados en JSON local
 function obtenerEnviosJSON() {
     $file = __DIR__ . '/../images/formularios/cuestionarios_envios.json';
@@ -349,21 +495,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['listar']) || isset($_G
                 $normName = mb_strtolower(trim($r['nombre']));
                 if (!isset($seenNames[$normName])) {
                     $story = json_decode($r['storytelling'] ?? '{}', true) ?: [];
-                    $curaduria = $story['curaduria'] ?? [
-                        'nivel' => 'ALTO',
-                        'badge' => '🟢 NIVEL ALTO',
-                        'formato' => 'Invitado Principal al Canal',
-                        'color' => '#39FF14',
-                        'razon' => 'Ficha cargada en base de datos Neon.'
-                    ];
-                    $score = $story['ponderacion']['score_total'] ?? 95;
+                    $story['id'] = $r['id'];
+                    $story['nombre'] = $r['nombre'];
+                    $story['created_at'] = $r['created_at'];
+                    asegurar_evaluacion_33($story);
 
                     $listaFinal[] = [
                         'id' => $r['id'],
                         'nombre' => $r['nombre'],
                         'created_at' => $r['created_at'] ?? date('Y-m-d H:i:s'),
-                        'curaduria' => $curaduria,
-                        'ponderacion_score' => $score
+                        'curaduria' => $story['curaduria'],
+                        'ponderacion_score' => $story['ponderacion_score']
                     ];
                     $seenNames[$normName] = true;
                 }
@@ -379,36 +521,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && (isset($_GET['listar']) || isset($_G
         $name = $envio['nombre'] ?? '';
         $normName = mb_strtolower(trim($name));
         if (!empty($name) && !isset($seenNames[$normName])) {
-            $curaduria = $envio['curaduria'] ?? [
-                'nivel' => 'ALTO',
-                'badge' => '🟢 NIVEL ALTO',
-                'formato' => 'Invitado Principal al Canal',
-                'color' => '#39FF14',
-                'razon' => 'Entrevista de 33 preguntas registrada.'
-            ];
-            $score = $envio['ponderacion']['score_total'] ?? 96;
+            asegurar_evaluacion_33($envio);
 
             $listaFinal[] = [
                 'id' => $envio['id'] ?? (100 + count($listaFinal)),
                 'nombre' => $name,
                 'created_at' => $envio['created_at'] ?? date('Y-m-d H:i:s'),
-                'curaduria' => $curaduria,
-                'ponderacion_score' => $score
+                'curaduria' => $envio['curaduria'],
+                'ponderacion_score' => $envio['ponderacion_score']
             ];
             $seenNames[$normName] = true;
         }
     }
 
-    // 1.3 Agregar los 8 registros clásicos de demostración si no existen ya
+    // 1.3 Agregar los registros de demostración si no existen ya
     foreach ($FALLBACK_INVITADOS as $fall) {
         $normName = mb_strtolower(trim($fall['nombre']));
         if (!isset($seenNames[$normName])) {
+            asegurar_evaluacion_33($fall);
             $listaFinal[] = [
                 'id' => $fall['id'],
                 'nombre' => $fall['nombre'],
                 'created_at' => $fall['created_at'],
                 'curaduria' => $fall['curaduria'],
-                'ponderacion_score' => $fall['ponderacion']['score_total'] ?? 95
+                'ponderacion_score' => $fall['ponderacion_score']
             ];
             $seenNames[$normName] = true;
         }
@@ -445,14 +581,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $reg['storytelling_enfoque'] = $story['storytelling_enfoque'] ?? ($reg['storytelling_enfoque'] ?? '');
                     $reg['reto'] = $story['reto'] ?? ($reg['reto'] ?? '');
                     $reg['frase'] = $story['frase'] ?? ($reg['frase'] ?? '');
-                    $reg['curaduria'] = $story['curaduria'] ?? [
-                        'nivel' => 'ALTO',
-                        'badge' => '🟢 NIVEL ALTO',
-                        'color' => '#39FF14',
-                        'formato' => 'Invitado Principal al Canal'
-                    ];
-                    $reg['ponderacion'] = $story['ponderacion'] ?? ['score_total' => 95, 'criterios' => []];
                     $reg['respuestas'] = $story['respuestas'] ?? [];
+                    asegurar_evaluacion_33($reg);
                     echo json_encode(['registro' => $reg], JSON_UNESCAPED_UNICODE);
                     exit();
                 }
@@ -465,6 +595,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $envios = obtenerEnviosJSON();
         foreach ($envios as $env) {
             if ((isset($env['id']) && strval($env['id']) === strval($id)) || (!empty($nombreReq) && strcasecmp($env['nombre'], $nombreReq) === 0)) {
+                asegurar_evaluacion_33($env);
                 echo json_encode(['registro' => $env], JSON_UNESCAPED_UNICODE);
                 exit();
             }
@@ -473,12 +604,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // 2.3 Buscar en FALLBACK_INVITADOS
         $intId = intval($id);
         if (isset($FALLBACK_INVITADOS[$intId])) {
-            echo json_encode(['registro' => $FALLBACK_INVITADOS[$intId]], JSON_UNESCAPED_UNICODE);
+            $fall = $FALLBACK_INVITADOS[$intId];
+            asegurar_evaluacion_33($fall);
+            echo json_encode(['registro' => $fall], JSON_UNESCAPED_UNICODE);
             exit();
         }
 
         foreach ($FALLBACK_INVITADOS as $fall) {
             if (!empty($nombreReq) && strcasecmp($fall['nombre'], $nombreReq) === 0) {
+                asegurar_evaluacion_33($fall);
                 echo json_encode(['registro' => $fall], JSON_UNESCAPED_UNICODE);
                 exit();
             }
@@ -496,19 +630,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'frase' => "\"El barrio no se platica, se demuestra en los hechos.\"",
             'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA\n[00:00 - 05:00] Hook de impacto\n[05:00 - 25:00] Historia de vida y lucha\n[25:00 - 45:00] Reflexiones y anécdotas de barrio\n[45:00 - 50:00] Cierre y despedida",
             'guion' => "GUIÓN - LA CUEVA DEL GÜERO\nEl Güero: ¡Qué onda manada! Hoy tenemos una historia pesada en la mesa...\nJunior: Saludos a toda la gente conectada desde Mexicali y la frontera.",
-            'cue_cards' => "CUE CARDS\n• Preguntar sobre el momento más difícil.\n• Anécdota principal.\n• Agradecimiento a patrocinadores.",
-            'curaduria' => [
-                'nivel' => 'ALTO',
-                'badge' => '🟢 NIVEL ALTO',
-                'color' => '#39FF14',
-                'formato' => 'Invitado Principal al Canal',
-                'razon' => 'Ficha generada para el panel de producción.'
-            ],
-            'ponderacion' => [
-                'score_total' => 95,
-                'criterios' => []
-            ]
+            'cue_cards' => "CUE CARDS\n• Preguntar sobre el momento más difícil.\n• Anécdota principal.\n• Agradecimiento a patrocinadores."
         ];
+        asegurar_evaluacion_33($mockReg);
 
         echo json_encode(['registro' => $mockReg], JSON_UNESCAPED_UNICODE);
         exit();

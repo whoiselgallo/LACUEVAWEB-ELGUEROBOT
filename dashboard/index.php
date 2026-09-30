@@ -778,20 +778,26 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                             </button>
                         </div>
 
-                        <!-- PONDERACIÓN DE CURADURÍA (0-9) -->
+                        <!-- PONDERACIÓN DE CURADURÍA (33 PARÁMETROS, ESCALA 1 A 10, TOTAL 33 A 330) -->
                         <div id="ponderacion-panel" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(57,255,20,0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; cursor: pointer;" onclick="togglePonderacion()">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <span id="ponderacion-score-badge" style="font-size: 1.6rem; font-weight: 900; color: #39FF14;">0.0</span>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer;" onclick="togglePonderacion()">
+                                <div style="display: flex; align-items: center; gap: 14px;">
+                                    <span id="ponderacion-score-badge" style="font-size: 1.65rem; font-weight: 900; color: #39FF14; letter-spacing: -0.5px;">0 / 330 PTS</span>
                                     <div>
-                                        <span id="ponderacion-nivel-badge" style="font-weight: 800; font-size: 0.8rem; padding: 3px 10px; border-radius: 20px; background: rgba(57,255,20,0.1); border: 1px solid #39FF14; color: #39FF14;">🟢 NIVEL ALTO</span>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span id="ponderacion-nivel-badge" style="font-weight: 800; font-size: 0.8rem; padding: 3px 10px; border-radius: 20px; background: rgba(57,255,20,0.1); border: 1px solid #39FF14; color: #39FF14;">🟢 NIVEL ALTO</span>
+                                            <span style="font-size: 0.72rem; color: #888; border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">33 Parámetros (Escala 1 a 10)</span>
+                                        </div>
                                         <p id="ponderacion-formato" style="margin: 4px 0 0 0; font-size: 0.85rem; color: #aaa;"></p>
                                     </div>
                                 </div>
-                                <i class="fa-solid fa-chevron-down" id="ponderacion-toggle-icon" style="color: #666; font-size: 0.9rem; transition: transform 0.3s;"></i>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: 600;">Ver 33 Preguntas</span>
+                                    <i class="fa-solid fa-chevron-down" id="ponderacion-toggle-icon" style="color: var(--neon-cyan); font-size: 0.9rem; transition: transform 0.3s;"></i>
+                                </div>
                             </div>
-                            <!-- CRITERIOS EXPANDIBLES -->
-                            <div id="ponderacion-criterios" style="display: none;">
+                            <!-- CRITERIOS EXPANDIBLES (33 PARÁMETROS) -->
+                            <div id="ponderacion-criterios" style="display: none; max-height: 480px; overflow-y: auto; padding-right: 6px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
                                 <!-- Se llena dinámicamente por JS -->
                             </div>
                             <!-- ACCIONES DE PRODUCCIÓN -->
