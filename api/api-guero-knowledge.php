@@ -327,39 +327,39 @@ function asegurar_evaluacion_33(&$reg) {
     if (!is_array($reg)) return;
 
     $PREGUNTAS_META = [
-        1 => ['acto' => 'Identificación', 'titulo' => 'Nombre Completo', 'k' => 'nombre'],
-        2 => ['acto' => 'Identificación', 'titulo' => 'Petardo / Alias de Barrio', 'k' => 'alias'],
-        3 => ['acto' => 'Identificación', 'titulo' => 'Contacto (Correo & WhatsApp)', 'k' => 'contacto'],
-        4 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Ocupación Actual & Jale Diario', 'k' => 'ocupacion'],
-        5 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Definición en 3 Palabras', 'k' => 'definicion'],
-        6 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Colonia / Barrio de Origen', 'k' => 'barrio'],
-        7 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Significado del Barrio', 'k' => 'significado_barrio'],
-        8 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Mayor Enseñanza de la Calle', 'k' => 'ensenanza_barrio'],
-        9 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Qué Quería Ser de Niño a los 10 Años', 'k' => 'sueno_10'],
-        10 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Obstáculos & Quien se Burló de su Sueño', 'k' => 'burla'],
-        11 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Peligroso Vivido', 'k' => 'peligroso'],
-        12 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Humillante en un Jale', 'k' => 'humillante'],
-        13 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Peor Error en su Carrera / Rumbo Perdido', 'k' => 'peor_error'],
-        14 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Últimas 24 Horas de Vida', 'k' => 'ultimas_24h'],
-        15 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Estado de Felicidad & Metas Pendientes', 'k' => 'felicidad'],
-        16 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Sacrificios para Llegar a este Punto', 'k' => 'sacrificios'],
-        17 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Primer Logro Chingón & Orgullo', 'k' => 'primer_logro'],
-        18 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Viaje en la Máquina del Tiempo', 'k' => 'maquina_tiempo'],
-        19 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Mensaje a su Yo de Hace 10 Años', 'k' => 'yo_10'],
-        20 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Secreto del Éxito & Mentalidad de Triunfo', 'k' => 'secreto_exito'],
-        21 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Cumpliendo lo Soñado de Niño', 'k' => 'cumpliendo_sueno'],
-        22 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Don Especial & Diferenciador', 'k' => 'don_especial'],
-        23 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Anécdota Chusca / Graciosa', 'k' => 'chusco'],
-        24 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Canción Bélica Favorita', 'k' => 'cancion_belica'],
-        25 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Confesión Incómoda & Exclusiva', 'k' => 'confesion'],
-        26 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Lo Que Más le Molesta en la Vida', 'k' => 'molestia'],
-        27 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Cómo Quiere ser Recordado (Legado)', 'k' => 'recordar'],
-        28 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Mayor Defecto Reconocido', 'k' => 'defecto'],
-        29 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Gusto Culposo Oculto', 'k' => 'gusto_culposo'],
-        30 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Miedo Profundo & Cómo lo Enfrenta', 'k' => 'miedo'],
-        31 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Dinámica / Reto Elegido en Cabina', 'k' => 'dinamica'],
-        32 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mención Extra para el Episodio', 'k' => 'mencion_extra'],
-        33 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mensaje Motivacional (No Tirar la Toalla)', 'k' => 'mensaje_ayuda']
+        1 => ['acto' => 'Identificación', 'titulo' => 'Nombre Completo', 'tipo' => 'ident', 'k' => 'nombre'],
+        2 => ['acto' => 'Identificación', 'titulo' => 'Petardo / Alias de Barrio', 'tipo' => 'alias', 'k' => 'alias'],
+        3 => ['acto' => 'Identificación', 'titulo' => 'Contacto (Correo & WhatsApp)', 'tipo' => 'contacto', 'k' => 'contacto'],
+        4 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Ocupación Actual & Jale Diario', 'tipo' => 'jale', 'k' => 'ocupacion'],
+        5 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Definición en 3 Palabras', 'tipo' => 'tres_palabras', 'k' => 'definicion'],
+        6 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Colonia / Barrio de Origen', 'tipo' => 'barrio', 'k' => 'barrio'],
+        7 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Significado del Barrio', 'tipo' => 'narrativa', 'k' => 'significado_barrio'],
+        8 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Mayor Enseñanza de la Calle', 'tipo' => 'sabiduria', 'k' => 'ensenanza_barrio'],
+        9 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Qué Quería Ser de Niño a los 10 Años', 'tipo' => 'nino', 'k' => 'sueno_10'],
+        10 => ['acto' => 'Bloque 1: Raíces', 'titulo' => 'Obstáculos & Quien se Burló de su Sueño', 'tipo' => 'conflicto', 'k' => 'burla'],
+        11 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Peligroso Vivido', 'tipo' => 'peligro', 'k' => 'peligroso'],
+        12 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Lo Más Humillante en un Jale', 'tipo' => 'madrazo_oro', 'k' => 'humillante'],
+        13 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Peor Error en su Carrera / Rumbo Perdido', 'tipo' => 'madrazo_oro', 'k' => 'peor_error'],
+        14 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Últimas 24 Horas de Vida', 'tipo' => 'filosofia', 'k' => 'ultimas_24h'],
+        15 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Estado de Felicidad & Metas Pendientes', 'tipo' => 'felicidad', 'k' => 'felicidad'],
+        16 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Sacrificios para Llegar a este Punto', 'tipo' => 'sacrificio', 'k' => 'sacrificios'],
+        17 => ['acto' => 'Bloque 2: Madrazos', 'titulo' => 'Primer Logro Chingón & Orgullo', 'tipo' => 'logro', 'k' => 'primer_logro'],
+        18 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Viaje en la Máquina del Tiempo', 'tipo' => 'nostalgia', 'k' => 'maquina_tiempo'],
+        19 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Mensaje a su Yo de Hace 10 Años', 'tipo' => 'sabiduria', 'k' => 'yo_10'],
+        20 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Secreto del Éxito & Mentalidad de Triunfo', 'tipo' => 'secreto', 'k' => 'secreto_exito'],
+        21 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Cumpliendo lo Soñado de Niño', 'tipo' => 'sueno', 'k' => 'cumpliendo_sueno'],
+        22 => ['acto' => 'Bloque 3: Mentalidad', 'titulo' => 'Don Especial & Diferenciador', 'tipo' => 'don', 'k' => 'don_especial'],
+        23 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Anécdota Chusca / Graciosa', 'tipo' => 'comedia', 'k' => 'chusco'],
+        24 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Canción Bélica Favorita', 'tipo' => 'musica', 'k' => 'cancion_belica'],
+        25 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Confesión Incómoda & Exclusiva', 'tipo' => 'exclusiva', 'k' => 'confesion'],
+        26 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Lo Que Más le Molesta en la Vida', 'tipo' => 'molestia', 'k' => 'molestia'],
+        27 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Cómo Quiere ser Recordado (Legado)', 'tipo' => 'legado', 'k' => 'recordar'],
+        28 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Mayor Defecto Reconocido', 'tipo' => 'defecto', 'k' => 'defecto'],
+        29 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Gusto Culposo Oculto', 'tipo' => 'gusto', 'k' => 'gusto_culposo'],
+        30 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Miedo Profundo & Cómo lo Enfrenta', 'tipo' => 'vulnerabilidad', 'k' => 'miedo'],
+        31 => ['acto' => 'Bloque 4: Anécdotas', 'titulo' => 'Dinámica / Reto Elegido en Cabina', 'tipo' => 'dinamica', 'k' => 'dinamica'],
+        32 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mención Extra para el Episodio', 'tipo' => 'mencion', 'k' => 'mencion_extra'],
+        33 => ['acto' => 'Bloque 5: Cierre', 'titulo' => 'Mensaje Motivacional (No Tirar la Toalla)', 'tipo' => 'motivacional', 'k' => 'mensaje_ayuda']
     ];
 
     $resp = $reg['respuestas'] ?? [];
@@ -404,28 +404,140 @@ function asegurar_evaluacion_33(&$reg) {
 
     $criterios = [];
     $total = 0;
+    $keywordsOro = ['barrio', 'calle', 'jale', 'jefa', 'familia', 'compas', 'chinga', 'madrazo', 'sueño', 'respeto', 'humildad', 'huevos', 'corazón', 'lágrimas', 'orgullo', 'miedo', 'levantarse', 'perder', 'ganar', 'sangre', 'sudor', 'mexicali', 'frontera', 'pueblo', 'lealtad', 'lucha', 'sacrificio', 'fe', 'auténtico', 'firme'];
 
     for ($i = 1; $i <= 33; $i++) {
         $meta = $PREGUNTAS_META[$i];
         $val = trim(strval($resp[$i] ?? ($defMap[$i] ?? '')));
         $len = mb_strlen($val);
         $norm = mb_strtolower($val);
+        $tipo = $meta['tipo'] ?? 'narrativa';
 
-        if ($len === 0 || in_array($norm, ['.', 'nada', 'no', 'nose', 'no se', 'ninguno', 'sin palabras'])) {
-            $score = ($len === 0) ? 3 : 4;
-            $just = $len > 0 ? "Respuesta breve: \"$val\". Requiere dinamización del Güero." : "Pregunta pendiente de profundizar.";
-        } elseif ($len < 15) {
-            $score = 7;
-            $just = "Respuesta puntual: \"$val\".";
-        } elseif ($len < 45) {
-            $score = 8;
-            $just = "Buen contexto de barrio: \"$val\".";
-        } elseif ($len < 100) {
-            $score = 9;
-            $just = "Gran autenticidad y detalle: \"$val\".";
+        $esVacio = ($len === 0);
+        $esEvasivo = in_array($norm, ['.', '-', 'nada', 'no', 'nose', 'no se', 'ninguno', 'ninguna', 'sin palabras', 'lo de siempre', 'lo normal', 'todo bien', 'n/a', 'na']);
+
+        if ($esVacio) {
+            $score = 2;
+            $just = "Sin respuesta registrada. Pregunta abierta para formular en cabina.";
+            $tag = "⚠️ Pendiente";
+        } elseif ($esEvasivo) {
+            $score = 3;
+            $just = "Respuesta evasiva: \"$val\". El Güero y Junior deben presionar con pregunta directa.";
+            $tag = "⚠️ Evasiva";
         } else {
-            $score = 10;
-            $just = "Profundidad narrativa sobresaliente: \"$val\".";
+            switch ($tipo) {
+                case 'ident':
+                    $palabras = count(preg_split('/\s+/', $val));
+                    $score = ($palabras >= 2) ? 10 : 8;
+                    $just = "Nombre oficial validado para plecas y créditos de producción.";
+                    $tag = "👤 Registro";
+                    break;
+
+                case 'alias':
+                    $score = (preg_match('/^(el|la|los|dj|mc)\s+/i', $val) || $len >= 3) ? 10 : 8;
+                    $just = "Alias de calle/personaje: \"$val\". Ideal para identificación rápida.";
+                    $tag = "🏷️ Petardo";
+                    break;
+
+                case 'contacto':
+                    $score = (strpos($val, '@') !== false || preg_match('/\d{7,}/', $val)) ? 10 : 7;
+                    $just = "Vía de comunicación directa con el invitado para producción.";
+                    $tag = "📱 Contacto";
+                    break;
+
+                case 'tres_palabras':
+                    $palabras = count(preg_split('/[\s,\/]+/', $val));
+                    if ($palabras >= 2 && $palabras <= 6) {
+                        $score = 10;
+                        $just = "Definición contundente y con síntesis perfecta: \"$val\".";
+                        $tag = "💎 Síntesis Top";
+                    } elseif ($len > 30) {
+                        $score = 8;
+                        $just = "Buena descripción conceptual: \"$val\".";
+                        $tag = "📝 Descriptivo";
+                    } else {
+                        $score = 7;
+                        $just = "Definición puntual: \"$val\".";
+                        $tag = "🎯 Puntual";
+                    }
+                    break;
+
+                case 'barrio':
+                    $score = (preg_match('/(colonia|fracc|pueblo|mexicali|valle|calexico|línea|san|sta|zona|ejido)/i', $norm) || $len > 6) ? 10 : 8;
+                    $just = "Arraigo territorial en \"$val\". Conecta con la identidad local del show.";
+                    $tag = "📍 Territorio";
+                    break;
+
+                case 'madrazo_oro':
+                case 'exclusiva':
+                    $hasKw = false;
+                    foreach ($keywordsOro as $kw) {
+                        if (strpos($norm, $kw) !== false) { $hasKw = true; break; }
+                    }
+                    if ($len >= 60 || ($len >= 25 && $hasKw)) {
+                        $score = 10;
+                        $just = "🔥 ORO EDITORIAL: Anécdota cruda y de alto impacto para clip viral o clímax.";
+                        $tag = "🔥 Oro Viral";
+                    } elseif ($len >= 20) {
+                        $score = 8;
+                        $just = "Buen momento de tensión: \"$val\". Se debe profundizar el desenlace en cabina.";
+                        $tag = "⚡ Clave";
+                    } else {
+                        $score = 6;
+                        $just = "Anécdota breve: \"$val\". El Güero debe detonar los detalles en vivo.";
+                        $tag = "🔍 Explorar";
+                    }
+                    break;
+
+                case 'comedia':
+                    $score = ($len >= 35 || preg_match('/(risa|caí|peluca|ped|amigo|compas|pena|chistoso|desmadre)/i', $norm)) ? 10 : ($len >= 15 ? 8 : 6);
+                    $just = ($score === 10) ? "😂 Chispa de cabina: Gran potencial para arrancar carcajadas y aligerar el set." : "Anécdota chusca: \"$val\".";
+                    $tag = "😂 Comedia";
+                    break;
+
+                case 'secreto':
+                    $score = ($len >= 4 && $len <= 60) ? 10 : 8;
+                    $just = "Mantra de vida: \"$val\". Excelente para cita gráfica en redes y miniatura.";
+                    $tag = "💡 Mantra";
+                    break;
+
+                case 'motivacional':
+                case 'sabiduria':
+                    if ($len >= 50 || (strpos($norm, 'adelante') !== false || strpos($norm, 'toalla') !== false || strpos($norm, 'lucha') !== false || strpos($norm, 'sueño') !== false)) {
+                        $score = 10;
+                        $just = "🌟 CLÍMAX EMOCIONAL: Mensaje profundo de inspiración para la audiencia.";
+                        $tag = "🌟 Clímax";
+                    } elseif ($len >= 15) {
+                        $score = 8;
+                        $just = "Mensaje directo y honesto: \"$val\".";
+                        $tag = "✨ Inspirador";
+                    } else {
+                        $score = 6;
+                        $just = "Consejo puntual: \"$val\".";
+                        $tag = "📌 Breve";
+                    }
+                    break;
+
+                default:
+                    $hasKw = false;
+                    foreach ($keywordsOro as $kw) {
+                        if (strpos($norm, $kw) !== false) { $hasKw = true; break; }
+                    }
+                    if ($len >= 70 || ($len >= 30 && $hasKw)) {
+                        $score = 10;
+                        $just = "Excelente profundidad narrativa y autenticidad: \"$val\".";
+                        $tag = "💎 Profundo";
+                    } elseif ($len >= 25) {
+                        $score = 8;
+                        $just = "Buen contexto de barrio y respuesta clara: \"$val\".";
+                        $tag = "👍 Sólido";
+                    } else {
+                        $score = 7;
+                        $just = "Respuesta puntual: \"$val\". Dinamizar en set.";
+                        $tag = "🎯 Puntual";
+                    }
+                    break;
+            }
         }
 
         $total += $score;
@@ -435,6 +547,7 @@ function asegurar_evaluacion_33(&$reg) {
             'acto' => $meta['acto'],
             'score' => $score,
             'max' => 10,
+            'etiqueta' => $tag ?? 'Parámetro',
             'respuesta' => $val,
             'justificacion' => $just
         ];
@@ -446,14 +559,14 @@ function asegurar_evaluacion_33(&$reg) {
     $nivel = ($total >= 260) ? 'ALTO' : (($total >= 165) ? 'MEDIO' : 'BAJO');
     $badge = ($nivel === 'ALTO') ? '🟢 NIVEL ALTO' : (($nivel === 'MEDIO') ? '🟡 NIVEL MEDIO' : '🔴 NIVEL BAJO');
     $color = ($nivel === 'ALTO') ? '#39FF14' : (($nivel === 'MEDIO') ? '#00FFFF' : '#FF00FF');
-    $formato = ($nivel === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : (($nivel === 'MEDIO') ? 'Entrevista Corta / Segmento (10 - 15 min)' : 'Micro-contenido / Shorts (30 - 60 seg)');
+    $formato = ($nivel === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : (($nivel === 'MEDIO') ? 'Entrevista Corta / Segmento (15 - 25 min)' : 'Micro-contenido / Reto en Cabina (Shorts 30 - 60s)');
 
     $reg['curaduria'] = [
         'nivel' => $nivel,
         'badge' => $badge,
         'color' => $color,
         'formato' => $formato,
-        'razon' => "Evaluación de 33 parámetros (Escala 1 a 10). Puntaje: {$total} / 330 pts."
+        'razon' => "Curaduría afinada de 33 parámetros con análisis semántico, detección de ganchos virales y ponderación por bloque temático ({$total} / 330 pts)."
     ];
 
     $reg['ponderacion'] = [

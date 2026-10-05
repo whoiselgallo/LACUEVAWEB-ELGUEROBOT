@@ -380,35 +380,44 @@ async function mostrarDetalle(id) {
         const ponderacionPanel = document.getElementById("ponderacion-panel");
         if (ponderacionPanel) ponderacionPanel.style.borderColor = `${curaduria.color || colorAuto}50`;
 
-        // Renderizar los 33 criterios completos
+        // Renderizar los 33 criterios completos con análisis de curaduría afinado
         const criteriosEl = document.getElementById("ponderacion-criterios");
         if (criteriosEl) {
             let criteriosHtml = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:6px 10px; background:rgba(0,255,255,0.05); border-radius:6px;">
-                    <span style="font-size:0.8rem; color:#00ffff; font-weight:700;"><i class="fa-solid fa-list-check"></i> Desglose de 33 Preguntas Evaluadas</span>
-                    <span style="font-size:0.75rem; color:#aaa;">Puntaje Total: <b style="color:${curaduria.color || '#39FF14'};">${totalCalculado} / 330 pts</b></span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:8px 12px; background:rgba(0,255,255,0.06); border:1px solid rgba(0,255,255,0.15); border-radius:8px;">
+                    <div>
+                        <span style="font-size:0.82rem; color:#00ffff; font-weight:800; display:block;"><i class="fa-solid fa-list-check"></i> Curaduría de 33 Parámetros (Escala 1 a 10)</span>
+                        <span style="font-size:0.72rem; color:#aaa;">Puntaje Calculado: <b style="color:${curaduria.color || '#39FF14'}; font-size:0.85rem;">${totalCalculado} / 330 pts</b> • ${escapeHtml(curaduria.formato || 'Formato Estándar')}</span>
+                    </div>
+                    <span style="font-size:0.75rem; font-weight:bold; color:${curaduria.color || '#39FF14'}; padding:3px 8px; border-radius:12px; border:1px solid ${curaduria.color || '#39FF14'}; background:rgba(0,0,0,0.4);">${escapeHtml(curaduria.badge || badgeAuto)}</span>
                 </div>
             `;
 
             criterios33.forEach((c) => {
                 const sc = Math.min(Math.max(c.score || 1, 1), 10);
                 const pct = sc * 10;
-                const barColor = sc >= 8 ? '#39FF14' : (sc >= 6 ? '#00FFFF' : '#FF00FF');
-                const actoBadge = c.acto ? `<span style="font-size:0.65rem; padding:1px 6px; border-radius:4px; background:rgba(255,255,255,0.08); color:#aaa; margin-right:6px;">${escapeHtml(c.acto)}</span>` : '';
+                const barColor = sc >= 9 ? '#39FF14' : (sc >= 7 ? '#00FFFF' : (sc >= 5 ? '#FFA500' : '#FF00FF'));
+                const actoBadge = c.acto ? `<span style="font-size:0.62rem; padding:1px 6px; border-radius:4px; background:rgba(255,255,255,0.08); color:#aaa; margin-right:6px;">${escapeHtml(c.acto)}</span>` : '';
+                const tagBadge = c.etiqueta ? `<span style="font-size:0.62rem; font-weight:700; padding:1px 7px; border-radius:6px; background:rgba(0,0,0,0.5); border:1px solid ${barColor}; color:${barColor}; margin-left:6px;">${escapeHtml(c.etiqueta)}</span>` : '';
+
+                const respText = c.respuesta ? escapeHtml(c.respuesta) : '';
+                const justText = c.justificacion ? escapeHtml(c.justificacion) : '';
 
                 criteriosHtml += `
-                    <div style="margin-bottom: 8px; padding: 10px 12px; background: rgba(0,0,0,0.4); border-radius: 8px; border-left: 3px solid ${barColor};">
+                    <div style="margin-bottom: 8px; padding: 10px 12px; background: rgba(0,0,0,0.45); border-radius: 8px; border-left: 3px solid ${barColor}; border-top: 1px solid rgba(255,255,255,0.04);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
-                            <div style="display:flex; align-items:center;">
+                            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
                                 ${actoBadge}
                                 <span style="font-weight: 700; font-size: 0.82rem; color: #eee;">${escapeHtml(c.nombre || `Pregunta ${c.num}`)}</span>
+                                ${tagBadge}
                             </div>
-                            <span style="font-weight: 900; font-size: 0.9rem; color: ${barColor};">${sc} / 10</span>
+                            <span style="font-weight: 900; font-size: 0.92rem; color: ${barColor}; margin-left:8px; flex-shrink:0;">${sc} / 10</span>
                         </div>
-                        <div style="background: rgba(255,255,255,0.08); border-radius: 4px; height: 5px; margin-bottom: 6px; overflow: hidden;">
-                            <div style="height: 100%; width: ${pct}% !important; background: ${barColor}; border-radius: 4px; box-shadow: 0 0 8px ${barColor}50; transition: width 0.4s;"></div>
+                        <div style="background: rgba(255,255,255,0.08); border-radius: 4px; height: 5px; margin-bottom: 7px; overflow: hidden;">
+                            <div style="height: 100%; width: ${pct}% !important; background: ${barColor}; border-radius: 4px; box-shadow: 0 0 8px ${barColor}60; transition: width 0.4s;"></div>
                         </div>
-                        <p style="margin: 0; font-size: 0.78rem; color: #bbb; line-height: 1.35;"><i class="fa-solid fa-comment-dots" style="color:${barColor}; font-size:0.7rem; margin-right:4px;"></i> ${escapeHtml(c.respuesta || c.justificacion || '')}</p>
+                        ${respText ? `<p style="margin: 0 0 4px 0; font-size: 0.78rem; color: #ddd; line-height: 1.35;"><i class="fa-solid fa-quote-left" style="color:${barColor}; font-size:0.68rem; margin-right:5px; opacity:0.8;"></i> <b>Respuesta:</b> "${respText}"</p>` : ''}
+                        ${justText ? `<p style="margin: 0; font-size: 0.73rem; color: #999; line-height: 1.3;"><i class="fa-solid fa-bullhorn" style="color:#FFA500; font-size:0.68rem; margin-right:4px;"></i> <i>Nota Host / Producción:</i> ${justText}</p>` : ''}
                     </div>
                 `;
             });
@@ -421,9 +430,9 @@ async function mostrarDetalle(id) {
             if (curaduria.nivel === 'BAJO') {
                 actionsEl.innerHTML = `<button class="btn-neon btn-neon-magenta" onclick="canalizarAMicroContenido('${escapeHtml(activeNombre)}')" style="border-color:#FF00FF;color:#FF00FF;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-bolt"></i> Extraer Hooks & Shorts (30s)</button>`;
             } else if (curaduria.nivel === 'MEDIO') {
-                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Generando guion para entrevista corta de 10 min...')" style="border-color:#00FFFF;color:#00FFFF;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-stopwatch"></i> Formato Entrevista Corta (10m)</button>`;
+                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Generando escaleta para entrevista de 15 a 25 min...')" style="border-color:#00FFFF;color:#00FFFF;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-stopwatch"></i> Formato Entrevista Dinámica (15-25m)</button>`;
             } else {
-                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Programa completo de 40+ min aprobado.')" style="border-color:#39FF14;color:#39FF14;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-star"></i> Programa Completo Aprobado</button>`;
+                actionsEl.innerHTML = `<button class="btn-neon" onclick="alert('Episodio Completo de 45+ min Aprobado para El Güero y Junior.')" style="border-color:#39FF14;color:#39FF14;background:transparent;padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;"><i class="fa-solid fa-star"></i> Programa Completo Aprobado (45+ min)</button>`;
             }
         }
 
