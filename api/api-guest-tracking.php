@@ -135,4 +135,42 @@ if ($action === 'recover_code') {
     exit;
 }
 
+if ($action === 'update_phase' || $action === 'update_status') {
+    $code = trim($_GET['code'] ?? ($_POST['code'] ?? ''));
+    $fase_index = intval($_GET['fase_index'] ?? ($_POST['fase_index'] ?? 1));
+    $estado = trim($_GET['estado'] ?? ($_POST['estado'] ?? 'En Proceso'));
+    
+    $envios = getEnviosLocales();
+    $nombreInv = 'Invitado';
+    foreach ($envios as &$env) {
+        if ((isset($env['token']) && strcasecmp($env['token'], $code) === 0) || (isset($env['id']) && strval($env['id']) === strval($code))) {
+            $env['fase_index'] = $fase_index;
+            $env['estado'] = $estado;
+            $nombreInv = $env['nombre'] ?? $nombreInv;
+            break;
+        }
+    }
+    @file_put_contents(__DIR__ . '/../images/formularios/cuestionarios_envios.json', json_encode($envios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("UPDATE invitados SET fase_index = :fase, estado = :estado WHERE token = :c OR id::text = :c");
+            $stmt->execute([':fase' => $fase_index, ':estado' => $estado, ':c' => $code]);
+        } catch (Exception $e) {}
+    }
+
+    try {
+        require_once __DIR__ . '/api-webhook.php';
+        dispararWebhook('tracking_actualizado', [
+            'invitado' => $nombreInv,
+            'token' => $code,
+            'fase' => "Fase {$fase_index}: {$estado}",
+            'fecha' => date('Y-m-d H:i:s')
+        ], 'panel_tracking');
+    } catch (Exception $e) {}
+    
+    echo json_encode(['status' => 'success', 'message' => 'Fase de tracking actualizada y notificada con webhook']);
+    exit;
+}
+
 echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);

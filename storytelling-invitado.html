@@ -148,8 +148,13 @@
           <span id="actIndicator" style="color: #ff00ff; font-size: 0.8rem; font-weight: bold;">Identificación Oficial</span>
         </div>
       </div>
-      <div style="text-align: right;">
-        <span id="progressText" style="color: #39ff14; font-weight: 800; font-size: 0.95rem;">1 / 33</span>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" onclick="abrirModalConfirmacion()" id="btnRevisarProgreso" style="background: rgba(0, 255, 255, 0.12); border: 1px solid #00ffff; color: #00ffff; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s;" onmouseover="this.style.background='#00ffff'; this.style.color='#000';" onmouseout="this.style.background='rgba(0, 255, 255, 0.12)'; this.style.color='#00ffff';" title="Revisar todas tus respuestas y corregir errores">
+          <i class="fa-solid fa-list-check"></i> Revisar Respuestas (<span id="btnRespCount">0</span>/33)
+        </button>
+        <div style="text-align: right;">
+          <span id="progressText" style="color: #39ff14; font-weight: 800; font-size: 0.95rem;">1 / 33</span>
+        </div>
       </div>
     </div>
     
@@ -163,6 +168,63 @@
       <button class="btn-mic" id="btnMic" onclick="toggleVoiceRecording()" title="Dictar por voz"><i class="fa-solid fa-microphone"></i></button>
       <input type="text" id="chatInput" class="chat-input" placeholder="Escribe o dicta tu respuesta carnal..." onkeydown="if(event.key==='Enter') enviarRespuesta()">
       <button class="btn-send" onclick="enviarRespuesta()"><i class="fa-solid fa-paper-plane"></i> Responder</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL DE CONFIRMACIÓN Y CORRECCIÓN DE RESPUESTAS AL TERMINAR
+       ============================================================ -->
+  <div id="modalConfirmacion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.92); backdrop-filter:blur(14px); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+    <div style="background:rgba(12,12,24,0.98); border:2px solid #00ffff; border-radius:20px; width:100%; max-width:880px; height:92vh; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 50px rgba(0,255,255,0.35), 0 0 25px rgba(255,0,255,0.2); position:relative;">
+      
+      <!-- HEADER DEL MODAL -->
+      <div style="padding:18px 24px; background:linear-gradient(180deg, rgba(20,20,38,0.95) 0%, rgba(12,12,22,0.95) 100%); border-bottom:1px solid rgba(0,255,255,0.25); display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+            <span style="background:rgba(57,255,20,0.15); border:1px solid #39ff14; color:#39ff14; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:10px; text-transform:uppercase;">
+              <i class="fa-solid fa-user-check"></i> Verificación y Confirmación Final
+            </span>
+            <span style="color:#aaa; font-size:0.8rem;">La Cueva del Güero</span>
+          </div>
+          <h2 style="margin:2px 0 4px 0; color:#00ffff; font-size:1.35rem; font-weight:800;">
+            Revisa y Confirma tus Respuestas 🐾
+          </h2>
+          <p style="margin:0; font-size:0.85rem; color:#bbb; line-height:1.4;">
+            Verifica que tus respuestas sean exactamente las que escribiste. Si encuentras algún error o quieres cambiar algo, dale clic a <b>"Modificar"</b> en la pregunta correspondiente para corregirla antes de que se guarde en la base de datos de producción.
+          </p>
+        </div>
+        <button type="button" onclick="cerrarModalConfirmacion()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:34px; height:34px; font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='#ff0055';">&times;</button>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA Y ESTADÍSTICAS -->
+      <div style="padding:10px 24px; background:rgba(16,16,28,0.9); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="position:relative; flex:1; min-width:220px;">
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#888; font-size:0.8rem;"></i>
+          <input type="text" id="filtroPreguntasModal" oninput="filtrarPreguntasModal()" placeholder="Buscar en preguntas o respuestas..." style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.6); border:1px solid rgba(0,255,255,0.3); border-radius:15px; padding:6px 14px 6px 32px; color:#fff; font-size:0.85rem; outline:none;">
+        </div>
+        <div style="font-size:0.82rem; color:#aaa; display:flex; align-items:center; gap:10px;">
+          <span>Respuestas: <strong id="contadorRespuestasModal" style="color:#39ff14; font-size:0.95rem;">0</strong> / 33</span>
+          <span id="badgeModificadasModal" style="display:none; background:rgba(255,165,0,0.15); border:1px solid #FFA500; color:#FFA500; font-size:0.75rem; padding:2px 8px; border-radius:8px; font-weight:bold;">
+            <i class="fa-solid fa-pen"></i> <span id="numModificadasModal">0</span> corregidas
+          </span>
+        </div>
+      </div>
+
+      <!-- LISTA DE PREGUNTAS Y RESPUESTAS (SCROLLABLE) -->
+      <div id="listaPreguntasConfirmacion" style="flex:1; overflow-y:auto; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
+        <!-- Se llena dinámicamente con JS -->
+      </div>
+
+      <!-- FOOTER CON ACCIONES -->
+      <div style="padding:14px 24px; background:rgba(10,10,18,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <button type="button" onclick="cerrarModalConfirmacion()" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#bbb; padding:8px 16px; border-radius:8px; font-size:0.85rem; cursor:pointer;">
+          <i class="fa-solid fa-arrow-left"></i> Volver al Chat
+        </button>
+        <button type="button" id="btnGuardarDefinitivo" onclick="confirmarYGuardarDefinitivo()" style="background:linear-gradient(135deg, #00ffff, #39ff14); border:none; color:#000; padding:10px 24px; border-radius:10px; font-size:0.95rem; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 0 20px rgba(57,255,20,0.4); transition:all 0.2s;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Confirmar y Guardar en la Base de Datos
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -255,6 +317,9 @@
       document.getElementById('chatMessages').appendChild(div);
     }
 
+    let preguntasModificadas = new Set(JSON.parse(localStorage.getItem('cueva_modificadas') || '[]'));
+    let edicionActiva = null;
+
     function updateProgress() {
       const total = PREGUNTAS.length;
       const act = PREGUNTAS[Math.min(currentIndex, total - 1)].acto;
@@ -262,6 +327,10 @@
       document.getElementById('progressText').textContent = `${Math.min(currentIndex + 1, total)} / ${total}`;
       const pct = Math.min(((currentIndex + 1) / total) * 100, 100);
       document.getElementById('progressBar').style.width = `${pct}%`;
+
+      const respondidas = Object.keys(respuestas).length;
+      const btnRespCount = document.getElementById('btnRespCount');
+      if (btnRespCount) btnRespCount.textContent = respondidas;
     }
 
     async function enviarRespuesta() {
@@ -284,20 +353,200 @@
           chat.scrollTop = chat.scrollHeight;
         }, 400);
       } else {
-        finalizarEntrevista();
+        updateProgress();
+        setTimeout(() => {
+          addBotBubble(`
+            <div style="background: rgba(0,255,255,0.12); border: 1px solid #00ffff; padding: 18px; border-radius: 12px; margin-top: 10px;">
+              <h3 style="color:#00ffff; margin:0 0 6px 0;">🎉 ¡A huevo carnal! Completaste las 33 preguntas</h3>
+              <p style="margin:0 0 12px 0; color:#eee; font-size:0.95rem;">
+                Para evitar cualquier error en tu expediente, revisa y confirma tus respuestas antes de guardarlas en la base de datos de producción.
+              </p>
+              <button type="button" onclick="abrirModalConfirmacion()" style="background:linear-gradient(135deg, #00ffff, #39ff14); border:none; color:#000; font-weight:800; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-list-check"></i> Abrir Pantalla de Confirmación
+              </button>
+            </div>
+          `);
+          abrirModalConfirmacion();
+        }, 600);
       }
     }
 
-    async function finalizarEntrevista() {
-      addBotBubble("¡A huevo carnal! 🐾 *salta de emoción* ¡Completaste las 33 preguntas de la plática! Estoy procesando tu expediente oficial de invitado...");
+    // ============================================================
+    // MODAL DE CONFIRMACIÓN Y CORRECCIÓN DE RESPUESTAS
+    // ============================================================
+
+    function abrirModalConfirmacion() {
+      const modal = document.getElementById('modalConfirmacion');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      renderModalConfirmacion();
+    }
+
+    function cerrarModalConfirmacion() {
+      const modal = document.getElementById('modalConfirmacion');
+      if (modal) modal.style.display = 'none';
+      edicionActiva = null;
+    }
+
+    function filtrarPreguntasModal() {
+      const query = (document.getElementById('filtroPreguntasModal').value || '').toLowerCase().trim();
+      renderModalConfirmacion(query);
+    }
+
+    function renderModalConfirmacion(filtro = '') {
+      const container = document.getElementById('listaPreguntasConfirmacion');
+      if (!container) return;
+
+      const respondidasCount = Object.keys(respuestas).length;
+      document.getElementById('contadorRespuestasModal').textContent = respondidasCount;
       
+      const badgeMod = document.getElementById('badgeModificadasModal');
+      const numMod = document.getElementById('numModificadasModal');
+      if (preguntasModificadas.size > 0) {
+        badgeMod.style.display = 'inline-flex';
+        numMod.textContent = preguntasModificadas.size;
+      } else {
+        badgeMod.style.display = 'none';
+      }
+
+      let html = '';
+      PREGUNTAS.forEach((p) => {
+        const num = p.num;
+        const resp = (respuestas[num] || '').trim();
+        const tieneResp = resp.length > 0;
+        const fueModificada = preguntasModificadas.has(num);
+        
+        // Limpiar tags HTML para búsqueda y display del título
+        const tituloLimpio = p.bot.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+
+        if (filtro && !tituloLimpio.toLowerCase().includes(filtro) && !resp.toLowerCase().includes(filtro)) {
+          return;
+        }
+
+        const isEditing = (edicionActiva === num);
+
+        html += `
+          <div style="background: rgba(0,0,0,0.55); border: 1px solid ${fueModificada ? '#FFA500' : (tieneResp ? 'rgba(0,255,255,0.3)' : 'rgba(255,0,85,0.3)')}; border-left: 4px solid ${fueModificada ? '#FFA500' : (tieneResp ? '#39ff14' : '#ff0055')}; border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="background: rgba(0,255,255,0.12); color: #00ffff; font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;">Pregunta #${num}</span>
+                <span style="color: #888; font-size: 0.75rem;">${p.acto}</span>
+                ${fueModificada ? `<span style="background: rgba(255,165,0,0.2); border: 1px solid #FFA500; color: #FFA500; font-size: 0.72rem; padding: 1px 6px; border-radius: 6px; font-weight: 700;">⚡ Corregida</span>` : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${tieneResp && !isEditing ? `
+                  <button type="button" onclick="activarEdicionPregunta(${num})" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(0,255,255,0.4); color: #00ffff; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-pen-to-square"></i> Modificar
+                  </button>
+                ` : ''}
+                ${!tieneResp && !isEditing ? `
+                  <button type="button" onclick="activarEdicionPregunta(${num})" style="background: rgba(255,0,85,0.15); border: 1px solid #ff0055; color: #ff0055; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-plus"></i> Responder Ahora
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <p style="margin: 0; color: #bbb; font-size: 0.88rem; line-height: 1.35;">${tituloLimpio}</p>
+
+            ${isEditing ? `
+              <div style="margin-top: 6px; background: rgba(10,10,25,0.9); border: 1px solid #00ffff; border-radius: 8px; padding: 10px;">
+                <label style="display: block; font-size: 0.78rem; color: #00ffff; font-weight: 700; margin-bottom: 4px;">Escribe tu respuesta corregida:</label>
+                <textarea id="editInput_${num}" rows="3" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; color: #fff; font-size: 0.95rem; resize: vertical; outline: none;">${escapeHtml(resp)}</textarea>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+                  <button type="button" onclick="cancelarEdicionPregunta()" style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #ccc; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                  <button type="button" onclick="guardarEdicionPregunta(${num})" style="background: #39ff14; border: none; color: #000; font-weight: 800; font-size: 0.8rem; padding: 5px 14px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-check"></i> Guardar Corrección
+                  </button>
+                </div>
+              </div>
+            ` : `
+              <div style="background: rgba(15,15,30,0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-top: 2px;">
+                ${tieneResp ? `
+                  <p style="margin: 0; color: #fff; font-size: 0.92rem; line-height: 1.4;"><i class="fa-solid fa-quote-left" style="color: ${fueModificada ? '#FFA500' : '#00ffff'}; font-size: 0.75rem; margin-right: 6px;"></i> "${escapeHtml(resp)}"</p>
+                ` : `
+                  <p style="margin: 0; color: #ff4477; font-size: 0.85rem; font-style: italic;"><i class="fa-solid fa-triangle-exclamation"></i> Sin respuesta aún.</p>
+                `}
+              </div>
+            `}
+          </div>
+        `;
+      });
+
+      if (!html) {
+        html = `<div style="text-align: center; color: #777; padding: 30px;"><p>No se encontraron preguntas que coincidan con la búsqueda.</p></div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function activarEdicionPregunta(num) {
+      edicionActiva = num;
+      renderModalConfirmacion();
+      setTimeout(() => {
+        const txt = document.getElementById(`editInput_${num}`);
+        if (txt) txt.focus();
+      }, 50);
+    }
+
+    function cancelarEdicionPregunta() {
+      edicionActiva = null;
+      renderModalConfirmacion();
+    }
+
+    function guardarEdicionPregunta(num) {
+      const txt = document.getElementById(`editInput_${num}`);
+      if (!txt) return;
+      const nuevoVal = txt.value.trim();
+      if (!nuevoVal) {
+        alert('Por favor escribe tu respuesta.');
+        return;
+      }
+
+      respuestas[num] = nuevoVal;
+      localStorage.setItem('cueva_33_preguntas', JSON.stringify(respuestas));
+      preguntasModificadas.add(num);
+      localStorage.setItem('cueva_modificadas', JSON.stringify(Array.from(preguntasModificadas)));
+
+      // Disparar aviso inmediato por webhook
+      try {
+        fetch('/api/api-webhook.php?action=disparar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'entrevista_error_reportado',
+            origen: 'modal_confirmacion_invitado',
+            datos: {
+              invitado: respuestas[1] || 'Invitado en entrevista',
+              pregunta_num: num,
+              pregunta: PREGUNTAS[num - 1].bot.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').substring(0, 120),
+              nueva_respuesta: nuevoVal
+            }
+          })
+        }).catch(err => console.warn('Aviso webhook en segundo plano:', err));
+      } catch (e) {}
+
+      edicionActiva = null;
+      renderModalConfirmacion();
+      renderChat();
+    }
+
+    async function confirmarYGuardarDefinitivo() {
+      const btn = document.getElementById('btnGuardarDefinitivo');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando y sincronizando con la base de datos...`;
+      }
+
       const payload = {
         nombre: respuestas[1] || 'Invitado La Cueva',
         alias: respuestas[2] || '',
         contacto: respuestas[3] || '',
         ocupacion: respuestas[4] || '',
         barrio: respuestas[6] || '',
-        respuestas: respuestas
+        respuestas: respuestas,
+        correccion_realizada: (preguntasModificadas.size > 0),
+        preguntas_modificadas: Array.from(preguntasModificadas).join(', ')
       };
 
       try {
@@ -309,20 +558,42 @@
         const data = await res.json();
         const code = data.code || ('GUEST-' + Math.floor(1000 + Math.random() * 9000));
 
-        setTimeout(() => {
-          addBotBubble(`
-            <div style="background: rgba(57,255,20,0.12); border: 1px solid #39ff14; padding: 18px; border-radius: 12px; margin-top: 10px;">
-              <h3 style="color:#39ff14; margin:0 0 8px 0;">🎉 ¡EXPEDIENTE GENERADO CON ÉXITO!</h3>
-              <p>Tu código único de seguimiento es: <b style="color:#00ffff; font-size:1.35rem; letter-spacing:1px;">${code}</b></p>
-              <p style="margin: 10px 0;">Tu ficha ya está en manos de El Junior y El Gallo en el panel de producción.</p>
-              <a href="https://s.lacuevadelguero.com/?code=${code}" target="_blank" style="display:inline-block; background:#00ffff; color:#000; padding:10px 18px; border-radius:8px; font-weight:bold; text-decoration:none; margin-top:6px;">🚀 Ver Mi Tracking en Vivo</a>
+        cerrarModalConfirmacion();
+
+        addBotBubble(`
+          <div style="background: rgba(57,255,20,0.15); border: 2px solid #39ff14; padding: 20px; border-radius: 14px; margin-top: 12px; box-shadow: 0 0 25px rgba(57,255,20,0.3);">
+            <h3 style="color:#39ff14; margin:0 0 8px 0; font-size:1.3rem;">🎉 ¡EXPEDIENTE CONFIRMADO Y GUARDADO EN LA BASE DE DATOS!</h3>
+            <p style="color:#eee; margin:0 0 10px 0;">Tus respuestas fueron verificadas con éxito. El Güero y Junior ya tienen tu ficha oficial.</p>
+            <p style="margin: 10px 0;">Tu código oficial de tracking es: <b style="color:#00ffff; font-size:1.4rem; letter-spacing:1px;">${code}</b></p>
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a href="https://s.lacuevadelguero.com/?code=${code}" target="_blank" style="display:inline-block; background:#00ffff; color:#000; padding:10px 18px; border-radius:8px; font-weight:bold; text-decoration:none;">🚀 Ver Mi Tracking en Vivo</a>
+              <button type="button" onclick="abrirModalConfirmacion()" style="background:transparent; border:1px solid #39ff14; color:#39ff14; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">👀 Volver a Ver Mis Respuestas</button>
             </div>
-          `);
-          localStorage.removeItem('cueva_33_preguntas');
-        }, 1000);
+          </div>
+        `);
+
+        localStorage.removeItem('cueva_33_preguntas');
+        localStorage.removeItem('cueva_modificadas');
       } catch (err) {
-        addBotBubble("¡Expediente guardado! Avisale a Junior por WhatsApp con tu nombre para agendar tu fecha de grabación.");
+        cerrarModalConfirmacion();
+        addBotBubble(`
+          <div style="background: rgba(255,0,85,0.15); border: 1px solid #ff0055; padding: 16px; border-radius: 12px; margin-top: 10px;">
+            <p style="margin:0; color:#ff4477;">¡Hubo un detalle de red al sincronizar con el servidor! Por favor dale de nuevo al botón de <b>Revisar Respuestas</b> o avísale a Junior directamente.</p>
+          </div>
+        `);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Confirmar y Guardar en la Base de Datos`;
+        }
       }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
     }
 
     function toggleVoiceRecording() {

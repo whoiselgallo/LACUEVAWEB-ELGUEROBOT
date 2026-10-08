@@ -366,8 +366,31 @@ if (file_exists($enviosFile)) {
     }
 }
 
-// Insertar al inicio de la lista
-array_unshift($envios, $expediente);
+// Actualizar en sitio si ya existía el invitado (por nombre normalizado o por token)
+$encontradoIndex = -1;
+$normNombre = mb_strtolower(trim($nombre));
+foreach ($envios as $idx => $item) {
+    $itemNombre = mb_strtolower(trim($item['nombre'] ?? ''));
+    $itemToken = $item['token'] ?? '';
+    if (($itemNombre === $normNombre && !empty($normNombre)) || ($itemToken === $trackingCode && !empty($trackingCode))) {
+        $encontradoIndex = $idx;
+        // Preservar ID y token previo si existía
+        if (!empty($item['token'])) {
+            $expediente['token'] = $item['token'];
+            $trackingCode = $item['token'];
+        }
+        if (!empty($item['id'])) {
+            $expediente['id'] = $item['id'];
+        }
+        break;
+    }
+}
+
+if ($encontradoIndex >= 0) {
+    $envios[$encontradoIndex] = $expediente;
+} else {
+    array_unshift($envios, $expediente);
+}
 @file_put_contents($enviosFile, json_encode($envios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 // ═════════════════════════════════════════════════════════════════════════════════
@@ -442,6 +465,36 @@ try {
     }
 } catch (Exception $e) {
     error_log("Database Save Warning (Fallback JSON used): " . $e->getMessage());
+}
+
+// ═════════════════════════════════════════════════════════════════════════════════
+// 3. DISPARAR WEBHOOK DE NOTIFICACIÓN EN TIEMPO REAL
+// ═════════════════════════════════════════════════════════════════════════════════
+try {
+    require_once __DIR__ . '/api-webhook.php';
+    $esCorreccion = !empty($input['correccion_realizada']);
+    if ($esCorreccion) {
+        dispararWebhook('entrevista_error_reportado', [
+            'nombre' => $nombre,
+            'alias' => $alias ?: 'Sin alias',
+            'token' => $trackingCode,
+            'preguntas_modificadas' => $input['preguntas_modificadas'] ?? 'Varias',
+            'mensaje' => "El invitado revisó su entrevista y corrigió respuestas antes del guardado definitivo."
+        ], 'cuestionario_invitado');
+    }
+    dispararWebhook('entrevista_completada', [
+        'nombre' => $nombre,
+        'alias' => $alias ?: 'Sin alias',
+        'barrio' => $barrio,
+        'jale' => $ocupacion,
+        'contacto' => $contacto,
+        'token' => $trackingCode,
+        'curaduria' => $curaduria['nivel'] ?? 'ALTO',
+        'score' => $totalScore . ' / 330 PTS',
+        'estado' => $esCorreccion ? 'Confirmado con correcciones' : 'Confirmado y verificado'
+    ], 'cuestionario_invitado');
+} catch (Exception $e) {
+    error_log("Webhook trigger warning: " . $e->getMessage());
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════

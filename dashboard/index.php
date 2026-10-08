@@ -714,6 +714,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
                 <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
                 <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
+                <button class="btn-neon" id="btn-centro-avisos" type="button" style="font-size:0.8rem; padding:6px 14px; border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleCentroAvisos()" title="Centro de Monitoreo y Avisos en Vivo (Webhook)">
+                    <i class="fa-solid fa-bell"></i> Avisos <span id="badge-avisos-count" style="background:#ff0055; color:#fff; font-size:0.7rem; font-weight:900; padding:1px 6px; border-radius:10px;">0</span>
+                </button>
                 <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
             </div>
         </header>
@@ -866,7 +869,94 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                             </div>
                         </div>
                         
-                        <div class="detalle-scroll" style="width: 100%;">
+                        <!-- RULETA INTERACTIVA DE RETOS DE CABINA CON IA -->
+                        <div id="retos-cabina-panel" class="seccion-asset" style="border-color: rgba(255, 215, 0, 0.45); background: rgba(18, 14, 6, 0.95); margin-bottom: 22px; box-shadow: 0 4px 25px rgba(255, 215, 0, 0.15);">
+                            <div class="seccion-header" style="border-bottom-color: rgba(255, 215, 0, 0.25); flex-wrap: wrap; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <i class="fa-solid fa-dice-d20" style="color: #FFD700; font-size: 1.4rem; text-shadow: 0 0 12px #FFD700;"></i>
+                                    <div>
+                                        <h3 style="margin: 0; color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                            Ruleta de Retos & Dinámicas de Cabina <span style="font-size: 0.72rem; background: rgba(255, 215, 0, 0.15); border: 1px solid #FFD700; color: #FFD700; padding: 2px 8px; border-radius: 12px; font-weight: 700;">IA Contextual</span>
+                                        </h3>
+                                        <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Recomendador interactivo de pruebas según la categoría elegida por el invitado o al azar.</p>
+                                    </div>
+                                </div>
+                                <div class="btn-action-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button class="btn-neon" id="btn-reto-aleatorio" onclick="tirarRetoAleatorio()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: #FFD700; color: #FFD700; background: rgba(255,215,0,0.1);">
+                                        <i class="fa-solid fa-dice"></i> 1. Tirar Reto Rápido
+                                    </button>
+                                    <button class="btn-neon btn-neon-magenta" id="btn-reto-ia" onclick="generarRetoConIA()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> 2. Personalizar con IA al Invitado
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- SELECTOR DE CATEGORÍAS EN FORMA DE BOTONES / PILLS NEÓN -->
+                            <div style="padding-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; margin-bottom: 14px;">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; color: #8e8e9f; font-weight: 700; letter-spacing: 1px; margin-right: 6px;">Categoría:</span>
+                                <button type="button" class="btn-cat-reto active" id="cat-reto-aleatorio" data-cat="aleatorio" onclick="seleccionarCategoriaReto('aleatorio')" style="background: rgba(255,215,0,0.2); border: 1px solid #FFD700; color: #FFD700; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 700; cursor: pointer;">🎲 Sorpresa / Azar</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-destreza" data-cat="destreza" onclick="seleccionarCategoriaReto('destreza')" style="background: transparent; border: 1px solid rgba(0,255,255,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🎯 Destreza (Malabares / Equilibrio)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-fisico" data-cat="fisico" onclick="seleccionarCategoriaReto('fisico')" style="background: transparent; border: 1px solid rgba(57,255,20,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">💪 Reto Físico (Sentadillas / Fuerza)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-artistico" data-cat="artistico" onclick="seleccionarCategoriaReto('artistico')" style="background: transparent; border: 1px solid rgba(255,0,255,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🎨 Artístico (Cantar / Dibujo / Rima)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-callejero" data-cat="callejero" onclick="seleccionarCategoriaReto('callejero')" style="background: transparent; border: 1px solid rgba(255,77,77,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🌶️ Callejero (Salsa Brava / Bromas)</button>
+                            </div>
+
+                            <!-- TARJETA DEL RETO RECOMENDADO / GENERADO -->
+                            <div id="reto-display-container" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,215,0,0.25); border-radius: 10px; padding: 18px; position: relative;">
+                                <!-- Cabecera del reto con badge y temporizador -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span id="reto-categoria-badge" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #FFD700; font-weight: 800; background: rgba(255,215,0,0.15); border: 1px solid #FFD700; padding: 3px 10px; border-radius: 12px;">Destreza</span>
+                                        <span id="reto-origen-badge" style="font-size: 0.68rem; color: #00FFFF; margin-left: 8px; border: 1px solid rgba(0,255,255,0.3); padding: 2px 8px; border-radius: 10px;">⚡ Modo Interactivo</span>
+                                        <h4 id="reto-titulo" style="margin: 8px 0 0 0; font-size: 1.25rem; color: #fff; text-shadow: 0 0 10px rgba(255,215,0,0.4);">Torre Caguamera en 45 Segundos</h4>
+                                    </div>
+                                    
+                                    <!-- CRONÓMETRO DE CABINA -->
+                                    <div style="background: rgba(10,10,20,0.85); border: 1px solid rgba(0,255,255,0.3); border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="text-align: center;">
+                                            <span style="font-size: 0.65rem; color: #888; text-transform: uppercase; display: block;">Tiempo Límite</span>
+                                            <span id="reto-cronometro" style="font-size: 1.3rem; font-weight: 900; color: #00FFFF; font-family: monospace;">00:45</span>
+                                        </div>
+                                        <div style="display: flex; gap: 5px;">
+                                            <button type="button" id="btn-crono-start" onclick="iniciarCronometroReto()" title="Iniciar tiempo" style="background: #39FF14; border: none; color: #000; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;"><i class="fa-solid fa-play"></i></button>
+                                            <button type="button" id="btn-crono-pause" onclick="pausarCronometroReto()" title="Pausar" style="background: #FFD700; border: none; color: #000; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fa-solid fa-pause"></i></button>
+                                            <button type="button" id="btn-crono-reset" onclick="reiniciarCronometroReto()" title="Reiniciar" style="background: #FF00FF; border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fa-solid fa-rotate-left"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- REGLAS Y DESCRIPCIÓN -->
+                                <div style="margin-bottom: 14px; background: rgba(0,0,0,0.3); border-left: 3px solid #FFD700; padding: 12px 14px; border-radius: 4px;">
+                                    <span style="font-size: 0.72rem; color: #FFD700; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Reglas & Dinámica de Ejecución:</span>
+                                    <p id="reto-reglas" style="margin: 0; color: #ddd; font-size: 0.95rem; line-height: 1.5;">Hacer equilibrio apilando 5 corcholatas o vasos sobre una botella de cerveza cerrada en menos de 45 segundos usando solo una mano.</p>
+                                </div>
+
+                                <!-- GRID 2 COLUMNAS: Contexto / Por qué este invitado + Castigo / Penitencia -->
+                                <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; margin-bottom: 14px;">
+                                    <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 12px;">
+                                        <h5 style="margin: 0 0 6px 0; color: #00FFFF; font-size: 0.82rem;"><i class="fa-solid fa-bullseye"></i> Ángulo Contextual del Invitado:</h5>
+                                        <p id="reto-contexto" style="margin: 0; font-size: 0.86rem; color: #ccc; line-height: 1.45;">Pone a prueba el pulso bajo presión y los nervios frente a cámara.</p>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,0,255,0.2); border-radius: 8px; padding: 12px;">
+                                        <h5 style="margin: 0 0 6px 0; color: #FF00FF; font-size: 0.82rem;"><i class="fa-solid fa-skull"></i> Castigo / Penitencia si Falla:</h5>
+                                        <p id="reto-castigo" style="margin: 0; font-size: 0.86rem; color: #ff99ff; line-height: 1.45; font-weight: 600;">Darle un trago a la salsa más picosa del set sin hacer muecas.</p>
+                                    </div>
+                                </div>
+
+                                <!-- FOOTER DE LA TARJETA: Materiales necesarios + Botón para inyectar a Cue Cards -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span style="font-size: 0.72rem; color: #888; text-transform: uppercase;">Materiales en Set:</span>
+                                        <span id="reto-materiales" style="font-size: 0.82rem; color: #fff; margin-left: 6px; font-weight: 600;">1 botella de vidrio y 5 tapas/vasos</span>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button type="button" class="btn-neon" onclick="copiarRetoACueCards()" style="padding: 5px 12px; font-size: 0.75rem; border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.1); cursor: pointer; border-radius: 4px;">
+                                            <i class="fa-solid fa-copy"></i> Copiar Reto al Portapapeles / Set
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                             <!-- ESCALETA -->
                             <div class="seccion-asset">
                                 <div class="seccion-header">
@@ -1779,6 +1869,40 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                     <!-- Lista de tareas dinamicas -->
                 </div>
             </div>
+
+            <!-- PANEL: VOTACIÓN DE DECISIONES DE EQUIPO Y PRODUCCIÓN -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid #FFD700; border-radius: 16px; padding: 20px; margin-top: 25px; box-shadow: 0 0 15px rgba(255,215,0,0.15);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 style="color:#FFD700; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-check-double"></i> Votación de Decisiones de Producción & Editorial
+                        </h3>
+                        <p style="font-size:0.75rem; color:#aaa; margin:4px 0 0 0;">Consenso en tiempo real para temas de episodios, cambios en escaletas y lanzamientos del show.</p>
+                    </div>
+                    <span style="font-size:0.7rem; color:#FFD700; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); padding:4px 10px; border-radius:12px;">
+                        <i class="fa-solid fa-satellite-dish"></i> Sincronizado vía Webhook
+                    </span>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px; margin-bottom:15px;">
+                    <input type="text" id="decision-nueva-input" class="form-input" placeholder="Proponer nueva decisión (ej: Grabar especial en vivo en Mexicali)..." style="padding:8px; font-size:0.8rem;">
+                    <div style="display:flex; gap:8px;">
+                        <select id="decision-rol-select" class="form-input" style="padding:8px; font-size:0.8rem; flex:1; background:#111;">
+                            <option value="El Güero">El Güero (Host)</option>
+                            <option value="Productor">Productor</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Comunidad">Comunidad</option>
+                        </select>
+                        <button class="btn-neon" onclick="proponerDecisionEquipo()" style="font-size:0.75rem; padding:8px 12px; border-color:#FFD700; color:#FFD700; white-space:nowrap;">
+                            <i class="fa-solid fa-plus"></i> Proponer
+                        </button>
+                    </div>
+                </div>
+
+                <div id="decisiones-lista" style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- Se renderizan dinámicamente -->
+                </div>
+            </div>
         </section>
     </div>
 
@@ -1930,6 +2054,56 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 <button type="button" class="btn-neon" onclick="cerrarModalCuestionario()" style="font-size:0.8rem; padding:6px 18px; border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.06); cursor:pointer; border-radius:8px;">
                     <i class="fa-solid fa-xmark"></i> Cerrar
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR FLOTANTE DE TOASTS PARA AVISOS EN VIVO -->
+    <div id="toastAvisosContainer" style="position:fixed; top:20px; right:20px; z-index:999999; display:flex; flex-direction:column; gap:10px; max-width:380px; pointer-events:none;"></div>
+
+    <!-- MODAL / DRAWER: CENTRO DE MONITOREO Y AVISOS EN VIVO (WEBHOOK) -->
+    <div id="modalCentroAvisos" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.85); backdrop-filter:blur(10px); z-index:99999; justify-content:flex-end; align-items:stretch;">
+        <div style="background:rgba(14,14,26,0.98); border-left:2px solid var(--neon-cyan); width:100%; max-width:460px; height:100vh; display:flex; flex-direction:column; box-shadow:-10px 0 35px rgba(0,0,0,0.8); position:relative;">
+            
+            <!-- Header -->
+            <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0; font-size:1.1rem; color:#fff;">Avisos en Vivo</h3>
+                        <span style="font-size:0.75rem; color:#aaa;"><i class="fa-solid fa-bolt" style="color:#39ff14;"></i> Monitoreo Webhook en Tiempo Real</span>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleCentroAvisos()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <!-- Webhook Config Toggle -->
+            <div style="padding:12px 20px; background:rgba(0,0,0,0.4); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.78rem; color:#bbb;"><i class="fa-solid fa-plug" style="color:var(--neon-cyan);"></i> Webhook Externo (Discord / Slack / Make)</span>
+                <button type="button" class="btn-neon" style="font-size:0.7rem; padding:3px 8px; border-color:var(--neon-cyan); color:var(--neon-cyan);" onclick="toggleConfigWebhook()"><i class="fa-solid fa-gear"></i> Configurar</button>
+            </div>
+
+            <!-- Formulario Config Webhook (Colapsable) -->
+            <div id="boxConfigWebhook" style="display:none; padding:15px 20px; background:rgba(20,15,30,0.95); border-bottom:1px solid rgba(0,255,255,0.2);">
+                <label style="display:block; font-size:0.78rem; color:var(--neon-cyan); margin-bottom:5px; font-weight:700;">URL del Webhook (Discord / Slack / Make / etc.):</label>
+                <input type="url" id="inputWebhookUrl" class="form-input" placeholder="https://discord.com/api/webhooks/..." style="font-size:0.8rem; padding:8px; margin-bottom:10px; width:100%; box-sizing:border-box;">
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 10px; border-color:#FF00FF; color:#FF00FF;" onclick="probarWebhookTest()"><i class="fa-solid fa-paper-plane"></i> Probar Test</button>
+                    <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 12px; background:var(--neon-green); color:#000; border-color:var(--neon-green); font-weight:800;" onclick="guardarConfigWebhook()"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                </div>
+            </div>
+
+            <!-- Feed de Avisos -->
+            <div id="listaAvisosFeed" style="flex:1; overflow-y:auto; padding:15px 20px; display:flex; flex-direction:column; gap:10px;">
+                <p style="color:#777; text-align:center; font-size:0.85rem; margin-top:20px;">Cargando avisos del sistema...</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding:12px 20px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" onclick="marcarAvisosLeidos()" style="background:none; border:none; color:#888; font-size:0.78rem; cursor:pointer;"><i class="fa-solid fa-check-double"></i> Marcar leídos</button>
+                <button type="button" onclick="cargarAvisosEnVivo(true)" style="background:none; border:none; color:var(--neon-cyan); font-size:0.78rem; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Actualizar</button>
             </div>
         </div>
     </div>
@@ -2125,11 +2299,32 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             });
             input.value = "";
             renderKanban();
+
+            // Disparar Webhook en tiempo real
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('task_kanban', {
+                    accion: 'Nueva Tarea Agregada',
+                    tarea: text,
+                    estado: 'Pendiente'
+                });
+            }
         }
 
         function toggleKanbanTask(id) {
+            const tareaAntes = kanbanTasks.find(t => t.id === id);
+            const eraDone = tareaAntes ? tareaAntes.done : false;
+
             kanbanTasks = kanbanTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
             renderKanban();
+
+            const tareaDespues = kanbanTasks.find(t => t.id === id);
+            if (tareaDespues && window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('task_kanban', {
+                    accion: tareaDespues.done ? 'Tarea Cumplida / Completada' : 'Tarea Reactivada',
+                    tarea: tareaDespues.text,
+                    estado: tareaDespues.done ? 'Completada 100%' : 'En progreso'
+                });
+            }
         }
 
         function deleteKanbanTask(id) {
@@ -2137,9 +2332,135 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             renderKanban();
         }
 
-        // Render inicializar Kanban al entrar
+        // 6. Votación de Decisiones de Equipo y Producción (Sincronizado vía Webhook)
+        let decisionesEquipo = JSON.parse(localStorage.getItem("cueva_decisiones_equipo")) || [
+            { id: 1, titulo: "Lanzar episodio especial con La Pocha y El Gallo en set en vivo", autor: "El Güero", favor: 3, contra: 0, estado: "Aprobada", fecha: "Hoy" },
+            { id: 2, titulo: "Migrar clips de TikTok a formato de pantalla dividida con gameplay", autor: "Editor", favor: 1, contra: 2, estado: "En debate", fecha: "Ayer" },
+            { id: 3, titulo: "Publicar audio completo en Spotify antes del estreno en YouTube", autor: "Productor", favor: 2, contra: 1, estado: "En debate", fecha: "Esta semana" }
+        ];
+
+        function renderDecisiones() {
+            const container = document.getElementById("decisiones-lista");
+            if (!container) return;
+            container.innerHTML = "";
+
+            decisionesEquipo.forEach(d => {
+                const totalVotos = (d.favor || 0) + (d.contra || 0);
+                const pctFavor = totalVotos > 0 ? Math.round((d.favor / totalVotos) * 100) : 50;
+                const statusColor = d.favor > d.contra ? '#39FF14' : (d.contra > d.favor ? '#FF4D4D' : '#FFD700');
+
+                const div = document.createElement("div");
+                div.style.cssText = "background:rgba(255,255,255,0.02); border:1px solid rgba(255,215,0,0.15); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px;";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                        <div>
+                            <span style="font-size:0.68rem; color:#FFD700; font-weight:700; text-transform:uppercase;">Propuesto por ${d.autor || 'Equipo'}</span>
+                            <h4 style="margin:2px 0 0 0; font-size:0.85rem; color:#fff;">${d.titulo}</h4>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:0.68rem; color:${statusColor}; border:1px solid ${statusColor}; padding:2px 6px; border-radius:8px; font-weight:bold;">
+                                ${d.favor > d.contra ? 'Mayoría A Favor' : (d.contra > d.favor ? 'Mayoría En Contra' : 'Empate')}
+                            </span>
+                            <button onclick="borrarDecision(${d.id})" style="background:none; border:none; color:#666; cursor:pointer; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="flex:1; background:rgba(255,255,255,0.08); height:6px; border-radius:3px; overflow:hidden; display:flex;">
+                            <div style="background:#39FF14; width:${pctFavor}%; height:100%;"></div>
+                            <div style="background:#FF4D4D; width:${100 - pctFavor}%; height:100%;"></div>
+                        </div>
+                        <span style="font-size:0.7rem; color:#aaa; font-family:monospace;">${d.favor} 👍 / ${d.contra} 👎</span>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:2px;">
+                        <button class="btn-neon" onclick="votarDecision(${d.id}, 'favor')" style="font-size:0.68rem; padding:3px 10px; border-color:#39FF14; color:#39FF14;">
+                            <i class="fa-solid fa-thumbs-up"></i> Votar A Favor
+                        </button>
+                        <button class="btn-neon" onclick="votarDecision(${d.id}, 'contra')" style="font-size:0.68rem; padding:3px 10px; border-color:#FF4D4D; color:#FF4D4D;">
+                            <i class="fa-solid fa-thumbs-down"></i> Votar En Contra
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            localStorage.setItem("cueva_decisiones_equipo", JSON.stringify(decisionesEquipo));
+        }
+
+        function proponerDecisionEquipo() {
+            const input = document.getElementById("decision-nueva-input");
+            const rolSelect = document.getElementById("decision-rol-select");
+            const texto = input ? input.value.trim() : "";
+            const rol = rolSelect ? rolSelect.value : "Equipo";
+
+            if (!texto) {
+                alert("Por favor escribe la decisión o propuesta que someterás a votación.");
+                return;
+            }
+
+            const nueva = {
+                id: Date.now(),
+                titulo: texto,
+                autor: rol,
+                favor: 1,
+                contra: 0,
+                estado: "En debate",
+                fecha: "Hoy"
+            };
+
+            decisionesEquipo.unshift(nueva);
+            if (input) input.value = "";
+            renderDecisiones();
+
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('decision_votada', {
+                    accion: 'Nueva Decisión Propuesta',
+                    titulo: texto,
+                    proponente: rol,
+                    voto_inicial: 'A favor',
+                    votos_favor: 1,
+                    votos_contra: 0
+                });
+            }
+        }
+
+        function votarDecision(id, tipo) {
+            const rolSelect = document.getElementById("decision-rol-select");
+            const votante = rolSelect ? rolSelect.value : "Socio / Equipo";
+
+            const dec = decisionesEquipo.find(d => d.id === id);
+            if (!dec) return;
+
+            if (tipo === 'favor') {
+                dec.favor = (dec.favor || 0) + 1;
+            } else {
+                dec.contra = (dec.contra || 0) + 1;
+            }
+
+            renderDecisiones();
+
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('decision_votada', {
+                    accion: 'Voto Registrado',
+                    decision: dec.titulo,
+                    votante: votante,
+                    voto: tipo === 'favor' ? 'A favor (👍)' : 'En contra (👎)',
+                    total_favor: dec.favor,
+                    total_contra: dec.contra
+                });
+            }
+        }
+
+        function borrarDecision(id) {
+            decisionesEquipo = decisionesEquipo.filter(d => d.id !== id);
+            renderDecisiones();
+        }
+
+        // Render inicializar Kanban y Decisiones al entrar
         document.addEventListener("DOMContentLoaded", () => {
             renderKanban();
+            renderDecisiones();
             calculateLeads();
         });
     </script>
