@@ -185,7 +185,12 @@ if (!in_array($catNormalizada, $categoriasDisponibles)) {
 $geminiApiKey = get_gemini_api_key();
 
 if (!empty($geminiApiKey)) {
-    $prompt = "Actúa como el Director de Dinámicas y Productor de Entretenimiento de 'La Cueva del Güero' (podcast urbano y comedia sin censura grabado en Mexicali, B.C., conducido por El Güero y El Junior).\n\n" .
+    $prompt = "Actúa como el Director Creativo y Productor Ejecutivo Javier Gallardo 'El Gallo', diseñando dinámicas y retos de cabina para el podcast 'La Cueva del Güero' en Mexicali, B.C.\n\n" .
+              "EQUIPO OFICIAL:\n" .
+              "- Personaje Principal e Inspiración: 'El Güero' el perro (mascota e imagen en logo/marca/set).\n" .
+              "- CEO y Host Conductor: Ariel Higuera 'El Junior' (dirige el show frente a micrófonos y reta al invitado).\n" .
+              "- Director Creativo y Productor Ejecutivo: Javier Gallardo 'El Gallo' (diseña los retos y lleva el ritmo).\n" .
+              "- Socia Ángel y Finanzas: Maria Elena Anguiano 'La Mary' (administra finanzas y patrocinios).\n\n" .
               "Tu labor es diseñar UN RETO DE CABINA DIVERTIDO, MEMORABLE Y ADAPTADO AL CONTEXTO ÚNICO DEL INVITADO.\n\n" .
               "DATOS DEL INVITADO:\n" .
               "- Nombre: {$nombre}\n" .

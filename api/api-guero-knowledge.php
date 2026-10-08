@@ -252,43 +252,43 @@ $FALLBACK_INVITADOS = [
     ],
     10 => [
         'id' => 10,
-        'nombre' => "La Pocha",
+        'nombre' => "Rosalva \"la pocha\"",
         'created_at' => "2026-09-29 20:00:00",
-        'alias' => "La Pocha",
+        'alias' => "la pocha",
         'ocupacion' => "Comerciante, Emprendedora y Personaje Urbano",
-        'barrio' => "Pueblo Nuevo / La Línea, Mexicali",
-        'trayectoria' => "Vida forjada entre el otro lado y Mexicali, rompiendo esquemas con comercio independiente, estilo chicano y puro flow cachanilla.",
+        'barrio' => "Estados Unidos USA",
+        'trayectoria' => "Vida forjada entre Estados Unidos USA y Mexicali, rompiendo esquemas con comercio independiente, estilo chicano y puro flow cachanilla.",
         'herida' => "El rechazo en ambos lados de la frontera y levantarse de la ruina económica con puro trabajo honesto.",
-        'molestia' => "La gente alzada que se avergüenza de sus raíces y los desleales.",
-        'frase' => "En la frontera nadie nos regala nada: o le chingas con orgullo o te quedas en el camino.",
-        'storytelling_enfoque' => "Identidad fronteriza, cultura de barrio y resiliencia femenina desde Pueblo Nuevo.",
-        'reto' => "Cruzar el cerco, perderlo todo y reconstruirse como pilar de su familia y comunidad.",
-        'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA DEL GÜERO\nInvitado: La Pocha (Personaje Urbano de Mexicali)\nTema: Vida de frontera, cultura chicana y el poder de no rajarse\n\n[00:00 - 05:00] Hook & Intro: El origen del apodo 'La Pocha' y el choque de dos mundos en la línea\n[05:00 - 15:00] Bloque 1: Creciendo en Pueblo Nuevo, el spanglish y los primeros jales pesados\n[15:00 - 28:00] Bloque 2: Los madrazos de la vida: perderlo todo en el otro lado y empezar de cero en Mexicali\n[28:00 - 40:00] Bloque 3: Negocios de frontera, códigos de respeto y el don de conectar con la gente\n[40:00 - 48:00] Bloque 4: Dinámica en cabina, confesión incómoda sin censura y canción bélica\n[48:00 - 52:00] Cierre & Reflexión: Mensaje a las morras y vatos que están pasando por la lumbre",
-        'guion' => "GUIÓN BROADCAST - LA CUEVA DEL GÜERO\nInvitado: La Pocha | Conducción: El Güero & Junior\n\nEl Güero: ¡Qué onda manada! Hoy la mesa vibra pesado porque tenemos a una morra que representa la pura esencia de la frontera: auténtica, entrona y sin pelos en la lengua. ¡Bienvenida a la Cueva, mi querida Pocha!\n\nJunior: ¡Qué onda Pocha! Todo Mexicali y el valle te ubican. Cuéntanos directo: ¿de dónde nació el apodo de 'La Pocha' y cómo fue crecer con un pie en Calexico y el otro en Pueblo Nuevo?\n\nLa Pocha: ¡Qué onda Güero, qué onda Junior! Pues la neta me decían así desde morra porque hablaba mocho, pero ese spanglish y esa mezcla es lo que me dio la fuerza para salir adelante en los dos lados...\n\nEl Güero: En el cuestionario nos platicaste de un momento donde sentiste que tocabas fondo. Cuéntale a la raza qué se siente tener que reinventarse cuando todos dudan de ti...\n\nLa Pocha: Se siente gacho, pero de la lumbre sales templado. Yo me dije: 'Aquí no hay tiempo de llorar, hay que chingarle al doble'.\n\nJunior: Y la neta, ¿cuál es el secreto para mantener la humildad cuando te empieza a ir bien?\n\nLa Pocha: Nunca olvidar de dónde vienes, carnal. El barrio te da escuela, pero tú decides si caminas derecho.",
-        'cue_cards' => "CUE CARDS DE CABINA - HOSTS\n• TARJETA 1 (HOOK): Origen del apodo 'La Pocha' y anécdotas de Pueblo Nuevo y la garita.\n• TARJETA 2 (RESILIENCIA): El golpe más duro en el trabajo y cómo levantó su propio negocio.\n• TARJETA 3 (DINÁMICA): Activar reto en cabina y mención especial a patrocinadores de la Cueva.\n• TARJETA 4 (CIERRE): Mensaje motivacional de poder femenino y superación fronteriza.",
+        'molestia' => "la gente hipócrita y mentirosa",
+        'frase' => "\"Progresión no perfección\"",
+        'storytelling_enfoque' => "Identidad fronteriza, cultura de barrio y resiliencia entre Estados Unidos USA y Mexicali con mentalidad de progresión no perfección.",
+        'reto' => "Reto físico en cabina: dinamismo, destreza y resistencia sin filtro.",
+        'escaleta' => "ESCALETA DE PRODUCCIÓN - LA CUEVA DEL GÜERO\nInvitado: Rosalva \"la pocha\" (la pocha)\nBarrio/Origen: Estados Unidos USA\nTema: Vida de frontera entre Estados Unidos USA y Mexicali, resiliencia y el lema 'progresión no perfección'\n\n[00:00 - 05:00] INTRO & PRESENTACIÓN: El Güero y Junior reciben a Rosalva \"la pocha\". Conexión binacional desde Estados Unidos USA y la fuerza de su apodo.\n[05:00 - 15:00] BLOQUE 1 - RAÍCES Y EL OTRO LADO: Crecer entre Estados Unidos USA y la frontera, el spanglish, los primeros jales y el choque cultural sin perder la esencia.\n[15:00 - 27:00] BLOQUE 2 - MADRAZOS Y REINVENCIÓN: La humillación en el trabajo por el idioma, el robo de la inversión y levantarse con pura disciplina. Lo que más le cala: la gente hipócrita y mentirosa.\n[27:00 - 38:00] BLOQUE 3 - ANTOJOS, MIEDOS Y COMEDIA: El gusto por los churros de harina y la comida china, la anécdota de la peluca en Calexico, y la confesión del verdadero pánico: a su mamá ('si la miras venir dime para correr').\n[38:00 - 46:00] BLOQUE 4 - CONFESIÓN BÉLICA & RETO FÍSICO: Rolas pesadas que la prenden: 'Mente en blanco' de Voz de Mando y 'No me falten al respeto' de Noel Torres. Su gusto culposo de maratonear Netflix y ejecución en vivo de su RETO FÍSICO en cabina.\n[46:00 - 52:00] CIERRE & LEGADO: Saludo picante a sus haters ('que aunque sea odio aún piensan en mí') y mensaje final para la manada: 'Progresión no perfección'.",
+        'guion' => "GUIÓN BROADCAST - LA CUEVA DEL GÜERO\nInvitado: Rosalva \"la pocha\" | Conducción: El Güero & Junior\n\nEl Güero: ¡Qué onda manada! Hoy la mesa vibra pesado con una invitada que trae todo el flow fronterizo y binacional: directa desde Estados Unidos USA, le damos la bienvenida a la Cueva a Rosalva \"la pocha\".\n\nJunior: ¡Bienvenida Rosalva! Todo mundo te conoce como \"la pocha\". Vienes representando a la raza de Estados Unidos USA y la frontera. ¿Cómo fue forjar ese carácter entre los dos lados de la línea?\n\nRosalva \"la pocha\": ¡Qué onda Güero, qué onda Junior! Pues la neta no fue fácil, me tiraron carrilla por hablar mocho y por ser mujer en los negocios, pero aquí estamos firmes, alegres y chambeando con todo.\n\nEl Güero: En el cuestionario nos soltaste verdades directas. Dices que lo que más te revienta es la gente hipócrita y mentirosa, pero también nos confesaste a qué le tienes verdadero pavor...\n\nRosalva \"la pocha\": ¡A mi mamá! Si la miran venir avísenme para correr, carnales, a esa doña sí le guardo todo el respeto del mundo.\n\nJunior: Oye Pocha, y para ponerle sabor bélico a la cabina: ¿qué suena en tus bocinas cuando andas con todo el tiro?\n\nRosalva \"la pocha\": \"Mente en blanco\" de Voz de Mando y \"No me falten al respeto\" de Noel Torres, con esas dos no me para nadie. Aunque en mi tiempo libre me encanta encerrarme a hacer bingewatch de Netflix, ese es mi mero gusto culposo.\n\nEl Güero: ¡Eso es todo! Y hoy no te salvas, elegiste el RETO FÍSICO en vivo, así que vamos a ver de qué cuero salen más correas en este set...\n\nJunior: Para despedir con broche de oro, ¿qué recado le dejas a tus seguidores y a los que no te querían ver triunfar?\n\nRosalva \"la pocha\": Saludos a todos mis haters, que aunque sea con odio pero aún piensan en mí. Y para toda la manada que le está batallando: acuérdense, \"progresión no perfección\". ¡Pa'delante siempre!",
+        'cue_cards' => "CUE CARDS DE CABINA - HOSTS\n• TARJETA 1 (HOOK & ORIGEN): Recibir a Rosalva \"la pocha\" desde Estados Unidos USA. Tocar su definición (Firme, alegre, trabajadora) y el orgullo chicano-fronterizo.\n• TARJETA 2 (VULNERABILIDAD & ANÉCDOTA): Tocar el tema de la gente hipócrita y mentirosa, antojos de churros de harina y comida china, y el chiste de su mamá ('si la miras venir dime para correr').\n• TARJETA 3 (DINÁMICA & BÉLICA): Activar RETO FÍSICO en cabina. Mencionar sus rolas: 'Mente en blanco' (Voz de Mando) y 'No me falten al respeto' (Noel Torres), más su gusto por Netflix.\n• TARJETA 4 (CIERRE & MENSAJE): Dedicatoria a los haters ('aunque sea odio aún piensan en mí') y remate con su lema: 'Progresión no perfección'.",
         'curaduria' => [
             'nivel' => 'ALTO',
             'badge' => '🟢 NIVEL ALTO',
             'formato' => 'Invitado Principal al Canal (Episodio Completo 45+ min)',
             'color' => '#39FF14',
-            'razon' => 'Personaje urbano icónico de Mexicali. Potencia narrativa de frontera, autenticidad y resiliencia.'
+            'razon' => 'Personaje urbano icónico binacional. Potencia narrativa entre Estados Unidos y la frontera, autenticidad y resiliencia.'
         ],
         'ponderacion' => [
             'score_total' => 98,
             'criterios' => [
-                ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 9.0, 'justificacion' => 'Puro arraigo fronterizo en Pueblo Nuevo y La Línea.'],
-                ['nombre' => 'Potencia Emocional & Resiliencia', 'score' => 9.0, 'justificacion' => 'Historia de superación y reinvención económica.'],
-                ['nombre' => 'Carisma & Dinámica en Set', 'score' => 9.0, 'justificacion' => 'Lenguaje directo, chispa y anécdotas sin filtro.'],
-                ['nombre' => 'Mensaje Motivacional', 'score' => 9.0, 'justificacion' => 'Empoderamiento y lealtad comunitaria.']
+                ['nombre' => 'Autenticidad & Conexión de Barrio', 'score' => 9.2, 'justificacion' => 'Raíces y estilo de vida entre Estados Unidos USA y la frontera. Definición: Firme, alegre, trabajadora.'],
+                ['nombre' => 'Potencia Emocional & Resiliencia', 'score' => 9.0, 'justificacion' => 'Superación de adversidades: No rajarse por nada, defender a los suyos y filosofía de \'progresión no perfección\'.'],
+                ['nombre' => 'Carisma & Dinámica en Set', 'score' => 9.3, 'justificacion' => 'Reto físico en cabina, bingewatch de Netflix, anécdotas de su mamá y rolas bélicas (Voz de Mando / Noel Torres).'],
+                ['nombre' => 'Mensaje Motivacional', 'score' => 9.0, 'justificacion' => 'Dedicado a los haters (\'que aunque sea odio aún piensan en mí\') y mentalidad de \'progresión no perfección\'.']
             ]
         ],
         'respuestas' => [
-            1 => "La Pocha",
-            2 => "La Pocha",
+            1 => "Rosalva \"la pocha\"",
+            2 => "la pocha",
             3 => "lapocha@lacuevadelguero.com",
             4 => "Comerciante, Emprendedora y Creadora",
             5 => "Firme, alegre, trabajadora",
-            6 => "Colonia Pueblo Nuevo / La Línea, Mexicali",
+            6 => "Estados Unidos USA",
             7 => "La familia elegida y la escuela donde se aprende el respeto",
             8 => "A no rajarse por nada y defender a los tuyos",
             9 => "Tener mis propios negocios y ayudar a mi jefa",
@@ -306,16 +306,16 @@ $FALLBACK_INVITADOS = [
             21 => "Sí, viviendo a mi manera y con la frente en alto",
             22 => "El carisma y que no me le achicopalo a nadie",
             23 => "La vez que se me cayó la peluca en pleno baile en Calexico",
-            24 => "Corridos pesados y rap chicano",
-            25 => "Que me sé de memoria todas las rolas de Selena y Paquita la del Barrio",
-            26 => "Los hipócritas y los que no pagan lo que deben",
+            24 => "mente en blaco de voz de mando / no me falten al respeto noel torres",
+            25 => "me gusta hacer bingewatch de Netflix: gusto culposo.",
+            26 => "la gente hipócrita y mentirosa",
             27 => "Como una mujer entrona que nunca se rajó",
             28 => "Muy desconfiada a veces",
-            29 => "Los churros locos y los tacos de noche",
-            30 => "A la soledad, pero me refugio en mi trabajo y mi fe",
-            31 => "Reto de destreza en vivo",
-            32 => "Un saludo a toda la banda de Pueblo Nuevo y la frontera",
-            33 => "Acuérdate que después de la tormenta sale el sol cachanilla. ¡Con todo y pa'delante!"
+            29 => "los churros de harina, y la comida china",
+            30 => "a mi mama y si la miras venir dime para correr.",
+            31 => "reto físico.",
+            32 => "saludos a todos mi haters que aunque sea odio aun piensan en mi",
+            33 => "progresión no perfeccion"
         ]
     ]
 ];

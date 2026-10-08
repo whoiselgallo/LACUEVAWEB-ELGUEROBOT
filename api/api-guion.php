@@ -54,7 +54,12 @@ $logros      = $ficha["logros"]      ?? "Logros no registrados";
 $fecha       = $inv["fecha"]         ?? "";
 
 $prompt = "# ROL: GUIONISTA PRINCIPAL Y DIRECTOR DE TRANSMISIÓN - LA CUEVA DEL GÜERO PODCAST\n\n" .
-          "Tu labor es redactar el GUIÓN TÉCNICO CINEMATOGRÁFICO Y BROADCAST completo para el episodio grabado en vivo en Mexicali, conducido por 'El Güero' y 'El Junior' con el siguiente invitado:\n\n" .
+          "Tu labor es redactar el GUIÓN TÉCNICO CINEMATOGRÁFICO Y BROADCAST completo para el episodio grabado en vivo en Mexicali, B.C.\n\n" .
+          "EQUIPO CANÓNICO DE LA CUEVA DEL GÜERO:\n" .
+          "- PERSONAJE PRINCIPAL / IMAGEN E INSPIRACIÓN: 'El Güero' el perro (figura central de la marca, logotipo y set de grabación).\n" .
+          "- CEO & HOST CONDUCTOR PRINCIPAL: Ariel Higuera 'El Junior' (lleva la conducción, entrevistas, modulación de ritmo y preguntas clave frente a cámara).\n" .
+          "- SOCIO INTELECTUAL, DIRECTOR CREATIVO & PRODUCTOR EJECUTIVO: Javier Gallardo 'El Gallo' (dirección de piso, intervenciones estratégicas de cabina, remates creativos y control de cámaras).\n" .
+          "- SOCIA ÁNGEL & ADMINISTRADORA DE FINANZAS: Maria Elena Anguiano 'La Mary' (visión financiera, menciones de marcas patrocinadas e integraciones comerciales).\n\n" .
           "DATOS DEL INVITADO:\n" .
           "- Nombre: {$nombre}\n" .
           "- Ocupación: {$ocupacion}\n" .
@@ -68,14 +73,15 @@ $prompt = "# ROL: GUIONISTA PRINCIPAL Y DIRECTOR DE TRANSMISIÓN - LA CUEVA DEL 
           "REGLAS OBLIGATORIAS:\n" .
           "1. Tono norteño urbano, directo, sin censura, con alta dosis de tensión humana y comedia natural.\n" .
           "2. Estructura el guión con marcas de tiempo (TIMECODES) y acotaciones escénicas para cámaras y conductores.\n" .
-          "3. Divide el episodio en 6 bloques claros:\n" .
+          "3. Conducción a cargo de Ariel Higuera 'El Junior', con menciones al espíritu de 'El Güero' (el perro estandarte) e intervenciones de cabina/producción de Javier Gallardo 'El Gallo'.\n" .
+          "4. Divide el episodio en 6 bloques claros:\n" .
           "   - BLOQUE 1 [00:00 - 02:00]: TEASER EXPLOSIVO (Frío de entrada con la confesión más tensa).\n" .
           "   - BLOQUE 2 [02:00 - 08:00]: PRESENTACIÓN, RAÍCES Y EL BARRIO (Conexión y anécdotas de origen).\n" .
           "   - BLOQUE 3 [08:00 - 20:00]: EL ASCENSO Y LA TRAYECTORIA (Los primeros chingazos y aprendizajes).\n" .
           "   - BLOQUE 4 [20:00 - 35:00]: LA HERIDA / EL MOMENTO DECISIVO (El corazón del episodio, momento crudo y emotivo).\n" .
-          "   - BLOQUE 5 [35:00 - 45:00]: EL DESMADRE Y LAS PREGUNTAS INCÓMODAS (La ruleta de preguntas filosas de La Cueva).\n" .
-          "   - BLOQUE 6 [45:00 - 50:00]: REMATE, LECCIÓN DE VIDA Y CIERRE (Llamado a la suscripción en YouTube).\n\n" .
-          "Escribe el guión técnico completo con diálogos verosímiles y acotaciones para El Güero y El Junior.";
+          "   - BLOQUE 5 [35:00 - 45:00]: EL DESMADRE Y LAS PREGUNTAS INCÓMODAS (La ruleta de preguntas filosas de La Cueva y retos de cabina).\n" .
+          "   - BLOQUE 6 [45:00 - 50:00]: REMATE, LECCIÓN DE VIDA Y CIERRE (Agradecimientos de producción liderados por El Gallo y La Mary, llamado a la suscripción en YouTube).\n\n" .
+          "Escribe el guión técnico completo con diálogos verosímiles, interacción de Ariel Higuera 'El Junior' con el invitado y acotaciones de cabina de Javier Gallardo 'El Gallo'.";
 
 $payload = [
     "contents" => [

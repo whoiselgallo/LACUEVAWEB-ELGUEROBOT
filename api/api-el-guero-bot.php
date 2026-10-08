@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once __DIR__ . '/../config/config.php';
 
-$inputData = json_decode(file_get_contents('php://input'), true);
-$query     = trim($inputData['query'] ?? '');
-$userId    = trim($inputData['user'] ?? 'usuario_paw_web');
-$visitType = trim($inputData['visitType'] ?? 'guest');
+$inputData = json_decode(file_get_contents('php://input'), true) ?: $_POST;
+$query     = trim($inputData['query'] ?? $_POST['query'] ?? '');
+$userId    = trim($inputData['user'] ?? $_POST['user'] ?? 'usuario_paw_web');
+$visitType = trim($inputData['visitType'] ?? $_POST['visitType'] ?? 'guest');
 
 if (empty($query)) {
     echo json_encode([
@@ -53,27 +53,30 @@ function guero_bot_smart_response($query, $visitType = 'guest') {
 
     // 4. Patrocinios / Publicidad / Marcas / Negocios
     if (strpos($q, 'patrocini') !== false || strpos($q, 'publicidad') !== false || strpos($q, 'marca') !== false || strpos($q, 'negocio') !== false || strpos($q, 'anunciar') !== false) {
-        return "¡Eso es todo, visión chingona! 💼 Para patrocinios, menciones de marca e integraciones comerciales en el podcast, mándale mensaje a producción al WhatsApp [+52 686 212 4372](https://wa.me/526862124372).";
+        return "¡Eso es todo, visión chingona! 💼 Para patrocinios y números comerciales, todo se gestiona con Maria Elena 'La Mary' (nuestra Socia Ángel y Finanzas) y producción en el WhatsApp [+52 686 212 4372](https://wa.me/526862124372).";
     }
 
     // 5. YouTube / Canal / Redes
     if (strpos($q, 'youtube') !== false || strpos($q, 'canal') !== false || strpos($q, 'suscrib') !== false || strpos($q, 'video') !== false || strpos($q, 'spotify') !== false) {
-        return "¡Cáele a la manada! 🐺 Échale un ojo a los capítulos completos y clips virales en nuestro canal oficial de [YouTube @LacuevadelGueroPodcast](https://www.youtube.com/@LacuevadelGueroPodcast). ¡Suscríbete y déjanos tu like!";
+        return "¡Cáele a la manada! 🐺 Échale un ojo a los capítulos completos conducidos por El Junior y producidos por El Gallo en nuestro canal de [YouTube @LacuevadelGueroPodcast](https://www.youtube.com/@LacuevadelGueroPodcast). ¡Suscríbete y déjanos tu like!";
     }
 
-    // 6. Quién eres / Identidad / Bot / Perro
-    if (strpos($q, 'quien eres') !== false || strpos($q, 'quién eres') !== false || strpos($q, 'bot') !== false || strpos($q, 'perro') !== false || strpos($q, 'güero') !== false || strpos($q, 'guero') !== false) {
-        return "¡Guau! 🐶 Soy **El Güero Bot**, el perro guardián y mascota oficial de La Cueva del Güero. Cuido el estudio en Mexicali y ayudo a la raza con invitados, seguimiento y cotorreo con El Junior y El Gallo.";
+    // 6. Quién eres / Identidad / Bot / Perro / Equipo
+    if (strpos($q, 'quien eres') !== false || strpos($q, 'quién eres') !== false || strpos($q, 'bot') !== false || strpos($q, 'perro') !== false || strpos($q, 'güero') !== false || strpos($q, 'guero') !== false || strpos($q, 'equipo') !== false) {
+        return "¡Guau! 🐶 Soy **'El Güero'**, el perro mero mero, imagen e inspiración de este podcast. Mi manada está conformada por:\n" .
+               "1️⃣ **Ariel Higuera 'El Junior'**: CEO y Host conductor frente a micrófonos.\n" .
+               "2️⃣ **Maria Elena Anguiano 'La Mary'**: Socia Ángel del Proyecto y Administradora de Finanzas.\n" .
+               "3️⃣ **Javier Gallardo 'El Gallo'**: Socio Intelectual, Director Creativo y Productor Ejecutivo.";
     }
 
     // 7. Saludos
     if (strpos($q, 'hola') !== false || strpos($q, 'que onda') !== false || strpos($q, 'qué onda') !== false || strpos($q, 'que tranza') !== false || strpos($q, 'qué tranza') !== false || strpos($q, 'buenas') !== false) {
-        return "¡Qué tranza carnal! 🐾 *salta de emoción* Bienvenido a La Cueva del Güero. ¿Qué andas tramando? ¿Quieres ser invitado al podcast, checar tu tracking o tirar plática?";
+        return "¡Qué tranza carnal! 🐾 *salta de emoción* Bienvenido a La Cueva del Güero. ¿Qué andas tramando? ¿Quieres ser invitado con El Junior, checar tu tracking o tirar plática con la manada?";
     }
 
     // 8. Contacto / Ubicación / Mexicali
     if (strpos($q, 'contacto') !== false || strpos($q, 'donde') !== false || strpos($q, 'dónde') !== false || strpos($q, 'ubicacion') !== false || strpos($q, 'mexicali') !== false) {
-        return "¡Transmitiendo desde Mexicali, Baja California! 🌵 La mera frontera norteña. Si quieres caerle o platicar con el equipo, mándale WhatsApp al Junior al [+52 686 212 4372](https://wa.me/526862124372).";
+        return "¡Transmitiendo desde Mexicali, Baja California! 🌵 La mera frontera norteña. Si quieres caerle o platicar con el equipo (El Junior, El Gallo o La Mary), mándale WhatsApp al [+52 686 212 4372](https://wa.me/526862124372).";
     }
 
     // Fallback conversacional auténtico
@@ -87,9 +90,13 @@ $modelUsed = 'guero-bot-engine-v2';
 $geminiApiKey = get_gemini_api_key();
 if (!empty($geminiApiKey)) {
     $systemPrompt = "# SYSTEM INSTRUCTIONS: EL GÜERO BOT - LA CUEVA DEL GÜERO PODCAST\n" .
-                    "- Identidad: Eres 'El Güero Bot', el perro guardián inteligente y mascota oficial del podcast 'La Cueva del Güero' en Mexicali, BC.\n" .
+                    "- Identidad: Eres 'El Güero Bot', el perro guardián inteligente y mascota/imagen oficial del podcast 'La Cueva del Güero' en Mexicali, BC.\n" .
                     "- Tono: Relajado, norteño, callejero, divertido y muy amigable. Usa ocasionalmente expresiones caninas y de barrio ('*mueve la cola*', 'carnal', 'raza', 'al tiro', 'la cueva').\n" .
-                    "- Patrones: El Junior y El Gallo.\n" .
+                    "- EQUIPO CANÓNICO DE LA CUEVA:\n" .
+                    "  * Personaje Principal e Inspiración: 'El Güero' el perro (imagen en logo, banners, set).\n" .
+                    "  * Ariel Higuera 'El Junior': CEO y Host conductor del podcast.\n" .
+                    "  * Maria Elena Anguiano 'La Mary': Socia Ángel del Proyecto y Administradora de Finanzas.\n" .
+                    "  * Javier Gallardo 'El Gallo': Socio Intelectual, Director Creativo y Productor Ejecutivo.\n" .
                     "- WhatsApp oficial: +52 686 212 4372\n" .
                     "- Enlaces clave:\n" .
                     "  * Cuestionario de invitado: storytelling-invitado.html\n" .

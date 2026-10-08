@@ -1,5 +1,5 @@
 ========================================================
-FLUJO DE PRODUCCIÓN DE LA CUEVA - INVITADO: La Pocha
+FLUJO DE PRODUCCIÓN DE LA CUEVA - INVITADO: Rosalva "la pocha"
 ========================================================
 
 Paso 1: [x] Cuestionario inicial de 33 preguntas contestado e indexado (COMPLETADO ✓)
@@ -10,9 +10,9 @@ Paso 5: [ ] Masterización del audio y edición multicámara.
 Paso 6: [ ] Generación de Hooks, Shorts y publicación en redes.
 
 DATOS DEL INVITADO:
-- Nombre: La Pocha
-- Alias: La Pocha
+- Nombre: Rosalva "la pocha"
+- Alias: la pocha
 - Ocupación: Comerciante, Emprendedora y Personaje Urbano
-- Barrio: Colonia Pueblo Nuevo / La Línea, Mexicali
-- Frase Gancho: "En la frontera nadie nos regala nada: o le chingas con orgullo o te quedas en el camino."
+- Barrio: Estados Unidos USA
+- Frase Gancho: "Progresión no perfección"
 - Curaduría: 🟢 NIVEL ALTO (Score 98/100) - Invitado Principal al Canal (Episodio Completo 45+ min)
