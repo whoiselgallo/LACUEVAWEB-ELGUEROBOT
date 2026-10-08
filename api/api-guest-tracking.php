@@ -40,18 +40,21 @@ if ($action === 'get_status') {
     // 1. Buscar en BD
     if ($pdo) {
         try {
-            $stmt = $pdo->prepare("SELECT id, nombre, token, estado, fase_index, fecha_propuesta FROM invitados WHERE id::text = :code OR token = :code OR nombre ILIKE :code LIMIT 1");
+            $stmt = $pdo->prepare("SELECT id, nombre, token, estado, fase_index, fecha_propuesta, ficha FROM invitados WHERE id::text = :code OR token = :code OR nombre ILIKE :code LIMIT 1");
             $stmt->execute([':code' => $code]);
             $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($invitado) {
+                $ficha = json_decode($invitado['ficha'] ?? '{}', true) ?: [];
                 echo json_encode([
                     'status' => 'success',
                     'invitado' => [
                         'nombre' => $invitado['nombre'],
+                        'token' => $invitado['token'] ?? $code,
                         'estado' => $invitado['estado'] ?? 'Ficha en Revisión',
                         'fase_index' => (int)($invitado['fase_index'] ?? 1),
-                        'fecha_grabacion' => $invitado['fecha_propuesta'] ?? null
+                        'fecha_grabacion' => $invitado['fecha_propuesta'] ?? null,
+                        'solicitud_correccion' => $ficha['solicitud_correccion'] ?? null
                     ]
                 ]);
                 exit;
@@ -69,9 +72,11 @@ if ($action === 'get_status') {
                 'status' => 'success',
                 'invitado' => [
                     'nombre' => $env['nombre'],
+                    'token' => $env['token'] ?? $code,
                     'estado' => $env['estado'] ?? 'Cuestionario Recibido',
                     'fase_index' => (int)($env['fase_index'] ?? 1),
-                    'fecha_grabacion' => date('d/m/Y', strtotime('+7 days'))
+                    'fecha_grabacion' => date('d/m/Y', strtotime('+7 days')),
+                    'solicitud_correccion' => $env['solicitud_correccion'] ?? null
                 ]
             ]);
             exit;

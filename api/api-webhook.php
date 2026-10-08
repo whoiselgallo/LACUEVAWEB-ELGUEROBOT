@@ -116,6 +116,30 @@ function dispararWebhook($tipo, $datos = [], $origen = 'sistema') {
             'icono' => 'fa-check-double',
             'color' => '#FFD700',
             'discord_color' => 16766720
+        ],
+        'solicitud_correccion_enviada' => [
+            'titulo' => '⚠️ Solicitud de Corrección Enviada a Invitado',
+            'icono' => 'fa-triangle-exclamation',
+            'color' => '#FF6600',
+            'discord_color' => 16737792
+        ],
+        'correccion_invitado_enviada' => [
+            'titulo' => '✍️ Nuevas Respuestas Enviadas por Invitado',
+            'icono' => 'fa-pen-nib',
+            'color' => '#00FFFF',
+            'discord_color' => 65535
+        ],
+        'guion_narrativa_actualizada' => [
+            'titulo' => '🎬 Guión, Escaleta y Narrativa Actualizados',
+            'icono' => 'fa-file-lines',
+            'color' => '#FF00FF',
+            'discord_color' => 16711935
+        ],
+        'cuestionario_aprobado_produccion' => [
+            'titulo' => '✅ Cuestionario Aprobado por Producción',
+            'icono' => 'fa-circle-check',
+            'color' => '#39FF14',
+            'discord_color' => 3800852
         ]
     ];
 
@@ -240,16 +264,20 @@ function enviarWebhookExterno($url, $evento, $meta) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════
-// MANEJO DE PETICIONES HTTP
+// MANEJO DE PETICIONES HTTP DIRECTAS
 // ═════════════════════════════════════════════════════════════════════════════════
-$method = $_SERVER['REQUEST_METHOD'];
-$action = $_GET['action'] ?? '';
+$isDirectWebhookCall = (isset($_SERVER['SCRIPT_FILENAME']) && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME']))
+    || (isset($_SERVER['REQUEST_URI']) && stripos($_SERVER['REQUEST_URI'], 'api-webhook.php') !== false);
 
-$rawInput = file_get_contents('php://input');
-$input = json_decode($rawInput, true) ?: $_POST;
-if (empty($action) && isset($input['action'])) {
-    $action = $input['action'];
-}
+if ($isDirectWebhookCall) {
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    $action = $_GET['action'] ?? '';
+
+    $rawInput = file_get_contents('php://input');
+    $input = json_decode($rawInput, true) ?: $_POST;
+    if (empty($action) && isset($input['action'])) {
+        $action = $input['action'];
+    }
 
 // 1. LISTAR EVENTOS
 if ($action === 'listar' || ($method === 'GET' && empty($action))) {
@@ -339,5 +367,6 @@ if ($action === 'marcar_leidos') {
     exit;
 }
 
-echo json_encode(['status' => 'error', 'error' => 'Acción no válida'], JSON_UNESCAPED_UNICODE);
-exit;
+    echo json_encode(['status' => 'error', 'error' => 'Acción no válida'], JSON_UNESCAPED_UNICODE);
+    exit;
+}

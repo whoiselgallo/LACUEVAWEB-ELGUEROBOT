@@ -2043,7 +2043,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
             <!-- FOOTER DEL MODAL -->
             <div style="padding:14px 24px; background:rgba(10,10,18,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                <div style="display:flex; align-items:center; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
                     <button type="button" id="modal-cuest-btn-tracking" class="btn-neon" onclick="abrirTrackingDesdeModal()" style="font-size:0.8rem; padding:6px 14px; border-color:var(--neon-green); color:var(--neon-green); background:transparent; cursor:pointer; border-radius:8px;">
                         <i class="fa-solid fa-satellite-dish"></i> Ver Tracking en Vivo
                     </button>
@@ -2051,9 +2051,44 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                         <i class="fa-solid fa-copy"></i> Copiar Todo
                     </button>
                 </div>
-                <button type="button" class="btn-neon" onclick="cerrarModalCuestionario()" style="font-size:0.8rem; padding:6px 18px; border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.06); cursor:pointer; border-radius:8px;">
-                    <i class="fa-solid fa-xmark"></i> Cerrar
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn-neon" onclick="aprobarCuestionarioDesdeModal()" style="font-size:0.8rem; padding:6px 16px; border-color:#39FF14; color:#39FF14; background:rgba(57,255,20,0.12); cursor:pointer; border-radius:8px; font-weight:700;" title="Aprobar cuestionario completo y avanzar a fase de Escaleta">
+                        <i class="fa-solid fa-circle-check"></i> Aprobar Cuestionario (Todo OK)
+                    </button>
+                    <button type="button" class="btn-neon" id="btn-enviar-correccion-invitado" onclick="enviarSolicitudCorreccionDesdeModal()" style="font-size:0.8rem; padding:6px 16px; border-color:#FF6600; color:#FF6600; background:rgba(255,102,0,0.12); cursor:pointer; border-radius:8px; font-weight:700;" title="Enviar solicitud de corrección al invitado con enlace y WhatsApp" disabled>
+                        <i class="fa-solid fa-triangle-exclamation"></i> Solicitar Corrección (<span id="modal-cuest-marcadas-count">0</span>)
+                    </button>
+                    <button type="button" class="btn-neon" onclick="cerrarModalCuestionario()" style="font-size:0.8rem; padding:6px 18px; border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.06); cursor:pointer; border-radius:8px;">
+                        <i class="fa-solid fa-xmark"></i> Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DIÁLOGO: COMPARTIR ENLACE DE CORRECCIÓN CON INVITADO -->
+    <div id="modalCompartirSolicitud" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:999999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+        <div style="background:#101020; border:2px solid #FF6600; border-radius:18px; max-width:550px; width:95%; padding:25px; box-shadow:0 0 35px rgba(255,102,0,0.35); text-align:left;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="color:#FF6600; margin:0; font-size:1.15rem; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-paper-plane"></i> Solicitud de Corrección Enviada
+                </h3>
+                <button onclick="document.getElementById('modalCompartirSolicitud').style.display='none'" style="background:none; border:none; color:#888; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+            <p style="color:#ccc; font-size:0.85rem; margin-bottom:15px;">
+                Las observaciones han quedado registradas en la base de datos y notificadas vía Webhook. Ahora puedes enviar el enlace directo al invitado para que entre con su mismo código y modifique únicamente las respuestas observadas:
+            </p>
+            <div style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:10px 14px; margin-bottom:15px;">
+                <span style="font-size:0.75rem; color:#888; display:block; margin-bottom:4px;">Enlace Directo de Tracking / Corrección:</span>
+                <input type="text" id="inputLinkCorreccion" readonly class="form-input" style="width:100%; font-size:0.85rem; padding:6px 10px; color:#00ffff; font-family:monospace; background:#080812;">
+            </div>
+            <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;">
+                <button type="button" class="btn-neon" onclick="copiarLinkCorreccionDirecto()" style="border-color:#00ffff; color:#00ffff; font-size:0.8rem; padding:8px 14px;">
+                    <i class="fa-solid fa-copy"></i> Copiar Enlace
                 </button>
+                <a id="btnWaCorreccionDirecto" href="#" target="_blank" class="btn-neon" style="border-color:#25D366; color:#25D366; font-size:0.8rem; padding:8px 14px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    <i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp
+                </a>
             </div>
         </div>
     </div>

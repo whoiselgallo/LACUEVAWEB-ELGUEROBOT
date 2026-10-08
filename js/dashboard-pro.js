@@ -1594,6 +1594,8 @@ function abrirModalCuestionarioCompleto() {
         primerBtn.style.color = "#fff";
     }
 
+    preguntasObservadasProduccion = {};
+    actualizarContadorMarcadas();
     renderModalCuestionario();
     modal.style.display = "flex";
 }
@@ -1628,6 +1630,156 @@ function setFiltroBloqueCuestionario(bloque, btnEl) {
     filtrarPreguntasCuestionario();
 }
 window.setFiltroBloqueCuestionario = setFiltroBloqueCuestionario;
+
+let preguntasObservadasProduccion = {};
+
+function escapeJs(str) {
+    if (!str) return '';
+    return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+}
+
+function toggleMarcarPreguntaError(num, nombre, respOriginal) {
+    if (preguntasObservadasProduccion[num]) {
+        delete preguntasObservadasProduccion[num];
+    } else {
+        preguntasObservadasProduccion[num] = {
+            id_pregunta: num,
+            pregunta: nombre,
+            respuesta_original: respOriginal,
+            causa: 'confusa',
+            nota: ''
+        };
+    }
+    actualizarContadorMarcadas();
+    filtrarPreguntasCuestionario();
+}
+window.toggleMarcarPreguntaError = toggleMarcarPreguntaError;
+
+function actualizarCausaError(num, causa) {
+    if (preguntasObservadasProduccion[num]) {
+        preguntasObservadasProduccion[num].causa = causa;
+    }
+}
+window.actualizarCausaError = actualizarCausaError;
+
+function actualizarNotaError(num, nota) {
+    if (preguntasObservadasProduccion[num]) {
+        preguntasObservadasProduccion[num].nota = nota;
+    }
+}
+window.actualizarNotaError = actualizarNotaError;
+
+function actualizarContadorMarcadas() {
+    const count = Object.keys(preguntasObservadasProduccion).length;
+    const countEl = document.getElementById("modal-cuest-marcadas-count");
+    if (countEl) countEl.textContent = count;
+    const btn = document.getElementById("btn-enviar-correccion-invitado");
+    if (btn) {
+        btn.disabled = count === 0;
+        btn.style.opacity = count === 0 ? "0.5" : "1";
+    }
+}
+window.actualizarContadorMarcadas = actualizarContadorMarcadas;
+
+async function enviarSolicitudCorreccionDesdeModal() {
+    const reg = window.activeRegistro;
+    if (!reg) return;
+    const observaciones = Object.values(preguntasObservadasProduccion);
+    if (observaciones.length === 0) {
+        alert("Por favor marca al menos una pregunta que requiera corrección.");
+        return;
+    }
+
+    const btn = document.getElementById("btn-enviar-correccion-invitado");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando solicitud...';
+    btn.disabled = true;
+
+    try {
+        const token = reg.token || ('GUEST-' + (reg.id || '001'));
+        const res = await fetch("/api/api-guest-corrections.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "solicitar_correccion",
+                token: token,
+                observaciones: observaciones,
+                productor: "Producción La Cueva"
+            })
+        });
+        const data = await res.json();
+        if (data.status === "success" || data.success) {
+            // Mostrar modal de compartir
+            const modalComp = document.getElementById("modalCompartirSolicitud");
+            const inputLink = document.getElementById("inputLinkCorreccion");
+            const btnWa = document.getElementById("btnWaCorreccionDirecto");
+
+            if (inputLink) inputLink.value = data.tracking_link || "";
+            if (btnWa) btnWa.href = data.whatsapp_url || "#";
+            if (modalComp) modalComp.style.display = "flex";
+
+            // Limpiar marcadas y refrescar avisos
+            preguntasObservadasProduccion = {};
+            actualizarContadorMarcadas();
+            filtrarPreguntasCuestionario();
+
+            if (window.cargarAvisosEnVivo) window.cargarAvisosEnVivo(true);
+        } else {
+            alert("Error al enviar solicitud: " + (data.message || "Desconocido"));
+        }
+    } catch (err) {
+        alert("Error de conexión: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        actualizarContadorMarcadas();
+    }
+}
+window.enviarSolicitudCorreccionDesdeModal = enviarSolicitudCorreccionDesdeModal;
+
+function copiarLinkCorreccionDirecto() {
+    const input = document.getElementById("inputLinkCorreccion");
+    if (!input || !input.value) return;
+    navigator.clipboard.writeText(input.value).then(() => {
+        alert("✓ Enlace directo de tracking y corrección copiado al portapapeles.");
+    }).catch(() => {
+        prompt("Copia el enlace manualmente:", input.value);
+    });
+}
+window.copiarLinkCorreccionDirecto = copiarLinkCorreccionDirecto;
+
+async function aprobarCuestionarioDesdeModal() {
+    const reg = window.activeRegistro;
+    if (!reg) return;
+    const nombre = reg.nombre || "Invitado";
+
+    if (!confirm(`¿Aprobar definitivamente el cuestionario de "${nombre}"?\n\nEsto marcará el cuestionario como revisado y avanzará el tracking del episodio a la Fase 2 (Escaleta & Curaduría).`)) {
+        return;
+    }
+
+    try {
+        const token = reg.token || ('GUEST-' + (reg.id || '001'));
+        const res = await fetch("/api/api-guest-corrections.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "aprobar_cuestionario",
+                token: token
+            })
+        });
+        const data = await res.json();
+        if (data.status === "success" || data.success) {
+            alert(`✓ ¡Cuestionario de "${nombre}" aprobado al 100%!\n\nSe ha disparado la alerta por webhook y el episodio avanzó a la Fase 2 de Escaleta.`);
+            cerrarModalCuestionario();
+            if (activeId) mostrarDetalle(activeId);
+            if (window.cargarAvisosEnVivo) window.cargarAvisosEnVivo(true);
+        } else {
+            alert("Error: " + (data.message || "No se pudo aprobar."));
+        }
+    } catch (err) {
+        alert("Falla de red: " + err.message);
+    }
+}
+window.aprobarCuestionarioDesdeModal = aprobarCuestionarioDesdeModal;
 
 function filtrarPreguntasCuestionario() {
     const query = (document.getElementById("modal-cuest-search")?.value || "").toLowerCase().trim();
@@ -1680,9 +1832,11 @@ function renderModalCuestionario(busqueda = "") {
         const tagBadge = c.etiqueta ? `<span style="font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:6px; background:rgba(0,0,0,0.5); border:1px solid ${color}; color:${color};">${escapeHtml(c.etiqueta)}</span>` : '';
         const respText = (c.respuesta || '').trim();
         const justText = (c.justificacion || '').trim();
+        const isMarcada = !!preguntasObservadasProduccion[c.num];
+        const obsActual = preguntasObservadasProduccion[c.num] || { causa: 'confusa', nota: '' };
 
         html += `
-            <div style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.06); border-left:4px solid ${color}; border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:8px;">
+            <div style="background:rgba(0,0,0,0.5); border:${isMarcada ? '1px solid #FF6600' : '1px solid rgba(255,255,255,0.06)'}; border-left:4px solid ${isMarcada ? '#FF6600' : color}; border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:8px; box-shadow:${isMarcada ? '0 0 15px rgba(255,102,0,0.2)' : 'none'};">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                         ${actoBadge}
@@ -1721,6 +1875,35 @@ function renderModalCuestionario(busqueda = "") {
                         <div><strong style="color:#ddd;">Estrategia Host / Set:</strong> ${escapeHtml(justText)}</div>
                     </div>
                 ` : ''}
+
+                <!-- PANEL DE OBSERVACIÓN / SOLICITUD DE CORRECCIÓN (PRODUCCIÓN) -->
+                <div style="margin-top:6px; border-top:1px dashed rgba(255,255,255,0.08); padding-top:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <button type="button" class="btn-flag-pregunta" onclick="toggleMarcarPreguntaError(${c.num}, '${escapeJs(c.nombre || `Pregunta ${c.num}`)}', '${escapeJs(respText)}')" style="background:${isMarcada ? 'rgba(255,102,0,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isMarcada ? '#FF6600' : 'rgba(255,255,255,0.15)'}; color:${isMarcada ? '#FF6600' : '#888'}; padding:4px 12px; border-radius:6px; font-size:0.75rem; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;">
+                            <i class="fa-solid fa-flag"></i> ${isMarcada ? 'Observación Activa para Corrección' : 'Marcar para Corrección'}
+                        </button>
+                        ${isMarcada ? `<span style="font-size:0.72rem; color:#FF6600; font-weight:bold;"><i class="fa-solid fa-circle-exclamation"></i> Se incluirá en la solicitud enviada al invitado</span>` : ''}
+                    </div>
+
+                    ${isMarcada ? `
+                        <div style="margin-top:8px; background:rgba(255,102,0,0.06); border:1px solid rgba(255,102,0,0.3); border-radius:8px; padding:10px; display:grid; grid-template-columns:1fr 2fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.7rem; color:#ffcc99; font-weight:700; display:block; margin-bottom:3px;">Causa de la Observación:</label>
+                                <select class="form-input" onchange="actualizarCausaError(${c.num}, this.value)" style="padding:6px 8px; font-size:0.75rem; background:#080812; border-color:rgba(255,102,0,0.4); color:#fff; width:100%;">
+                                    <option value="confusa" ${obsActual.causa === 'confusa' ? 'selected' : ''}>🟠 Confusa / Poco clara</option>
+                                    <option value="inadecuada" ${obsActual.causa === 'inadecuada' ? 'selected' : ''}>🔴 Inadecuada / Lenguaje no apto</option>
+                                    <option value="error_captura" ${obsActual.causa === 'error_captura' ? 'selected' : ''}>🟡 Error de captura / Incompleta</option>
+                                    <option value="incoherente" ${obsActual.causa === 'incoherente' ? 'selected' : ''}>🟣 Incoherente con la historia</option>
+                                    <option value="otra" ${obsActual.causa === 'otra' ? 'selected' : ''}>⚪ Otra observación</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.7rem; color:#ffcc99; font-weight:700; display:block; margin-bottom:3px;">Nota o instrucción para el invitado:</label>
+                                <input type="text" class="form-input" value="${escapeHtml(obsActual.nota || '')}" oninput="actualizarNotaError(${c.num}, this.value)" placeholder="Ej: Por favor platícanos más de cómo saliste adelante..." style="padding:6px 8px; font-size:0.75rem; background:#080812; border-color:rgba(255,102,0,0.4); color:#fff; width:100%;">
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
         `;
     });
