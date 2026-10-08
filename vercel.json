@@ -32,6 +32,14 @@
       "dest": "/favicon.png"
     },
     {
+      "src": "/api/api-el-guero-bot\\.php",
+      "dest": "/api/api-el-guero-bot.js"
+    },
+    {
+      "src": "/api/api-el-guero-bot",
+      "dest": "/api/api-el-guero-bot.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
