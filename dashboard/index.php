@@ -746,8 +746,11 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                                     </h2>
                                     <span id="detalleAlias" style="color: var(--neon-magenta); font-weight: 700; font-size: 0.95rem;">Alias: ---</span>
                                 </div>
-                                <div style="display: flex; gap: 8px; align-items: center;">
+                                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
                                     <span id="detalleFecha" style="color: #666; font-size: 0.8rem;"></span>
+                                    <button class="btn-neon" id="btn-ver-cuestionario-modal" type="button" onclick="abrirModalCuestionarioCompleto()" style="border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.1); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; cursor: pointer; white-space: nowrap; font-weight: 700; transition: all 0.2s ease;" title="Ver cuestionario completo de 33 preguntas contestadas">
+                                        <i class="fa-solid fa-clipboard-question"></i> Ver Cuestionario Completo
+                                    </button>
                                     <button class="btn-neon" id="btn-tracking" onclick="const trackUrl = window.location.hostname.includes('lacuevadelguero.com') ? 'https://s.lacuevadelguero.com/' : '../tracking/index.html'; window.open(trackUrl + (activeId ? '?id=' + activeId : ''), '_blank')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
                                         <i class="fa-solid fa-bullseye"></i> Ver Tracking en Vivo
                                     </button>
@@ -792,6 +795,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 8px;">
+                                    <button type="button" class="btn-neon" onclick="event.stopPropagation(); abrirModalCuestionarioCompleto()" style="border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.12); padding: 4px 12px; font-size: 0.74rem; border-radius: 12px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" title="Abrir modal con el cuestionario completo">
+                                        <i class="fa-solid fa-expand"></i> Ver en Modal
+                                    </button>
                                     <span style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: 600;">Ver 33 Preguntas</span>
                                     <i class="fa-solid fa-chevron-down" id="ponderacion-toggle-icon" style="color: var(--neon-cyan); font-size: 0.9rem; transition: transform 0.3s;"></i>
                                 </div>
@@ -1832,6 +1838,99 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
                 <button type="submit" class="btn-neon" style="width:100%;"><i class="fa-solid fa-cloud-arrow-up"></i> Publicar Fotografía en la Galería Pública</button>
             </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: VISUALIZACIÓN DEL CUESTIONARIO COMPLETO DEL INVITADO
+         ============================================================ -->
+    <div id="modalCuestionarioCompleto" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.88); backdrop-filter:blur(14px); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+        <div style="background:rgba(12,12,22,0.98); border:2px solid var(--neon-cyan); border-radius:20px; width:100%; max-width:1050px; height:92vh; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 50px rgba(0,255,255,0.3), 0 0 30px rgba(255,0,255,0.2); position:relative;">
+            
+            <!-- HEADER DEL MODAL -->
+            <div style="padding:18px 24px; background:linear-gradient(180deg, rgba(20,20,38,0.95) 0%, rgba(12,12,22,0.95) 100%); border-bottom:1px solid rgba(0,255,255,0.25); display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap;">
+                        <span style="background:rgba(0,255,255,0.12); border:1px solid var(--neon-cyan); color:var(--neon-cyan); font-size:0.75rem; font-weight:800; padding:2px 10px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px;">
+                            <i class="fa-solid fa-clipboard-check"></i> Cuestionario Oficial Contestado
+                        </span>
+                        <span id="modal-cuest-token-badge" style="font-size:0.75rem; color:#888; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:2px 8px; border-radius:10px;">Token: ---</span>
+                        <span id="modal-cuest-fecha-badge" style="font-size:0.75rem; color:#aaa;"><i class="fa-regular fa-clock"></i> ---</span>
+                    </div>
+                    <h2 id="modal-cuest-nombre" style="margin:2px 0 6px 0; color:#fff; font-size:1.5rem; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-weight:800;">
+                        <span>Invitado</span>
+                        <span id="modal-cuest-alias" style="color:var(--neon-magenta); font-size:1.05rem; font-weight:700;">(Alias)</span>
+                    </h2>
+                    
+                    <!-- METADATA DEL INVITADO -->
+                    <div style="display:flex; gap:14px; align-items:center; font-size:0.82rem; color:#bbb; flex-wrap:wrap;">
+                        <span id="modal-cuest-barrio"><i class="fa-solid fa-location-dot" style="color:var(--neon-cyan);"></i> Barrio: ---</span>
+                        <span id="modal-cuest-ocupacion"><i class="fa-solid fa-briefcase" style="color:var(--neon-magenta);"></i> Jale: ---</span>
+                        <span id="modal-cuest-contacto"><i class="fa-solid fa-envelope" style="color:var(--neon-green);"></i> Contacto: ---</span>
+                    </div>
+                </div>
+
+                <!-- BADGE DE SCORE Y ACCIONES TOP -->
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button type="button" onclick="copiarCuestionarioTexto()" class="btn-neon" style="font-size:0.78rem; padding:6px 12px; border-radius:8px; border-color:var(--neon-cyan); color:var(--neon-cyan); background:rgba(0,255,255,0.08); cursor:pointer;" title="Copiar todas las preguntas y respuestas al portapapeles">
+                            <i class="fa-solid fa-copy"></i> Copiar Texto
+                        </button>
+                        <button type="button" onclick="imprimirCuestionario()" class="btn-neon" style="font-size:0.78rem; padding:6px 12px; border-radius:8px; border-color:var(--neon-magenta); color:var(--neon-magenta); background:rgba(255,0,255,0.08); cursor:pointer;" title="Imprimir o exportar cuestionario en PDF">
+                            <i class="fa-solid fa-print"></i> Imprimir
+                        </button>
+                        <button type="button" onclick="cerrarModalCuestionario()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:34px; height:34px; font-size:1.3rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='#ff0055'; this.style.borderColor='#ff0055';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.2)';">&times;</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="modal-cuest-score-badge" style="font-weight:900; font-size:1.15rem; color:#39FF14; background:rgba(0,0,0,0.5); border:1px solid rgba(57,255,20,0.4); padding:3px 12px; border-radius:14px;">--- / 330 PTS</span>
+                        <span id="modal-cuest-nivel-badge" style="font-weight:700; font-size:0.75rem; color:#39FF14; border:1px solid #39FF14; background:rgba(57,255,20,0.1); padding:4px 10px; border-radius:12px;">🟢 NIVEL ALTO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLBAR DE BÚSQUEDA Y FILTRADO POR BLOQUES -->
+            <div style="padding:12px 24px; background:rgba(16,16,28,0.9); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+                    <div style="position:relative; flex:1; min-width:260px;">
+                        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#888; font-size:0.85rem;"></i>
+                        <input type="text" id="modal-cuest-search" oninput="filtrarPreguntasCuestionario()" placeholder="Buscar por palabra clave, pregunta o respuesta del invitado..." style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.5); border:1px solid rgba(0,255,255,0.3); border-radius:20px; padding:8px 14px 8px 34px; color:#fff; font-size:0.85rem; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--neon-cyan)';" onblur="this.style.borderColor='rgba(0,255,255,0.3)';">
+                    </div>
+                    <div style="font-size:0.8rem; color:#aaa; display:flex; align-items:center; gap:8px;">
+                        <span>Mostrando: <strong id="modal-cuest-conteo" style="color:var(--neon-cyan); font-size:0.95rem;">33</strong> de 33 preguntas</span>
+                    </div>
+                </div>
+
+                <!-- FILTRO POR BLOQUES TEMÁTICOS -->
+                <div id="modal-cuest-filtros" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch;">
+                    <button type="button" class="btn-bloque-filter active" onclick="setFiltroBloqueCuestionario('todos', this)" style="background:rgba(0,255,255,0.2); border:1px solid var(--neon-cyan); color:#fff; padding:4px 12px; border-radius:12px; font-size:0.75rem; font-weight:700; cursor:pointer; white-space:nowrap;">Todos (33)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('ident', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Identificación (3)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('raices', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 1: Raíces (7)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('madrazos', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 2: Madrazos (7)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('mentalidad', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 3: Mentalidad (5)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('anecdotas', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 4: Anécdotas (9)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('cierre', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 5: Cierre (2)</button>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR CON SCROLL DE LAS PREGUNTAS -->
+            <div id="modal-cuest-body" style="flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:12px;">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- FOOTER DEL MODAL -->
+            <div style="padding:14px 24px; background:rgba(10,10,18,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" id="modal-cuest-btn-tracking" class="btn-neon" onclick="abrirTrackingDesdeModal()" style="font-size:0.8rem; padding:6px 14px; border-color:var(--neon-green); color:var(--neon-green); background:transparent; cursor:pointer; border-radius:8px;">
+                        <i class="fa-solid fa-satellite-dish"></i> Ver Tracking en Vivo
+                    </button>
+                    <button type="button" class="btn-neon" onclick="copiarCuestionarioTexto()" style="font-size:0.8rem; padding:6px 14px; border-color:var(--neon-cyan); color:var(--neon-cyan); background:transparent; cursor:pointer; border-radius:8px;">
+                        <i class="fa-solid fa-copy"></i> Copiar Todo
+                    </button>
+                </div>
+                <button type="button" class="btn-neon" onclick="cerrarModalCuestionario()" style="font-size:0.8rem; padding:6px 18px; border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.06); cursor:pointer; border-radius:8px;">
+                    <i class="fa-solid fa-xmark"></i> Cerrar
+                </button>
+            </div>
         </div>
     </div>
 
