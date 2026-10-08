@@ -175,7 +175,7 @@ function db_connect() {
                      ';port=' . $port .
                      ';dbname=' . $database .
                    ';sslmode=require' .
-                   ';connect_timeout=10';
+                   ';connect_timeout=4';
 
             if (strpos($host, 'neon.tech') !== false) {
                 $endpoint = preg_replace('/-pooler\./', '.', $host);
@@ -401,7 +401,7 @@ function call_gemini_generate($payload, $apiKey = null) {
         return ['success' => false, 'error' => 'No hay claves de API de Gemini configuradas.'];
     }
 
-    $models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+    $models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
     $lastError = '';
 
     foreach ($models as $model) {
@@ -411,7 +411,7 @@ function call_gemini_generate($payload, $apiKey = null) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
             CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_TIMEOUT => 8,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => 0
         ]);
