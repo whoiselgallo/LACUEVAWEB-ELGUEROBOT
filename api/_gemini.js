@@ -26,24 +26,25 @@ function getAllGeminiKeys() {
     return rawKeys.split(',').map(k => k.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
 }
 
-// Modelos activos verificados en producción con alta disponibilidad
+// Modelos activos ordenados por estabilidad y velocidad de respuesta
 const ACTIVE_MODELS = [
-    'gemini-flash-latest',
-    'gemini-3.5-flash-lite',
     'gemini-flash-lite-latest',
-    'gemini-3.1-flash-lite'
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash-lite',
+    'gemini-flash-latest'
 ];
 
 /**
  * Llamada centralizada y ultra robusta a Gemini con failover continuo
  * @param {string|object} content Texto o estructura de contenido
- * @param {object} options Opciones de generación (systemInstruction, temperature, maxTokens)
+ * @param {object} options Opciones de generación (systemInstruction, temperature, maxTokens, timeoutMs)
  */
 async function callGemini(content, options = {}) {
     const keys = getAllGeminiKeys();
     const systemPrompt = options.systemInstruction || '';
     const temperature = options.temperature ?? 0.7;
     const maxOutputTokens = options.maxOutputTokens ?? 2048;
+    const timeoutMs = options.timeoutMs ?? 25000;
 
     let userText = typeof content === 'string' ? content : JSON.stringify(content);
 
@@ -71,7 +72,7 @@ async function callGemini(content, options = {}) {
         for (const model of ACTIVE_MODELS) {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000);
+                const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
                 const res = await fetch(url, {
@@ -95,7 +96,7 @@ async function callGemini(content, options = {}) {
                     }
                 }
             } catch (err) {
-                // Siguiente modelo/clave
+                // Siguiente modelo o clave
             }
         }
     }

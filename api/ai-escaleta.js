@@ -65,7 +65,7 @@ module.exports = async function handler(req, res) {
         "  \"cue_cards\": \"(Lista de viñetas claras con las preguntas más detonantes para que Ariel 'El Junior' las lea en cabina)\"\n" +
         "}";
 
-    const geminiRes = await callGemini(prompt, { temperature: 0.7, maxOutputTokens: 3500 });
+    const geminiRes = await callGemini(prompt, { temperature: 0.7, maxOutputTokens: 2500, timeoutMs: 25000 });
 
     if (geminiRes.success) {
         let text = geminiRes.text;
