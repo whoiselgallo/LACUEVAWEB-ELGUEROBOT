@@ -126,11 +126,29 @@ define('DIFY_TIMEOUT', (int)getEnvVar('DIFY_TIMEOUT', 60));
 // ═════════════════════════════════════════════════════════════════════════════════
 // BASE DE DATOS - PostgreSQL / Neon.tech (Render + Neon)
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DB_HOST', getRequiredEnvVar('DB_HOST'));
-define('DB_NAME', getRequiredEnvVar('DB_NAME'));
-define('DB_USER', getRequiredEnvVar('DB_USER'));
-define('DB_PASS', getRequiredEnvVar('DB_PASS'));
-define('DB_PORT', getEnvVar('DB_PORT', '5432'));
+$neonDbUrl = getEnvVar('DATABASE_URL') ?: getEnvVar('DATABASE_URL_UNPOOLED');
+$neonHost = '';
+$neonDb = '';
+$neonUser = '';
+$neonPass = '';
+$neonPort = '5432';
+
+if (!empty($neonDbUrl) && preg_match('/^postgresql:\/\//i', $neonDbUrl)) {
+    $parsedNeon = parse_url($neonDbUrl);
+    if (is_array($parsedNeon)) {
+        $neonHost = $parsedNeon['host'] ?? '';
+        $neonPort = (string)($parsedNeon['port'] ?? '5432');
+        $neonDb   = isset($parsedNeon['path']) ? ltrim($parsedNeon['path'], '/') : '';
+        $neonUser = $parsedNeon['user'] ?? '';
+        $neonPass = $parsedNeon['pass'] ?? '';
+    }
+}
+
+define('DB_HOST', getEnvVar('DB_HOST', $neonHost));
+define('DB_NAME', getEnvVar('DB_NAME', $neonDb));
+define('DB_USER', getEnvVar('DB_USER', $neonUser));
+define('DB_PASS', getEnvVar('DB_PASS', $neonPass));
+define('DB_PORT', getEnvVar('DB_PORT', $neonPort));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // APLICACIÓN - Configuración General
