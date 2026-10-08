@@ -68,7 +68,7 @@
     },
     {
       "src": "/api/auth-google(\\.php)?",
-      "dest": "/api/auth-google.js"
+      "dest": "/api/oauth-google.js"
     },
     {
       "src": "/api/(.*)",
