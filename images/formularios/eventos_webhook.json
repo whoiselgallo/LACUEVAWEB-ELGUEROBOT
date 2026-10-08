@@ -1,5 +1,74 @@
 [
     {
+        "id": "EVT-20261008180617-592",
+        "tipo": "cuestionario_aprobado_produccion",
+        "titulo": "✅ Cuestionario Aprobado por Producción",
+        "icono": "fa-circle-check",
+        "color": "#39FF14",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "estado": "Aprobado 100% por Producción",
+            "fase": "Fase 2: Escaleta & Curaduría en marcha",
+            "curaduria_nivel": "ALTO",
+            "fecha_aprobacion": "2026-10-08 18:06:17"
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180617-558",
+        "tipo": "guion_narrativa_actualizada",
+        "titulo": "🎬 Guión, Escaleta y Narrativa Actualizados",
+        "icono": "fa-file-lines",
+        "color": "#FF00FF",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "motor_storytelling_ia",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "elementos_actualizados": "Escaleta de 5 bloques, Guión broadcast, Cue Cards de cabina y Storytelling sintetizado",
+            "estado": "Sincronizado automáticamente en base de datos y dashboard."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180617-809",
+        "tipo": "correccion_invitado_enviada",
+        "titulo": "✍️ Nuevas Respuestas Enviadas por Invitado",
+        "icono": "fa-pen-nib",
+        "color": "#00FFFF",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "tracking_invitado",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "preguntas_modificadas": "P13, P25",
+            "total_modificadas": 2,
+            "estado": "Respuestas recibidas con éxito. Listo para revisión de producción."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180615-562",
+        "tipo": "solicitud_correccion_enviada",
+        "titulo": "⚠️ Solicitud de Corrección Enviada a Invitado",
+        "icono": "fa-triangle-exclamation",
+        "color": "#FF6600",
+        "timestamp": "2026-10-08 18:06:15",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "preguntas_observadas": 2,
+            "productor": "El Güero (Host Principal)",
+            "detalles": "\n• Pregunta 13 [Incoherente] - \"Contradice la respuesta 4 sobre quién manejaba tu música.\"\n• Pregunta 25 [Confusa] - \"Muy ambigua. La mesa requiere la exclusiva real con contexto.\"",
+            "enlace_tracking": "http:\/\/s.lacuevadelguero.com\/tracking\/?code=GUEST-5293"
+        },
+        "leido": false
+    },
+    {
         "id": "EVT-20261008180523-742",
         "tipo": "solicitud_correccion_enviada",
         "titulo": "⚠️ Solicitud de Corrección Enviada a Invitado",
