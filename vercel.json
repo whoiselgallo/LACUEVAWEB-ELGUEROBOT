@@ -51,6 +51,10 @@
       "dest": "/api/ai-hooks.js"
     },
     {
+      "src": "/api/api-guero-knowledge(\\.php)?",
+      "dest": "/api/guero-knowledge.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
