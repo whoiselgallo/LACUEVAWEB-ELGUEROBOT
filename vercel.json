@@ -72,7 +72,7 @@
         }
       ],
       "src": "/(.*)",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/index.html"
     },
     {
       "src": "/tracking",
@@ -80,11 +80,11 @@
     },
     {
       "src": "/dashboard/(.*)",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/$1"
     },
     {
       "src": "/dashboard",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/index.html"
     },
     {
       "src": "/(.*)",
