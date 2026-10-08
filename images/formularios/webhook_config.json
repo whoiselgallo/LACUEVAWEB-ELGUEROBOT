@@ -1,0 +1,16 @@
+{
+    "url": "",
+    "tipo": "discord",
+    "secret": "",
+    "eventos_activos": {
+        "entrevista_completada": true,
+        "entrevista_error_reportado": true,
+        "tracking_actualizado": true,
+        "task_kanban": true,
+        "blog_publicado": true,
+        "analitica_actualizada": true,
+        "decision_votada": true
+    },
+    "habilitado": true,
+    "fecha_actualizacion": "2026-10-08 07:50:00"
+}

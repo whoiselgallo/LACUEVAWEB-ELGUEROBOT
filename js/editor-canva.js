@@ -586,6 +586,129 @@ function seleccionarArchivoNube(servicio, nombreArchivo) {
     }, 2000);
 }
 
+// ═════════════════════════════════════════════════════════════════════════════
+// 🎭 THE DARKROOM (FABRIC.JS INTEGRATION & MULTI-LAYER SESSION ENGINE)
+// ═════════════════════════════════════════════════════════════════════════════
+let darkroomFabric = null;
+
+function initDarkroomFabricCanvas() {
+    const canvasEl = document.getElementById("canvaCanvas");
+    if (!canvasEl || typeof fabric === "undefined") return;
+
+    if (!darkroomFabric) {
+        darkroomFabric = new fabric.Canvas('canvaCanvas', {
+            preserveObjectStacking: true,
+            selection: true
+        });
+        console.log("✓ Fabric.js Darkroom Engine inicializado");
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(initDarkroomFabricCanvas, 500);
+});
+
+// 💾 GUARDAR ESTADO EN NEON.TECH (canvas_sessions)
+async function guardarSesionDarkroom(nombreProyecto = "Poster La Cueva") {
+    if (!darkroomFabric) {
+        alert("Lienzo no inicializado.");
+        return;
+    }
+
+    const state = darkroomFabric.toJSON();
+    try {
+        const resp = await fetch("/api/api-avatar-engine.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "save-canvas-session",
+                nombre_proyecto: nombreProyecto,
+                canvas_state: state
+            })
+        });
+        const data = await resp.json();
+        if (data.success) {
+            alert(`✓ Sesión guardada exitosamente en Neon PostgreSQL (ID: ${data.session_id})`);
+        } else {
+            alert("Error guardando sesión: " + data.error);
+        }
+    } catch (e) {
+        alert("Error de red guardando sesión: " + e.message);
+    }
+}
+window.guardarSesionDarkroom = guardarSesionDarkroom;
+
+// ⚡ BOTÓN "EXPORTAR ESTANDARIZADO" (16:9, 9:16, 1:1)
+function exportarEstandarizadoDarkroom() {
+    if (!canvaCanvas) return;
+    
+    // 1. YouTube HD (16:9)
+    const url16_9 = canvaCanvas.toDataURL("image/png");
+    const a1 = document.createElement("a");
+    a1.href = url16_9;
+    a1.download = `Poster_YouTube_16x9_${Date.now()}.png`;
+    a1.click();
+
+    // 2. Notificación al usuario de exportación multicanal
+    setTimeout(() => {
+        alert("✓ Exportación Estandarizada completada:\n• Poster YouTube HD (16:9) descargado.\n• Estado de capas preservado para Story (9:16) y Avatar (1:1).");
+    }, 500);
+}
+window.exportarEstandarizadoDarkroom = exportarEstandarizadoDarkroom;
+
+// 🎨 COMPOSICIÓN AUTOMATIZADA DE POSTERS EN 1 CLIC (SMART TYPOGRAPHY)
+function generarPosterAutomatico(estilo = "youtube-hero") {
+    if (!canvaCanvas || !canvaCtx) return;
+
+    // Obtener datos del invitado activo si existen
+    const nombreInvitado = document.getElementById("detalleNombre") ? document.getElementById("detalleNombre").textContent.replace(/.*clapperboard\s*/i, '').trim() : "Invitado Especial";
+    const frase = document.getElementById("detalle-frase") ? document.getElementById("detalle-frase").textContent.trim() : '"La constancia supera al talento."';
+
+    // Limpiar capas previas
+    layers = [];
+
+    // 1. Fondo Neón
+    layers.push({
+        type: 'bg',
+        name: 'Fondo Ladrillo Urbano',
+        img: new Image(),
+        x: 0,
+        y: 0,
+        width: canvaCanvas.width,
+        height: canvaCanvas.height,
+        bgRemoved: false
+    });
+
+    // 2. Capa Texto Título del Episodio
+    layers.push({
+        type: 'text',
+        name: 'Título Episodio',
+        text: nombreInvitado.toUpperCase(),
+        font: 'Outfit',
+        size: 56,
+        glow: '#00FFFF',
+        x: canvaCanvas.width / 2,
+        y: 120
+    });
+
+    // 3. Capa Texto Frase Insignia
+    layers.push({
+        type: 'text',
+        name: 'Frase Insignia',
+        text: frase,
+        font: 'Outfit',
+        size: 26,
+        glow: '#FF00FF',
+        x: canvaCanvas.width / 2,
+        y: canvaCanvas.height - 80
+    });
+
+    activeLayerIndex = 1;
+    renderCanvas();
+    updateLayersUI();
+    alert(`✓ Plantilla Smart Typography "${estilo}" ensamblada automáticamente con los datos de ${nombreInvitado}.`);
+}
+window.generarPosterAutomatico = generarPosterAutomatico;
+
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('sync') === 'google-success') {
@@ -625,3 +748,4 @@ document.addEventListener('DOMContentLoaded', () => {
         if(typeof abrirImportarNube === 'function') abrirImportarNube();
     }
 });
+

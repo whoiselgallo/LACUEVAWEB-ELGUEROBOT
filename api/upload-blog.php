@@ -143,6 +143,18 @@ if ($action === 'publish') {
     $posts_existentes[] = $post;
     
     if (file_put_contents($archivo_posts, json_encode($posts_existentes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))) {
+        // Disparar Webhook en tiempo real
+        try {
+            require_once __DIR__ . '/api-webhook.php';
+            dispararWebhook('blog_publicado', [
+                'titulo' => $titulo,
+                'autor' => $autor,
+                'categoria' => $categoria,
+                'fecha' => $fecha,
+                'excerpt' => $excerpt
+            ], 'gestor_blog');
+        } catch (Exception $e) {}
+
         echo json_encode([
             'success' => true,
             'mensaje' => 'Post publicado exitosamente',

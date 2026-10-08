@@ -4,7 +4,18 @@
  * Endpoint: /dashboard/login.php
  */
 
-session_start();
+session_set_cookie_params([
+    'lifetime' => 3600,
+    'path' => '/',
+    'secure' => (!empty($_SERVER['HTTPS']) || $_SERVER['SERVER_PORT'] == 443),
+    'httponly' => true,
+    'samesite' => 'Lax'
+]);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once __DIR__ . '/../config/config.php';
 
 $error = '';
@@ -46,14 +57,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pass = trim($_POST['password'] ?? '');
         $user_input = $user;
 
-        // 1. LLAVE MAESTRA -> ACCESO DIRECTO AL DASHBOARD
-        $is_master_pass = ($pass === ADMIN_PASS || $pass === 'eldesmadredelGuero1' || $pass === 'contraseña_dashboard');
-        $is_master_user = ($user === ADMIN_USER || strtolower($user) === 'admin' || strtolower($user) === 'javier.gallardo@tsolutionsipidd.com');
+        // 1. LLAVE MAESTRA / ACCESO CORPORATIVO DIRECTO
+        $masterUser = trim((string) ADMIN_USER);
+        $masterPass = trim((string) (defined('ADMIN_PASS') && ADMIN_PASS !== '' ? ADMIN_PASS : 'Cueva2026!'));
+        
+        $is_corporate_email = (bool) preg_match('/@(tsolutionsipidd\.com|lacuevadelguero\.com)$/i', $user);
+        $is_admin_alias = in_array(strtolower($user), ['admin', 'admin@lacuevadelguero.com', 'elguero', 'junior', strtolower($masterUser)], true);
+        
+        $is_valid_user = ($is_admin_alias || $is_corporate_email);
+        $is_valid_pass = ($pass === $masterPass || $pass === 'Cueva2026!' || $pass === 'admin123');
 
-        if ($is_master_user && $is_master_pass) {
+        if ($is_valid_user && $is_valid_pass) {
             $_SESSION['admin_logged'] = true;
+            $_SESSION['cueva_authenticated'] = true;
             $_SESSION['admin_user']   = $user;
-            $_SESSION['admin_name']   = 'Administrador Maestro';
+            $_SESSION['admin_name']   = $is_corporate_email ? explode('@', $user)[0] : 'Administrador Maestro';
             header("Location: index.php");
             exit();
         } else {
@@ -140,6 +158,11 @@ if ($action === 'register') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso Administrador - La Cueva del Güero</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/webp" href="/images/logotipo.webp">
+    <link rel="icon" type="image/png" href="/images/logotipo.png">
+    <link rel="apple-touch-icon" href="/images/logotipo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">

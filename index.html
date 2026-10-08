@@ -6,8 +6,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>La Cueva del Güero</title>
   <meta name="description" content="La Cueva del Güero: podcast urbano, invitados reales, historias crudas y reflexión con estilo neon.">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" href="favicon.ico">
   <link rel="icon" type="image/webp" href="images/logotipo.webp">
   <link rel="icon" type="image/png" href="images/logotipo.png">
+  <link rel="apple-touch-icon" href="images/logotipo.png">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/paw-agent.css">
   
@@ -129,12 +132,9 @@
               <a href="#evaluacion">Evalúa la Cueva</a>
               <a href="#guero-bot">El Güero Bot</a>
               <div class="dropdown-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 8px 0;"></div>
-              <a href="#" class="btn-menu-tienda" style="color: #ff5f5f; display: flex; align-items: center; gap: 8px;"><i class="fas fa-store"></i> Tienda</a>
-              <a href="#" class="btn-menu-carrito" style="color: #ffffff; display: flex; align-items: center; gap: 8px;"><i class="fas fa-shopping-cart"></i> Carrito</a>
-              <a href="#" class="btn-ask-guero-mode" data-mode="guest" style="color: #00ffff; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-user"></i> ASK EL GÜERO (Guest)</a>
-              <a href="#" class="btn-ask-guero-mode" data-mode="team" style="color: #ff00ff; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-users"></i> ASK EL GÜERO (Team)</a>
-              <a href="#" class="btn-ask-guero-mode" data-mode="follower" style="color: #00ff00; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fas fa-heart"></i> ASK EL GÜERO (Follower)</a>
-              <a href="dashboard/index.php" style="color:#FF00FF; font-weight:bold; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-gauge"></i> Dashboard PRO</a>
+              <a href="storytelling-invitado.html" style="color: #00ffff; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-clipboard-user"></i> Cuestionario de Invitado</a>
+              <a href="tracking/index.html" style="color: #39FF14; font-weight: bold; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-satellite-dish"></i> Tracking de Invitado</a>
+              <a href="cesion-derechos.html" style="color: #ff00ff; display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-file-contract"></i> Cesión de Derechos</a>
             </div>
           </div>
         </div>
@@ -174,12 +174,11 @@
         <!-- Black Curtain Overlay for Initial Black Screen -->
         <div id="black-curtain" style="position: absolute; inset: 0; background: #000; z-index: 99; opacity: 1; transition: opacity 2s ease; pointer-events: none;"></div>
 
-        <!-- 4 Glowing Action Buttons (Clean labels without 'ASK EL GÜERO') -->
+        <!-- 3 Glowing Action Buttons (Invitado, Producción, Fandom) -->
         <div id="intro-action-buttons" style="position: absolute; bottom: 35px; z-index: 10; display: flex; gap: 15px; opacity: 0; transition: opacity 1.5s ease; flex-wrap: wrap; justify-content: center;">
             <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="guest" style="--c: #00ffff;">Invitado</a>
             <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="team" style="--c: #ff00ff;">Producción</a>
             <a href="#" class="btn-glowing btn-ask-guero-mode" data-mode="follower" style="--c: #00ff00;">Fandom</a>
-            <a href="dashboard/index.php" class="btn-glowing" style="--c: #ffa500;">Dashboard PRO</a>
         </div>
       </div>
       

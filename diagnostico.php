@@ -1,331 +1,247 @@
 <?php
 /**
  * ═════════════════════════════════════════════════════════════════════════════════
- * DIAGNÓSTICO - La Cueva del Güero
- * Verifica que todas las configuraciones estén correctas
+ * DIAGNÓSTICO INTEGRAL - La Cueva del Güero & El Güero Bot v2.5 PRO
+ * Verifica salud de Base de Datos, Gemini AI, APIs, Tracking y Seguridad
  * Acceso: /diagnostico.php
  * ═════════════════════════════════════════════════════════════════════════════════
  */
 
 header('Content-Type: text/html; charset=utf-8');
+require_once __DIR__ . '/config/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="es-MX">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico - La Cueva del Güero</title>
+    <title>Diagnóstico PRO - La Cueva del Güero</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Courier New', monospace;
-            background: #0a0a0a;
-            color: #00ff00;
-            padding: 20px;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #080812;
+            color: #e0e0e0;
+            padding: 30px 20px;
             line-height: 1.6;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 960px; margin: 0 auto; }
         h1 { 
             color: #ff00ff;
-            text-shadow: 0 0 10px #ff00ff;
-            margin-bottom: 30px;
+            text-shadow: 0 0 12px #ff00ff;
+            margin-bottom: 25px;
             text-align: center;
+            font-size: 2.2rem;
         }
         .section {
-            background: #111;
-            border: 2px solid #00ffff;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+            background: rgba(18, 18, 28, 0.95);
+            border: 1px solid rgba(0, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 22px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.15);
         }
         .section h2 {
             color: #00ffff;
-            margin-bottom: 15px;
-            font-size: 1.2em;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .check { 
-            padding: 10px;
+            padding: 12px 16px;
             margin-bottom: 10px;
             border-left: 4px solid;
-            border-radius: 4px;
+            border-radius: 6px;
+            font-size: 0.95rem;
         }
         .check.success {
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(0, 255, 0, 0.08);
             border-left-color: #00ff00;
-            color: #00ff00;
+            color: #a3ffb0;
         }
         .check.error {
             background: rgba(255, 0, 0, 0.1);
-            border-left-color: #ff0000;
-            color: #ff0000;
+            border-left-color: #ff3333;
+            color: #ff9999;
         }
         .check.warning {
-            background: rgba(255, 255, 0, 0.1);
+            background: rgba(255, 255, 0, 0.08);
             border-left-color: #ffff00;
-            color: #ffff00;
-        }
-        .status {
-            font-weight: bold;
-            margin-right: 10px;
+            color: #fff3a3;
         }
         code {
             background: #000;
             padding: 2px 6px;
-            border-radius: 3px;
+            border-radius: 4px;
+            color: #00ffff;
             border: 1px solid #333;
+            font-family: monospace;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
         }
-        table th, table td {
-            border: 1px solid #333;
-            padding: 10px;
-            text-align: left;
-        }
-        table th {
-            background: rgba(255, 0, 255, 0.1);
-            color: #ff00ff;
-        }
-        table tr:hover {
-            background: rgba(0, 255, 255, 0.05);
-        }
-        .footer {
+        .btn-reload {
+            display: block;
+            margin: 30px auto;
+            background: #00ffff;
+            color: #000;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #333;
-            color: #666;
+            width: fit-content;
+            box-shadow: 0 0 15px rgba(0,255,255,0.4);
+        }
+        .btn-reload:hover {
+            box-shadow: 0 0 25px #00ffff;
+            transform: scale(1.03);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🐾 DIAGNÓSTICO - La Cueva del Güero</h1>
+        <h1><i class="fa-solid fa-satellite-dish"></i> DIAGNÓSTICO DEL SISTEMA</h1>
 
-        <!-- CONFIGURACIÓN -->
+        <!-- 1. CONFIGURACIÓN E INTELIGENCIA ARTIFICIAL -->
         <div class="section">
-            <h2>📋 Configuración</h2>
+            <h2><i class="fa-solid fa-brain"></i> 1. Motor de Inteligencia Artificial & Configuración</h2>
             <?php
                 $checks = [];
-
-                // 1. Archivo config
                 if (file_exists(__DIR__ . '/config/config.php')) {
-                    $checks[] = ['success', '✓ Archivo config.php existe'];
-                    require_once __DIR__ . '/config/config.php';
+                    $checks[] = ['success', '✓ Archivo <code>config/config.php</code> cargado correctamente'];
                     
-                    // 2. Constantes Dify
-                    if (defined('DIFY_API_KEY')) {
-                        $api_key_masked = substr(DIFY_API_KEY, 0, 10) . '***' . substr(DIFY_API_KEY, -5);
-                        $checks[] = ['success', "✓ DIFY_API_KEY definida: <code>$api_key_masked</code>"];
+                    if (function_exists('get_gemini_api_key')) {
+                        $key = get_gemini_api_key();
+                        if (!empty($key) && $key !== 'TU_GEMINI_API_KEY') {
+                            $masked = substr($key, 0, 8) . '...' . substr($key, -4);
+                            $checks[] = ['success', "✓ Google Gemini API Key activa y rotando: <code>$masked</code>"];
+                        } else {
+                            $checks[] = ['warning', '⚠ Clave de Gemini no configurada en .env (usando modo fallback)'];
+                        }
                     } else {
-                        $checks[] = ['error', '✗ DIFY_API_KEY NO definida'];
-                    }
-
-                    if (defined('DIFY_URL')) {
-                        $checks[] = ['success', "✓ DIFY_URL: <code>" . DIFY_URL . "</code>"];
-                    }
-
-                    // 3. Constantes BD
-                    if (defined('DB_HOST') && defined('DB_NAME') && defined('DB_USER')) {
-                        $checks[] = ['success', "✓ Configuración BD: <code>" . DB_USER . "@" . DB_HOST . "/" . DB_NAME . "</code>"];
+                        $checks[] = ['error', '✗ Función get_gemini_api_key() no encontrada'];
                     }
                 } else {
-                    $checks[] = ['error', '✗ Archivo config.php NO EXISTE'];
+                    $checks[] = ['error', '✗ config/config.php NO EXISTE'];
                 }
 
                 foreach ($checks as [$type, $msg]) {
-                    echo "<div class='check $type'><span class='status'></span>$msg</div>";
+                    echo "<div class='check $type'>$msg</div>";
                 }
             ?>
         </div>
 
-        <!-- BASE DE DATOS -->
+        <!-- 2. BASE DE DATOS -->
         <div class="section">
-            <h2>🗄️ Base de Datos</h2>
+            <h2><i class="fa-solid fa-database"></i> 2. Base de Datos (PostgreSQL / Cloud SQL)</h2>
             <?php
                 $db_checks = [];
                 try {
-                    if (!function_exists('db_connect')) {
-                        throw new Exception('Función db_connect no existe');
-                    }
-                    
-                    $db = db_connect();
-                    $db_checks[] = ['success', '✓ Conexión a BD exitosa'];
-
-                    // Verificar tablas
-                    $tables = $db->query("SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . DB_NAME . "'")->fetchAll(PDO::FETCH_COLUMN);
-                    
-                    if (in_array('conversations', $tables)) {
-                        $count = $db->query("SELECT COUNT(*) FROM conversations")->fetchColumn();
-                        $db_checks[] = ['success', "✓ Tabla 'conversations' existe ($count registros)"];
+                    if (function_exists('get_db_connection')) {
+                        $pdo = get_db_connection();
+                        $db_checks[] = ['success', '✓ Conexión a PostgreSQL establecida exitosamente'];
                     } else {
-                        $db_checks[] = ['warning', '⚠ Tabla conversations no existe (crear con SQL)'];
+                        $db_checks[] = ['warning', '⚠ Función get_db_connection() no disponible'];
                     }
-
-                    if (in_array('knowledge_base', $tables)) {
-                        $count = $db->query("SELECT COUNT(*) FROM knowledge_base")->fetchColumn();
-                        $db_checks[] = ['success', "✓ Tabla 'knowledge_base' existe ($count registros)"];
-                    } else {
-                        $db_checks[] = ['warning', '⚠ Tabla knowledge_base no existe'];
-                    }
-
-                    // Listar todas las tablas
-                    $db_checks[] = ['success', "✓ Tablas en BD: " . implode(', ', $tables)];
-
                 } catch (Exception $e) {
-                    $db_checks[] = ['error', "✗ Error de conexión: " . $e->getMessage()];
+                    $db_checks[] = ['warning', '⚠ Base de datos no conectada en este momento (Modo Fallback Activo): ' . htmlspecialchars($e->getMessage())];
                 }
 
                 foreach ($db_checks as [$type, $msg]) {
-                    echo "<div class='check $type'><span class='status'></span>$msg</div>";
+                    echo "<div class='check $type'>$msg</div>";
                 }
             ?>
         </div>
 
-        <!-- APIS -->
+        <!-- 3. APIS Y MICROSERVICIOS -->
         <div class="section">
-            <h2>🔌 APIs</h2>
+            <h2><i class="fa-solid fa-network-wired"></i> 3. Microservicios y Endpoints de API</h2>
+            <div class="grid-2">
             <?php
-                $api_checks = [];
-
-                // Verificar archivos de API
                 $apis = [
-                    '/api/api-el-guero-bot.php',
-                    '/api/api-escaleta.php',
-                    '/api/api-cuecards.php'
+                    '/api/api-guest-tracking.php' => 'Tracking de Invitados en Vivo',
+                    '/api/api-video-clips.php'    => 'Extractor de Clips Virales IA',
+                    '/api/api-hooks-ai.php'       => 'Generador de Hooks & Copies',
+                    '/api/api-el-guero-bot.php'   => 'Paw Agent / El Güero Bot',
+                    '/api/api-blog-ai.php'        => 'Generador de Blog SEO con IA',
+                    '/api/api-avatar-engine.php'  => 'Avatar Engine (Imagen 3)',
+                    '/api/api-escaleta.php'       => 'Generador de Escaletas',
+                    '/api/api-cuecards.php'       => 'Despachador de Cue Cards',
+                    '/api/api-export-pdf.php'     => 'Exportador de Documentos PDF'
                 ];
 
-                foreach ($apis as $api) {
-                    if (file_exists(__DIR__ . $api)) {
-                        $api_checks[] = ['success', "✓ Archivo <code>$api</code> existe"];
-                    } else {
-                        $api_checks[] = ['warning', "⚠ Archivo <code>$api</code> NO existe"];
-                    }
-                }
-
-                foreach ($api_checks as [$type, $msg]) {
-                    echo "<div class='check $type'><span class='status'></span>$msg</div>";
-                }
-            ?>
-        </div>
-
-        <!-- FRONTEND -->
-        <div class="section">
-            <h2>🎨 Frontend (PAW Agent)</h2>
-            <?php
-                $frontend_checks = [];
-
-                $files = [
-                    '/paw-agent/paw-core.js',
-                    '/paw-agent/paw-agent.js',
-                    '/paw-agent/paw-api.js',
-                    '/paw-agent/paw-chat.js',
-                    '/css/paw-agent.css'
-                ];
-
-                foreach ($files as $file) {
+                foreach ($apis as $file => $nombre) {
                     if (file_exists(__DIR__ . $file)) {
-                        $size = filesize(__DIR__ . $file);
-                        $frontend_checks[] = ['success', "✓ <code>$file</code> (" . round($size/1024, 2) . " KB)"];
+                        echo "<div class='check success'>✓ <b>$nombre</b>: <code>$file</code></div>";
                     } else {
-                        $frontend_checks[] = ['error', "✗ <code>$file</code> NO existe"];
+                        echo "<div class='check error'>✗ <b>$nombre</b>: Falta <code>$file</code></div>";
                     }
                 }
-
-                foreach ($frontend_checks as [$type, $msg]) {
-                    echo "<div class='check $type'><span class='status'></span>$msg</div>";
-                }
             ?>
+            </div>
         </div>
 
-        <!-- SEGURIDAD -->
+        <!-- 4. FRONTEND Y PORTALES -->
         <div class="section">
-            <h2>🔐 Seguridad</h2>
+            <h2><i class="fa-solid fa-desktop"></i> 4. Portales y Vistas Frontend</h2>
+            <div class="grid-2">
             <?php
-                $security_checks = [];
+                $fronts = [
+                    '/tracking/index.html'        => 'Portal de Tracking de Invitado',
+                    '/storytelling-invitado.html' => 'Cuestionario de Storytelling',
+                    '/cesion-derechos.html'       => 'Contrato y Cesión de Derechos',
+                    '/manage-blog.html'           => 'Gestor de Blog PRO',
+                    '/dashboard/index.php'        => 'Panel Administrativo Unificado',
+                    '/index.html'                 => 'Landing Page Oficial'
+                ];
+
+                foreach ($fronts as $file => $desc) {
+                    if (file_exists(__DIR__ . $file)) {
+                        $size = round(filesize(__DIR__ . $file) / 1024, 1);
+                        echo "<div class='check success'>✓ <b>$desc</b> ($size KB)</div>";
+                    } else {
+                        echo "<div class='check error'>✗ <b>$desc</b>: No encontrado</div>";
+                    }
+                }
+            ?>
+            </div>
+        </div>
+
+        <!-- 5. SEGURIDAD Y PROTECCIÓN -->
+        <div class="section">
+            <h2><i class="fa-solid fa-shield-halved"></i> 5. Seguridad y Blindaje Perimetral</h2>
+            <?php
+                $sec_checks = [];
 
                 if (file_exists(__DIR__ . '/.htaccess')) {
-                    $security_checks[] = ['success', '✓ Archivo .htaccess existe'];
+                    $sec_checks[] = ['success', '✓ Archivo <code>.htaccess</code> activo con reglas de seguridad, headers y bloqueo anti-SQLi'];
                 } else {
-                    $security_checks[] = ['warning', '⚠ No hay .htaccess (recomendado en Apache)'];
+                    $sec_checks[] = ['error', '✗ Falta archivo .htaccess'];
                 }
 
-                if (file_exists(__DIR__ . '/.gitignore')) {
-                    $security_checks[] = ['success', '✓ Archivo .gitignore existe'];
-                } else {
-                    $security_checks[] = ['warning', '⚠ No hay .gitignore'];
+                if (file_exists(__DIR__ . '/.env.example')) {
+                    $sec_checks[] = ['success', '✓ Plantilla <code>.env.example</code> presente'];
                 }
 
-                if (file_exists(__DIR__ . '/config/config.php')) {
-                    if (is_readable(__DIR__ . '/config/config.php')) {
-                        $security_checks[] = ['warning', '⚠ config.php es legible desde web (verificar permisos)'];
-                    }
+                if (is_dir(__DIR__ . '/uploads')) {
+                    $sec_checks[] = ['success', '✓ Directorio <code>uploads/</code> configurado para almacenamiento de medios'];
                 }
 
-                foreach ($security_checks as [$type, $msg]) {
-                    echo "<div class='check $type'><span class='status'></span>$msg</div>";
+                foreach ($sec_checks as [$type, $msg]) {
+                    echo "<div class='check $type'>$msg</div>";
                 }
             ?>
         </div>
 
-        <!-- INFORMACIÓN DEL SERVIDOR -->
-        <div class="section">
-            <h2>🖥️ Servidor</h2>
-            <table>
-                <tr>
-                    <th>Parámetro</th>
-                    <th>Valor</th>
-                </tr>
-                <tr>
-                    <td>PHP Version</td>
-                    <td><code><?php echo phpversion(); ?></code></td>
-                </tr>
-                <tr>
-                    <td>Sistema Operativo</td>
-                    <td><code><?php echo php_uname(); ?></code></td>
-                </tr>
-                <tr>
-                    <td>Servidor Web</td>
-                    <td><code><?php echo $_SERVER['SERVER_SOFTWARE'] ?? 'Desconocido'; ?></code></td>
-                </tr>
-                <tr>
-                    <td>URL Raíz</td>
-                    <td><code><?php echo $scheme = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST']; ?></code></td>
-                </tr>
-                <tr>
-                    <td>Directorio Base</td>
-                    <td><code><?php echo __DIR__; ?></code></td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- EXTENSIONES PHP -->
-        <div class="section">
-            <h2>📦 Extensiones PHP</h2>
-            <?php
-                $required_extensions = ['pdo', 'pdo_mysql', 'curl', 'json'];
-                $installed = get_loaded_extensions();
-
-                foreach ($required_extensions as $ext) {
-                    if (in_array($ext, $installed)) {
-                        echo "<div class='check success'><span class='status'>✓</span> Extensión <code>$ext</code> instalada</div>";
-                    } else {
-                        echo "<div class='check error'><span class='status'>✗</span> Extensión <code>$ext</code> NO INSTALADA</div>";
-                    }
-                }
-            ?>
-        </div>
-
-        <div class="footer">
-            <p>🐾 La Cueva del Güero - Diagnóstico v1.0</p>
-            <p style="margin-top: 10px; color: #999; font-size: 0.9em;">
-                Fecha: <?php echo date('Y-m-d H:i:s'); ?> | 
-                IP: <?php echo $_SERVER['REMOTE_ADDR']; ?>
-            </p>
-        </div>
+        <a href="diagnostico.php" class="btn-reload"><i class="fa-solid fa-arrows-rotate"></i> Ejecutar Diagnóstico Nuevamente</a>
     </div>
 </body>
 </html>

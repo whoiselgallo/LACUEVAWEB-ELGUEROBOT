@@ -10,7 +10,21 @@ require_once __DIR__ . '/../config/config.php';
 
 try {
     $db = db_connect();
-    echo "✓ Conexión exitosa a PostgreSQL (Neon.tech)\n\n";
+    echo "✓ Conexión exitosa a PostgreSQL (Google Cloud SQL)\n\n";
+
+    // Crear tabla knowledge_base si no existe
+    $db->exec("
+        CREATE TABLE IF NOT EXISTS knowledge_base (
+            id          SERIAL PRIMARY KEY,
+            nombre      VARCHAR(255) NOT NULL,
+            tipo        VARCHAR(100) NOT NULL DEFAULT 'storytelling',
+            storytelling TEXT,
+            created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_knowledge_base_tipo ON knowledge_base (tipo);
+        CREATE INDEX IF NOT EXISTS idx_knowledge_base_nombre ON knowledge_base (nombre);
+    ");
 } catch (Exception $e) {
     die("❌ Error conectando a DB: " . $e->getMessage() . "\n");
 }

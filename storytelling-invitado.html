@@ -1,187 +1,644 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Storytelling Invitado – La Cueva del Güero</title>
-
-  <!-- Estilos base del sitio -->
+  <title>Plática con El Güero | Cuestionario Oficial de 33 Preguntas</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" href="images/logotipo.png">
+  <link rel="apple-touch-icon" href="images/logotipo.png">
+  
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/paw-agent.css">
-
-  <!-- CSS específico de este formulario -->
-  <link rel="stylesheet" href="css/storytelling-invitado.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" 
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" 
-        crossorigin="anonymous" 
-        referrerpolicy="no-referrer" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Permanent+Marker&display=swap" rel="stylesheet">
+  
   <style>
     body {
-      background: #0a0a0a;
-      color: #e6e6e6;
-      font-family: 'Architects Daughter', cursive;
+      background: #06060c;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      margin: 0;
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .chat-interview-card {
+      width: 100%;
+      max-width: 780px;
+      background: rgba(12, 12, 22, 0.95);
+      border: 2px solid #00ffff;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.25), inset 0 0 15px rgba(255, 0, 255, 0.1);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 14px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-bottom: 1px solid rgba(0, 255, 255, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 3%;
+      background: linear-gradient(90deg, #00ffff, #39ff14, #ff00ff);
+      transition: width 0.4s ease;
+    }
+    .chat-messages {
+      flex: 1;
       padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
-    h1 {
-      text-align: center;
-      color: #FF00FF;
-      text-shadow: 0 0 15px #FF00FF;
-      margin-bottom: 5px;
+    .msg {
+      max-width: 84%;
+      padding: 14px 18px;
+      border-radius: 14px;
+      line-height: 1.45;
+      font-size: 0.98rem;
+      animation: fadeIn 0.3s ease;
     }
-    .subtitulo {
-      text-align: center;
-      color: #00FFFF;
-      text-shadow: 0 0 8px #00FFFF;
-      margin-bottom: 30px;
+    .msg-bot {
+      align-self: flex-start;
+      background: rgba(0, 255, 255, 0.08);
+      border: 1px solid #00ffff;
+      color: #e2f8ff;
+      border-bottom-left-radius: 2px;
     }
-    .botones {
+    .msg-user {
+      align-self: flex-end;
+      background: rgba(255, 0, 255, 0.18);
+      border: 1px solid #ff00ff;
+      color: #ffe6ff;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-input-bar {
+      padding: 12px 18px;
+      background: rgba(0, 0, 0, 0.85);
+      border-top: 1px solid rgba(0, 255, 255, 0.2);
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 25px;
+      align-items: center;
     }
-    .botones button {
-      padding: 12px 20px;
-      background: #111;
-      border: 1px solid #00FFFF;
-      color: #00FFFF;
-      border-radius: 8px;
-      cursor: pointer;
+    .chat-input {
+      flex: 1;
+      background: rgba(10, 10, 20, 0.9);
+      border: 1px solid rgba(0, 255, 255, 0.4);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 10px;
       font-size: 1rem;
-      transition: 0.2s;
+      outline: none;
     }
-    .botones button:hover {
-      background: #00FFFF;
-      color: #111;
-      box-shadow: 0 0 15px #00FFFF;
+    .chat-input:focus {
+      border-color: #39ff14;
+      box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
     }
-    .panel {
-      display: none;
+    .btn-send, .btn-mic {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .panel.visible {
-      display: block;
+    .btn-send {
+      background: linear-gradient(135deg, #00ffff, #39ff14);
+      color: #000;
     }
-    .back-link {
-      display: inline-block;
-      margin-bottom: 20px;
-      color: #00FFFF;
-      text-decoration: none;
+    .btn-mic {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
     }
-    .back-link:hover {
-      text-shadow: 0 0 8px #00FFFF;
+    .btn-mic.recording {
+      background: #ff0055;
+      border-color: #ff0055;
+      animation: pulse 1s infinite;
     }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
   </style>
 </head>
 <body>
-  <script>
-    // Validar acceso exclusivo como invitado identificado por la pata del bot
-    if (localStorage.getItem('paw_guest_access') !== 'true') {
-      document.body.innerHTML = `
-        <div style="background:#0a0a0a; color:#fff; font-family:'Outfit', sans-serif; display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; margin:0; text-align:center;">
-          <div style="background:rgba(15,15,15,0.8); border:1px solid #FF00FF; box-shadow:0 0 20px rgba(255,0,255,0.3); padding:40px; border-radius:12px; max-width:400px; box-sizing:border-box;">
-            <h2 style="color:#FF00FF; text-shadow:0 0 10px #FF00FF; margin-bottom:15px;">🔒 Acceso Restringido</h2>
-            <p style="color:#ddd; margin-bottom:25px; line-height:1.5;">Por seguridad, debes identificarte primero como invitado conversando con el Güero Bot en la página principal.</p>
-            <a href="index.html" style="display:inline-block; padding:12px 20px; background:#00FFFF; border:none; color:#111; font-weight:bold; border-radius:8px; text-decoration:none; box-shadow:0 0 10px rgba(0,255,255,0.3); transition:0.2s;">Volver al Inicio</a>
-          </div>
+
+  <div class="chat-interview-card">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="images/logotipo.png" alt="El Güero" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #00ffff;">
+        <div>
+          <h3 style="margin: 0; color: #00ffff; font-size: 1.1rem;">Plática con El Güero 🐾</h3>
+          <span id="actIndicator" style="color: #ff00ff; font-size: 0.8rem; font-weight: bold;">Identificación Oficial</span>
         </div>
-      `;
-      document.body.style.padding = "0";
-      window.stop(); // Detener el renderizado del resto del documento
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" onclick="abrirModalConfirmacion()" id="btnRevisarProgreso" style="background: rgba(0, 255, 255, 0.12); border: 1px solid #00ffff; color: #00ffff; font-size: 0.78rem; font-weight: 700; padding: 5px 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s;" onmouseover="this.style.background='#00ffff'; this.style.color='#000';" onmouseout="this.style.background='rgba(0, 255, 255, 0.12)'; this.style.color='#00ffff';" title="Revisar todas tus respuestas y corregir errores">
+          <i class="fa-solid fa-list-check"></i> Revisar Respuestas (<span id="btnRespCount">0</span>/33)
+        </button>
+        <div style="text-align: right;">
+          <span id="progressText" style="color: #39ff14; font-weight: 800; font-size: 0.95rem;">1 / 33</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="chat-input-bar">
+      <button class="btn-mic" id="btnMic" onclick="toggleVoiceRecording()" title="Dictar por voz"><i class="fa-solid fa-microphone"></i></button>
+      <input type="text" id="chatInput" class="chat-input" placeholder="Escribe o dicta tu respuesta carnal..." onkeydown="if(event.key==='Enter') enviarRespuesta()">
+      <button class="btn-send" onclick="enviarRespuesta()"><i class="fa-solid fa-paper-plane"></i> Responder</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL DE CONFIRMACIÓN Y CORRECCIÓN DE RESPUESTAS AL TERMINAR
+       ============================================================ -->
+  <div id="modalConfirmacion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.92); backdrop-filter:blur(14px); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+    <div style="background:rgba(12,12,24,0.98); border:2px solid #00ffff; border-radius:20px; width:100%; max-width:880px; height:92vh; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 50px rgba(0,255,255,0.35), 0 0 25px rgba(255,0,255,0.2); position:relative;">
+      
+      <!-- HEADER DEL MODAL -->
+      <div style="padding:18px 24px; background:linear-gradient(180deg, rgba(20,20,38,0.95) 0%, rgba(12,12,22,0.95) 100%); border-bottom:1px solid rgba(0,255,255,0.25); display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px; flex-wrap:wrap;">
+            <span style="background:rgba(57,255,20,0.15); border:1px solid #39ff14; color:#39ff14; font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:10px; text-transform:uppercase;">
+              <i class="fa-solid fa-user-check"></i> Verificación y Confirmación Final
+            </span>
+            <span style="color:#aaa; font-size:0.8rem;">La Cueva del Güero</span>
+          </div>
+          <h2 style="margin:2px 0 4px 0; color:#00ffff; font-size:1.35rem; font-weight:800;">
+            Revisa y Confirma tus Respuestas 🐾
+          </h2>
+          <p style="margin:0; font-size:0.85rem; color:#bbb; line-height:1.4;">
+            Verifica que tus respuestas sean exactamente las que escribiste. Si encuentras algún error o quieres cambiar algo, dale clic a <b>"Modificar"</b> en la pregunta correspondiente para corregirla antes de que se guarde en la base de datos de producción.
+          </p>
+        </div>
+        <button type="button" onclick="cerrarModalConfirmacion()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:34px; height:34px; font-size:1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='#ff0055';">&times;</button>
+      </div>
+
+      <!-- BARRA DE BÚSQUEDA Y ESTADÍSTICAS -->
+      <div style="padding:10px 24px; background:rgba(16,16,28,0.9); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="position:relative; flex:1; min-width:220px;">
+          <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#888; font-size:0.8rem;"></i>
+          <input type="text" id="filtroPreguntasModal" oninput="filtrarPreguntasModal()" placeholder="Buscar en preguntas o respuestas..." style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.6); border:1px solid rgba(0,255,255,0.3); border-radius:15px; padding:6px 14px 6px 32px; color:#fff; font-size:0.85rem; outline:none;">
+        </div>
+        <div style="font-size:0.82rem; color:#aaa; display:flex; align-items:center; gap:10px;">
+          <span>Respuestas: <strong id="contadorRespuestasModal" style="color:#39ff14; font-size:0.95rem;">0</strong> / 33</span>
+          <span id="badgeModificadasModal" style="display:none; background:rgba(255,165,0,0.15); border:1px solid #FFA500; color:#FFA500; font-size:0.75rem; padding:2px 8px; border-radius:8px; font-weight:bold;">
+            <i class="fa-solid fa-pen"></i> <span id="numModificadasModal">0</span> corregidas
+          </span>
+        </div>
+      </div>
+
+      <!-- LISTA DE PREGUNTAS Y RESPUESTAS (SCROLLABLE) -->
+      <div id="listaPreguntasConfirmacion" style="flex:1; overflow-y:auto; padding:18px 24px; display:flex; flex-direction:column; gap:12px;">
+        <!-- Se llena dinámicamente con JS -->
+      </div>
+
+      <!-- FOOTER CON ACCIONES -->
+      <div style="padding:14px 24px; background:rgba(10,10,18,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <button type="button" onclick="cerrarModalConfirmacion()" style="background:transparent; border:1px solid rgba(255,255,255,0.2); color:#bbb; padding:8px 16px; border-radius:8px; font-size:0.85rem; cursor:pointer;">
+          <i class="fa-solid fa-arrow-left"></i> Volver al Chat
+        </button>
+        <button type="button" id="btnGuardarDefinitivo" onclick="confirmarYGuardarDefinitivo()" style="background:linear-gradient(135deg, #00ffff, #39ff14); border:none; color:#000; padding:10px 24px; border-radius:10px; font-size:0.95rem; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow:0 0 20px rgba(57,255,20,0.4); transition:all 0.2s;">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Confirmar y Guardar en la Base de Datos
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const PREGUNTAS = [
+      // Identificación Inicial (1 a 3)
+      { num: 1, acto: "Identificación Oficial", bot: "¡Qué onda carnal! 🐾 *mueve la cola* Pásale a La Cueva del Güero. Antes de afilar los micrófonos con El Junior y El Gallo... <b>¿Cuál es tu nombre completo?</b>" },
+      { num: 2, acto: "Identificación Oficial", bot: "¡Eso! ¿Y cuál es tu <b>petardo, alias o apodo</b>? (¿Cómo te conoce la raza en el bajo mundo?)" },
+      { num: 3, acto: "Identificación Oficial", bot: "<b>¿Tienes correo y WhatsApp?</b> Pásamelos para mandarte tu código de tracking y coordinar tu fecha de grabación." },
+
+      // Bloque 1: El Barrio y Raíces (4 a 10)
+      { num: 4, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 1: <b>¿A qué te dedicas actualmente?</b> Cuéntame tu mero jale del día a día." },
+      { num: 5, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 2: <b>¿Cómo te defines en 3 palabras?</b>" },
+      { num: 6, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 3: <b>¿De qué colonia o barrio eres?</b> ¿Dónde te forjaste?" },
+      { num: 7, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 4: <b>¿Qué significa para ti el Barrio?</b>" },
+      { num: 8, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 5: <b>¿Cuál es la mayor enseñanza que te ha regalado el barrio?</b>" },
+      { num: 9, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 6: <b>¿Qué quería ser de niño el tú de 10 años?</b>" },
+      { num: 10, acto: "Bloque 1: El Barrio y Raíces", bot: "Pregunta 7: <b>¿Hubo alguien que se burló o te dijo que no podrías conseguir tu sueño? ¿Quién fue?</b>" },
+
+      // Bloque 2: Madrazos y Sacrificios (11 a 17)
+      { num: 11, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 8: <b>¿Qué es lo más peligroso que has hecho en tu vida?</b>" },
+      { num: 12, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 9: <i>El camino y los madrazos</i>: <b>¿Qué es lo más humillante que te han pedido hacer en un jale (trabajo)? ¿Cuál fue tu reacción?</b>" },
+      { num: 13, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 10: <i>En el camino a veces perdemos el rumbo</i>: <b>¿Cuál ha sido el peor error que cometiste en tu carrera, ese que casi hace que renuncies a tus sueños?</b>" },
+      { num: 14, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 11: Si en este momento te dijera <i>'solo te quedan 24 horas de vida'</i>: <b>¿En qué las utilizarías?</b>" },
+      { num: 15, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 12: <b>¿Eres feliz o aún te faltan sueños por realizar?</b>" },
+      { num: 16, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 13: <b>¿Cuáles son esas cosas que tuviste que sacrificar para poder estar en este punto de tu carrera?</b>" },
+      { num: 17, acto: "Bloque 2: Madrazos y Sacrificios", bot: "Pregunta 14: <b>¿Cuál fue tu primer logro?</b> Ese momento en donde dijiste: <i>'chingón, me siento orgulloso de mí y de lo que logré'</i>." },
+
+      // Bloque 3: Mentalidad y Flow (18 a 22)
+      { num: 18, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 15: Si tuvieras una máquina del tiempo: <b>¿A dónde viajarías y por qué?</b>" },
+      { num: 19, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 16: <b>¿Qué le dirías hoy si te encontraras de frente a tu yo de hace 10 años?</b>" },
+      { num: 20, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 17: <i>La mentalidad y el flow</i>: <b>¿Tu secreto para el éxito en una palabra? ¿Cómo le hiciste para llegar a donde estás?</b>" },
+      { num: 21, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 18: En estos momentos: <b>¿Estás cumpliendo lo que soñaste ser?</b>" },
+      { num: 22, acto: "Bloque 3: Mentalidad y Flow", bot: "Pregunta 19: <b>¿Qué te hace diferente a los demás? ¿Tienes identificado ese don que te hace especial?</b>" },
+
+      // Bloque 4: Anecdotario y Confesiones (23 a 31)
+      { num: 23, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 20: <b>Algo chusco o chistoso que te haya pasado</b>, que cada que lo recuerdas te hace reír." },
+      { num: 24, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 21: <b>¿Esa canción que escuchas y te pones 'bélico'?</b>" },
+      { num: 25, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 22: <i>Confesión incómoda</i>: <b>Cuéntanos eso que siempre has querido decir, pero no te atreves a sacarlo de tu ronco pecho. Danos la exclusiva.</b>" },
+      { num: 26, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 23: <b>¿Qué es lo que más te molesta de la gente o de la vida?</b>" },
+      { num: 27, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 24: <b>¿Cómo te gustaría que la gente te recuerde cuando ya no estés en este mundo?</b>" },
+      { num: 28, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 25: <b>¿Cuál consideras que es tu mayor defecto?</b>" },
+      { num: 29, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 26: <i>Todos tenemos algo que nos gusta pero nos da pena</i>: <b>¿Cuál es tu gusto culposo?</b>" },
+      { num: 30, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 27: <b>¿A qué le tienes miedo y cómo lo enfrentas?</b>" },
+      { num: 31, acto: "Bloque 4: Anecdotario y Confesiones", bot: "Pregunta 28: <i>Dinámica / Reto</i>: <b>Si tuvieras que elegir solo una opción: ¿Fama sin dinero o Dinero sin fama? ¿Por qué?</b>" },
+
+      // Bloque 5: El Mensaje Final (32 a 33)
+      { num: 32, acto: "Bloque 5: El Mensaje Final", bot: "Pregunta 29: <b>¿Algo más que quieras que mencionemos o platiquemos en el episodio?</b>" },
+      { num: 33, acto: "Bloque 5: El Mensaje Final", bot: "Pregunta 30: <i>Es momento de la ayuda</i>: <b>¿Qué le dirías a esa persona que está pasando por un mal momento, para que no tire la toalla y se motive a seguir adelante?</b>" }
+    ];
+
+    let currentIndex = 0;
+    let respuestas = JSON.parse(localStorage.getItem('cueva_33_preguntas') || '{}');
+    let recognition = null;
+
+    window.onload = () => {
+      const guardadas = Object.keys(respuestas).length;
+      if (guardadas > 0 && guardadas < PREGUNTAS.length) {
+        currentIndex = guardadas;
+      }
+      renderChat();
+    };
+
+    function renderChat() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = '';
+
+      for (let i = 0; i <= currentIndex && i < PREGUNTAS.length; i++) {
+        addBotBubble(PREGUNTAS[i].bot);
+        if (respuestas[i + 1]) {
+          addUserBubble(respuestas[i + 1]);
+        }
+      }
+
+      updateProgress();
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function addBotBubble(text) {
+      const div = document.createElement('div');
+      div.className = 'msg msg-bot';
+      div.innerHTML = text;
+      document.getElementById('chatMessages').appendChild(div);
+    }
+
+    function addUserBubble(text) {
+      const div = document.createElement('div');
+      div.className = 'msg msg-user';
+      div.textContent = text;
+      document.getElementById('chatMessages').appendChild(div);
+    }
+
+    let preguntasModificadas = new Set(JSON.parse(localStorage.getItem('cueva_modificadas') || '[]'));
+    let edicionActiva = null;
+
+    function updateProgress() {
+      const total = PREGUNTAS.length;
+      const act = PREGUNTAS[Math.min(currentIndex, total - 1)].acto;
+      document.getElementById('actIndicator').textContent = act;
+      document.getElementById('progressText').textContent = `${Math.min(currentIndex + 1, total)} / ${total}`;
+      const pct = Math.min(((currentIndex + 1) / total) * 100, 100);
+      document.getElementById('progressBar').style.width = `${pct}%`;
+
+      const respondidas = Object.keys(respuestas).length;
+      const btnRespCount = document.getElementById('btnRespCount');
+      if (btnRespCount) btnRespCount.textContent = respondidas;
+    }
+
+    async function enviarRespuesta() {
+      const input = document.getElementById('chatInput');
+      const val = input.value.trim();
+      if (!val) return;
+
+      addUserBubble(val);
+      respuestas[currentIndex + 1] = val;
+      localStorage.setItem('cueva_33_preguntas', JSON.stringify(respuestas));
+      input.value = '';
+
+      currentIndex++;
+
+      if (currentIndex < PREGUNTAS.length) {
+        setTimeout(() => {
+          addBotBubble(PREGUNTAS[currentIndex].bot);
+          updateProgress();
+          const chat = document.getElementById('chatMessages');
+          chat.scrollTop = chat.scrollHeight;
+        }, 400);
+      } else {
+        updateProgress();
+        setTimeout(() => {
+          addBotBubble(`
+            <div style="background: rgba(0,255,255,0.12); border: 1px solid #00ffff; padding: 18px; border-radius: 12px; margin-top: 10px;">
+              <h3 style="color:#00ffff; margin:0 0 6px 0;">🎉 ¡A huevo carnal! Completaste las 33 preguntas</h3>
+              <p style="margin:0 0 12px 0; color:#eee; font-size:0.95rem;">
+                Para evitar cualquier error en tu expediente, revisa y confirma tus respuestas antes de guardarlas en la base de datos de producción.
+              </p>
+              <button type="button" onclick="abrirModalConfirmacion()" style="background:linear-gradient(135deg, #00ffff, #39ff14); border:none; color:#000; font-weight:800; padding:10px 20px; border-radius:8px; cursor:pointer; font-size:0.95rem; display:inline-flex; align-items:center; gap:8px;">
+                <i class="fa-solid fa-list-check"></i> Abrir Pantalla de Confirmación
+              </button>
+            </div>
+          `);
+          abrirModalConfirmacion();
+        }, 600);
+      }
+    }
+
+    // ============================================================
+    // MODAL DE CONFIRMACIÓN Y CORRECCIÓN DE RESPUESTAS
+    // ============================================================
+
+    function abrirModalConfirmacion() {
+      const modal = document.getElementById('modalConfirmacion');
+      if (!modal) return;
+      modal.style.display = 'flex';
+      renderModalConfirmacion();
+    }
+
+    function cerrarModalConfirmacion() {
+      const modal = document.getElementById('modalConfirmacion');
+      if (modal) modal.style.display = 'none';
+      edicionActiva = null;
+    }
+
+    function filtrarPreguntasModal() {
+      const query = (document.getElementById('filtroPreguntasModal').value || '').toLowerCase().trim();
+      renderModalConfirmacion(query);
+    }
+
+    function renderModalConfirmacion(filtro = '') {
+      const container = document.getElementById('listaPreguntasConfirmacion');
+      if (!container) return;
+
+      const respondidasCount = Object.keys(respuestas).length;
+      document.getElementById('contadorRespuestasModal').textContent = respondidasCount;
+      
+      const badgeMod = document.getElementById('badgeModificadasModal');
+      const numMod = document.getElementById('numModificadasModal');
+      if (preguntasModificadas.size > 0) {
+        badgeMod.style.display = 'inline-flex';
+        numMod.textContent = preguntasModificadas.size;
+      } else {
+        badgeMod.style.display = 'none';
+      }
+
+      let html = '';
+      PREGUNTAS.forEach((p) => {
+        const num = p.num;
+        const resp = (respuestas[num] || '').trim();
+        const tieneResp = resp.length > 0;
+        const fueModificada = preguntasModificadas.has(num);
+        
+        // Limpiar tags HTML para búsqueda y display del título
+        const tituloLimpio = p.bot.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').trim();
+
+        if (filtro && !tituloLimpio.toLowerCase().includes(filtro) && !resp.toLowerCase().includes(filtro)) {
+          return;
+        }
+
+        const isEditing = (edicionActiva === num);
+
+        html += `
+          <div style="background: rgba(0,0,0,0.55); border: 1px solid ${fueModificada ? '#FFA500' : (tieneResp ? 'rgba(0,255,255,0.3)' : 'rgba(255,0,85,0.3)')}; border-left: 4px solid ${fueModificada ? '#FFA500' : (tieneResp ? '#39ff14' : '#ff0055')}; border-radius: 10px; padding: 14px 18px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span style="background: rgba(0,255,255,0.12); color: #00ffff; font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 6px;">Pregunta #${num}</span>
+                <span style="color: #888; font-size: 0.75rem;">${p.acto}</span>
+                ${fueModificada ? `<span style="background: rgba(255,165,0,0.2); border: 1px solid #FFA500; color: #FFA500; font-size: 0.72rem; padding: 1px 6px; border-radius: 6px; font-weight: 700;">⚡ Corregida</span>` : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                ${tieneResp && !isEditing ? `
+                  <button type="button" onclick="activarEdicionPregunta(${num})" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(0,255,255,0.4); color: #00ffff; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-pen-to-square"></i> Modificar
+                  </button>
+                ` : ''}
+                ${!tieneResp && !isEditing ? `
+                  <button type="button" onclick="activarEdicionPregunta(${num})" style="background: rgba(255,0,85,0.15); border: 1px solid #ff0055; color: #ff0055; font-size: 0.78rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-plus"></i> Responder Ahora
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+
+            <p style="margin: 0; color: #bbb; font-size: 0.88rem; line-height: 1.35;">${tituloLimpio}</p>
+
+            ${isEditing ? `
+              <div style="margin-top: 6px; background: rgba(10,10,25,0.9); border: 1px solid #00ffff; border-radius: 8px; padding: 10px;">
+                <label style="display: block; font-size: 0.78rem; color: #00ffff; font-weight: 700; margin-bottom: 4px;">Escribe tu respuesta corregida:</label>
+                <textarea id="editInput_${num}" rows="3" style="width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 8px; color: #fff; font-size: 0.95rem; resize: vertical; outline: none;">${escapeHtml(resp)}</textarea>
+                <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+                  <button type="button" onclick="cancelarEdicionPregunta()" style="background: transparent; border: 1px solid rgba(255,255,255,0.3); color: #ccc; font-size: 0.78rem; padding: 5px 12px; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                  <button type="button" onclick="guardarEdicionPregunta(${num})" style="background: #39ff14; border: none; color: #000; font-weight: 800; font-size: 0.8rem; padding: 5px 14px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="fa-solid fa-check"></i> Guardar Corrección
+                  </button>
+                </div>
+              </div>
+            ` : `
+              <div style="background: rgba(15,15,30,0.8); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-top: 2px;">
+                ${tieneResp ? `
+                  <p style="margin: 0; color: #fff; font-size: 0.92rem; line-height: 1.4;"><i class="fa-solid fa-quote-left" style="color: ${fueModificada ? '#FFA500' : '#00ffff'}; font-size: 0.75rem; margin-right: 6px;"></i> "${escapeHtml(resp)}"</p>
+                ` : `
+                  <p style="margin: 0; color: #ff4477; font-size: 0.85rem; font-style: italic;"><i class="fa-solid fa-triangle-exclamation"></i> Sin respuesta aún.</p>
+                `}
+              </div>
+            `}
+          </div>
+        `;
+      });
+
+      if (!html) {
+        html = `<div style="text-align: center; color: #777; padding: 30px;"><p>No se encontraron preguntas que coincidan con la búsqueda.</p></div>`;
+      }
+
+      container.innerHTML = html;
+    }
+
+    function activarEdicionPregunta(num) {
+      edicionActiva = num;
+      renderModalConfirmacion();
+      setTimeout(() => {
+        const txt = document.getElementById(`editInput_${num}`);
+        if (txt) txt.focus();
+      }, 50);
+    }
+
+    function cancelarEdicionPregunta() {
+      edicionActiva = null;
+      renderModalConfirmacion();
+    }
+
+    function guardarEdicionPregunta(num) {
+      const txt = document.getElementById(`editInput_${num}`);
+      if (!txt) return;
+      const nuevoVal = txt.value.trim();
+      if (!nuevoVal) {
+        alert('Por favor escribe tu respuesta.');
+        return;
+      }
+
+      respuestas[num] = nuevoVal;
+      localStorage.setItem('cueva_33_preguntas', JSON.stringify(respuestas));
+      preguntasModificadas.add(num);
+      localStorage.setItem('cueva_modificadas', JSON.stringify(Array.from(preguntasModificadas)));
+
+      // Disparar aviso inmediato por webhook
+      try {
+        fetch('/api/api-webhook.php?action=disparar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tipo: 'entrevista_error_reportado',
+            origen: 'modal_confirmacion_invitado',
+            datos: {
+              invitado: respuestas[1] || 'Invitado en entrevista',
+              pregunta_num: num,
+              pregunta: PREGUNTAS[num - 1].bot.replace(/<[^>]*>?/gm, ' ').replace(/\s+/g, ' ').substring(0, 120),
+              nueva_respuesta: nuevoVal
+            }
+          })
+        }).catch(err => console.warn('Aviso webhook en segundo plano:', err));
+      } catch (e) {}
+
+      edicionActiva = null;
+      renderModalConfirmacion();
+      renderChat();
+    }
+
+    async function confirmarYGuardarDefinitivo() {
+      const btn = document.getElementById('btnGuardarDefinitivo');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando y sincronizando con la base de datos...`;
+      }
+
+      const payload = {
+        nombre: respuestas[1] || 'Invitado La Cueva',
+        alias: respuestas[2] || '',
+        contacto: respuestas[3] || '',
+        ocupacion: respuestas[4] || '',
+        barrio: respuestas[6] || '',
+        respuestas: respuestas,
+        correccion_realizada: (preguntasModificadas.size > 0),
+        preguntas_modificadas: Array.from(preguntasModificadas).join(', ')
+      };
+
+      try {
+        const res = await fetch('/api/api-invitados-save.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const code = data.code || ('GUEST-' + Math.floor(1000 + Math.random() * 9000));
+
+        cerrarModalConfirmacion();
+
+        addBotBubble(`
+          <div style="background: rgba(57,255,20,0.15); border: 2px solid #39ff14; padding: 20px; border-radius: 14px; margin-top: 12px; box-shadow: 0 0 25px rgba(57,255,20,0.3);">
+            <h3 style="color:#39ff14; margin:0 0 8px 0; font-size:1.3rem;">🎉 ¡EXPEDIENTE CONFIRMADO Y GUARDADO EN LA BASE DE DATOS!</h3>
+            <p style="color:#eee; margin:0 0 10px 0;">Tus respuestas fueron verificadas con éxito. El Güero y Junior ya tienen tu ficha oficial.</p>
+            <p style="margin: 10px 0;">Tu código oficial de tracking es: <b style="color:#00ffff; font-size:1.4rem; letter-spacing:1px;">${code}</b></p>
+            <div style="margin-top: 12px; display:flex; gap:10px; flex-wrap:wrap;">
+              <a href="https://s.lacuevadelguero.com/?code=${code}" target="_blank" style="display:inline-block; background:#00ffff; color:#000; padding:10px 18px; border-radius:8px; font-weight:bold; text-decoration:none;">🚀 Ver Mi Tracking en Vivo</a>
+              <button type="button" onclick="abrirModalConfirmacion()" style="background:transparent; border:1px solid #39ff14; color:#39ff14; padding:10px 16px; border-radius:8px; font-weight:bold; cursor:pointer;">👀 Volver a Ver Mis Respuestas</button>
+            </div>
+          </div>
+        `);
+
+        localStorage.removeItem('cueva_33_preguntas');
+        localStorage.removeItem('cueva_modificadas');
+      } catch (err) {
+        cerrarModalConfirmacion();
+        addBotBubble(`
+          <div style="background: rgba(255,0,85,0.15); border: 1px solid #ff0055; padding: 16px; border-radius: 12px; margin-top: 10px;">
+            <p style="margin:0; color:#ff4477;">¡Hubo un detalle de red al sincronizar con el servidor! Por favor dale de nuevo al botón de <b>Revisar Respuestas</b> o avísale a Junior directamente.</p>
+          </div>
+        `);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Confirmar y Guardar en la Base de Datos`;
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function toggleVoiceRecording() {
+      const btn = document.getElementById('btnMic');
+      const input = document.getElementById('chatInput');
+
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert('Tu navegador no soporta dictado por voz. Te recomendamos usar Google Chrome en tu celular o compu.');
+        return;
+      }
+
+      if (recognition) {
+        recognition.stop();
+        recognition = null;
+        btn.classList.remove('recording');
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'es-MX';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = () => {
+        btn.classList.add('recording');
+      };
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        input.value = (input.value ? input.value + ' ' : '') + transcript;
+      };
+
+      recognition.onerror = () => {
+        btn.classList.remove('recording');
+        recognition = null;
+      };
+
+      recognition.onend = () => {
+        btn.classList.remove('recording');
+        recognition = null;
+      };
+
+      recognition.start();
     }
   </script>
-
-  <a href="index.html" class="back-link">← Volver a La Cueva</a>
-
-  <h1>🎙 Storytelling del Invitado</h1>
-  <p class="subtitulo">Presentación + Storytelling + Guion + Escaleta + Cue Cards</p>
-
-  <section id="contenedorStorytelling">
-    <form id="formStorytelling">
-      <!-- IDENTIDAD -->
-      <h2>Identidad del invitado</h2>
-
-      <label for="st_nombre">Nombre completo o artístico</label>
-      <input type="text" id="st_nombre" required>
-
-      <label for="st_ocupacion">Ocupación actual</label>
-      <input type="text" id="st_ocupacion" required>
-
-      <label for="st_frase">Frase que lo describe en una línea</label>
-      <input type="text" id="st_frase" required>
-
-      <label for="st_barrio">Barrio / ciudad de origen</label>
-      <input type="text" id="st_barrio" required>
-
-      <!-- HISTORIA BASE -->
-      <h2>Historia base</h2>
-
-      <label for="st_historia">Historia resumida (5–10 líneas)</label>
-      <textarea id="st_historia" rows="5" required></textarea>
-
-      <!-- STORYTELLING DETONANTE -->
-      <h2>Storytelling de apertura</h2>
-
-      <label for="st_anecdota">Anécdota detonante que lo representa</label>
-      <textarea id="st_anecdota" rows="4" required></textarea>
-
-      <label for="st_momento">Momento más decisivo de su vida</label>
-      <textarea id="st_momento" rows="4" required></textarea>
-
-      <label for="st_herida">Herida emocional / obstáculo fuerte</label>
-      <textarea id="st_herida" rows="4" required></textarea>
-
-      <label for="st_trayectoria">Trayectoria (cómo llegó hasta aquí)</label>
-      <textarea id="st_trayectoria" rows="4" required></textarea>
-
-      <!-- GUION DE PREGUNTAS -->
-      <h2>Guion de preguntas</h2>
-
-      <label for="st_incomodo">Temas incómodos / límites</label>
-      <textarea id="st_incomodo" rows="3"></textarea>
-
-      <label for="st_vulnerabilidad">Vulnerabilidades (qué lo hace sentir expuesto)</label>
-      <textarea id="st_vulnerabilidad" rows="3"></textarea>
-
-      <label for="st_pasiones">Pasiones / temas que ama hablar</label>
-      <textarea id="st_pasiones" rows="3"></textarea>
-
-      <label for="st_logros">Logros clave que deben salir en el episodio</label>
-      <textarea id="st_logros" rows="3"></textarea>
-
-      <!-- LOGÍSTICA -->
-      <h2>Logística</h2>
-
-      <label for="st_fecha">Fecha propuesta de grabación</label>
-      <input type="text" id="st_fecha" placeholder="DD/MM/AAAA">
-
-      <label for="st_contacto">Contacto (teléfono o correo)</label>
-      <input type="text" id="st_contacto">
-
-      <div class="botones">
-        <button type="button" id="st_generar">🚀 Generar paquete</button>
-        <button type="button" id="st_copiar">📋 Copiar resultado</button>
-        <button type="button" id="st_descargar">💾 Descargar TXT</button>
-        <button type="button" id="st_limpiar">🧹 Limpiar</button>
-      </div>
-      <div style="text-align:center; margin-top:15px; font-size:0.85rem; color:#aaa; line-height:1.6;">
-        Al participar, aceptas nuestro <a href="politica-privacidad.html" target="_blank" style="color:#00ffff; text-decoration:none; border-bottom:1px dashed #00ffff; padding-bottom:1px; margin-right:10px;">Aviso de Privacidad</a> y la <a href="cesion-derechos.html" target="_blank" style="color:#ff00ff; text-decoration:none; border-bottom:1px dashed #ff00ff; padding-bottom:1px;"><i class="fa-solid fa-file-contract"></i> Carta de Cesión de Imagen y Voz</a>.
-      </div>
-    </form>
-  </section>
-
-  <section id="st_resultado" class="panel">
-    <h2>Resultado – Paquete completo del episodio</h2>
-    <div id="st_bloques"></div>
-  </section>
-
-  <!-- JS de página -->
-  <script src="js/storytelling-invitado-page.js"></script>
 </body>
 </html>

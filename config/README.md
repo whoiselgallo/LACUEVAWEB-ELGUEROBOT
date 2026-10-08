@@ -105,8 +105,8 @@ Los errores se registran en `/logs/error.log`. El directorio se crea automática
 Para producción, considera usar variables de entorno:
 
 ```php
-define('DIFY_API_KEY', getenv('DIFY_API_KEY') ?: 'app-uAuHKtsI6l82PIqdF7e7yiVL');
-define('DB_PASS', getenv('DB_PASS') ?: 'eldesmadredelGuero1');
+define('DIFY_API_KEY', getenv('DIFY_API_KEY'));
+define('DB_PASS', getenv('DB_PASS'));
 ```
 
 ## Errores Comunes

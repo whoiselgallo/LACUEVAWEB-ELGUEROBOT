@@ -12,11 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
 async function cargarAvataresRegistrados() {
     try {
         const response = await fetch(`${API_AVATAR_URL}?action=list`);
+        if (!response.ok) return;
         const data = await response.json();
         const select = document.getElementById("avatarCharacterSelect");
         const gallery = document.getElementById("avatarGallery");
 
-        if (!data.success || !data.avatars) return;
+        if (!data || !data.success || !data.avatars) return;
 
         if (select) {
             select.innerHTML = '<option value="">-- Selecciona un personaje --</option>';
@@ -206,12 +207,13 @@ async function generarHumanoideAislado() {
                             <p><strong>Personaje:</strong> ${data.character}</p>
                             <p><strong>Pose/Actividad:</strong> ${data.actividad}</p>
                             <p><strong>Vestimenta:</strong> ${data.ropa}</p>
-                            <p><strong>Fondo:</strong> <span style="color:#39FF14;">Transparente PNG (Aislado)</span></p>
+                            <p><strong>Inyección Biométrica:</strong> <span style="color:${data.biometric_injected ? '#39FF14' : '#00FFFF'}; font-weight:bold;">${data.biometric_injected ? '✓ IP-Adapter 0.85 Activo (Flux.1)' : '✓ Motor Visual Neón'}</span></p>
+                            <p><strong>Fondo:</strong> <span style="color:#39FF14;">Transparente PNG (Segmentación Rembg)</span></p>
                         </div>
 
                         <!-- ACCIONES DE INTEGRACIÓN DIRECTA -->
-                        <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center;">
-                            <button class="btn-neon" onclick="cargarImagenDesdeUrl('${data.avatar_url}')"><i class="fa-solid fa-palette"></i> Cargar en Canva</button>
+                        <div style="display:flex; gap:10px; margin-bottom:15px; justify-content:center; flex-wrap:wrap;">
+                            <button class="btn-neon" onclick="cargarImagenDesdeUrl('${data.avatar_url}')"><i class="fa-solid fa-wand-magic-sparkles"></i> Abrir en The Darkroom (Fabric.js)</button>
                             <a href="${data.avatar_url}" download="avatar_${data.character}.png" class="btn-neon btn-neon-magenta" style="text-decoration:none; display:inline-block; padding:10px 20px;"><i class="fa-solid fa-download"></i> Descargar PNG</a>
                         </div>
 

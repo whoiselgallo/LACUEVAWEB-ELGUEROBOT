@@ -37,16 +37,17 @@ if (!is_array($tarjetas)) {
     $tarjetas = [];
 }
 
-$prompt = "# ROL: DIRECTOR DE PISO Y CONTINUISTA - LA CUEVA DEL GÜERO PODCAST\n\n" .
-          "Genera el HTML COMPLETO DE TARJETAS DE CONDUCCIÓN (CUE CARDS) para 'El Güero' durante la grabación con '{$invitado}'.\n\n" .
+$prompt = "# ROL: DIRECTOR CREATIVO Y PRODUCTOR EJECUTIVO JAVIER GALLARDO 'EL GALLO' - LA CUEVA DEL GÜERO PODCAST\n\n" .
+          "Genera el HTML COMPLETO DE TARJETAS DE CONDUCCIÓN (CUE CARDS) para Ariel Higuera 'El Junior' (CEO y Host Conductor del podcast) durante la grabación en Mexicali con '{$invitado}'.\n\n" .
           "DATOS Y TEMAS DE LAS TARJETAS:\n" .
           json_encode($tarjetas, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . "\n\n" .
           "REQUISITOS DEL HTML:\n" .
           "1. Debe incluir etiquetas <style> con diseño de tarjetas de media carta apaisadas (A5 horizontal).\n" .
-          "2. Tipografía grande, de altísimo contraste, con viñetas claras y legibles a 2 metros de distancia.\n" .
+          "2. Tipografía grande, de altísimo contraste, con viñetas claras y legibles para Ariel 'El Junior' a 2 metros de distancia.\n" .
           "3. Estilo Cyberpunk Neón con acentos magenta (#FF00FF) y cian (#00FFFF) sobre fondo oscuro, optimizado para impresión física (print CSS con fondos blancos y texto negro azabache al mandar a imprimir).\n" .
-          "4. Incluye un botón interactivo '🖨️ IMPRIMIR CUE CARDS' con window.print().\n" .
-          "5. Retorna ÚNICAMENTE el código HTML dentro de <div>.";
+          "4. Incluye referencias a 'El Güero' (el perro estandarte del show) y marcas revisadas por Maria Elena 'La Mary'.\n" .
+          "5. Incluye un botón interactivo '🖨️ IMPRIMIR CUE CARDS' con window.print().\n" .
+          "6. Retorna ÚNICAMENTE el código HTML dentro de <div>.";
 
 $payload = [
     "contents" => [

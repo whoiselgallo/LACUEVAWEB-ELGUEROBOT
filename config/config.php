@@ -1,7 +1,7 @@
 <?php
 /**
  * ═════════════════════════════════════════════════════════════════════════════════
- * CONFIGURACIÓN GENERAL - LA CUEVA DEL GÜERO (POSTGRESQL / NEON.TECH)
+ * CONFIGURACIÓN GENERAL - LA CUEVA DEL GÜERO (POSTGRESQL / GOOGLE CLOUD SQL)
  * ═════════════════════════════════════════════════════════════════════════════════
  * 
  * Archivo centralizado de configuración para:
@@ -21,10 +21,74 @@
 // ═════════════════════════════════════════════════════════════════════════════════
 
 /**
- * Obtener variable de entorno de forma segura
+ * Obtener variable de entorno de forma segura.
+ * No se usan secretos visibles por defecto en producción.
  */
 function getEnvVar($name, $default = null) {
-    return getenv($name) ?: $_ENV[$name] ?? $default;
+    $value = getenv($name);
+    if ($value !== false && $value !== '') {
+        return $value;
+    }
+
+    if (array_key_exists($name, $_ENV) && $_ENV[$name] !== '') {
+        return $_ENV[$name];
+    }
+
+    return $default;
+}
+
+function getRequiredEnvVar($name) {
+    $value = getEnvVar($name);
+    if ($value === null || trim((string)$value) === '') {
+        throw new RuntimeException("Falta la variable de entorno requerida: {$name}");
+    }
+    return $value;
+}
+
+function getBoolEnvVar($name, $default = false) {
+    $value = strtolower((string)getEnvVar($name, $default ? 'true' : 'false'));
+    return in_array($value, ['1', 'true', 'yes', 'on'], true);
+}
+
+function assert_runtime_config() {
+    $required = [
+        'DIFY_CHATBOT_API_KEY',
+        'DIFY_WORKFLOW_API_KEY',
+        'DB_HOST',
+        'DB_NAME',
+        'DB_USER',
+        'DB_PASS'
+    ];
+
+    $missing = [];
+    foreach ($required as $name) {
+        if (trim((string)getEnvVar($name, '')) === '') {
+            $missing[] = $name;
+        }
+    }
+
+    if (!empty($missing)) {
+        throw new RuntimeException('Faltan variables de entorno requeridas: ' . implode(', ', $missing));
+    }
+}
+
+function check_required_db_tables(array $tables) {
+    $db = db_connect();
+    $stmt = $db->query("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'");
+    $existing = array_map('strval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    $missing = [];
+
+    foreach ($tables as $table) {
+        if (!in_array($table, $existing, true)) {
+            $missing[] = $table;
+        }
+    }
+
+    return [
+        'connected' => true,
+        'missing' => $missing,
+        'present' => array_values(array_intersect($tables, $existing))
+    ];
 }
 
 // Cargar variables desde el archivo .env si existe localmente
@@ -51,53 +115,79 @@ if (file_exists($env_path)) {
 // ═════════════════════════════════════════════════════════════════════════════════
 // DIFY AI - Configuración Centralizada
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DIFY_CHATBOT_API_KEY', getEnvVar('DIFY_CHATBOT_API_KEY', 'app-ZDU95DtbTtW4FEaduH8bgpNH'));
+define('DIFY_CHATBOT_API_KEY', getRequiredEnvVar('DIFY_CHATBOT_API_KEY'));
 define('DIFY_CHATBOT_URL', getEnvVar('DIFY_CHATBOT_URL', 'https://api.dify.ai/v1/chat-messages'));
 
-define('DIFY_WORKFLOW_API_KEY', getEnvVar('DIFY_WORKFLOW_API_KEY', 'app-shft6rz0SXSVZWSSPdqPH1S9'));
+define('DIFY_WORKFLOW_API_KEY', getRequiredEnvVar('DIFY_WORKFLOW_API_KEY'));
 define('DIFY_WORKFLOW_URL', getEnvVar('DIFY_WORKFLOW_URL', 'https://api.dify.ai/v1/workflows/run'));
 
 define('DIFY_TIMEOUT', (int)getEnvVar('DIFY_TIMEOUT', 60));
 
 // ═════════════════════════════════════════════════════════════════════════════════
-// BASE DE DATOS - PostgreSQL / Neon.tech
+// BASE DE DATOS - PostgreSQL / Neon.tech (Render + Neon)
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DB_HOST', getEnvVar('DB_HOST', 'ep-winter-queen-af6tc66y-pooler.c-2.us-west-2.aws.neon.tech'));
-define('DB_NAME', getEnvVar('DB_NAME', 'neondb'));
-define('DB_USER', getEnvVar('DB_USER', 'neondb_owner'));
-define('DB_PASS', getEnvVar('DB_PASS', 'npg_eOUvM7qXj0SZ'));
+define('DB_HOST', getRequiredEnvVar('DB_HOST'));
+define('DB_NAME', getRequiredEnvVar('DB_NAME'));
+define('DB_USER', getRequiredEnvVar('DB_USER'));
+define('DB_PASS', getRequiredEnvVar('DB_PASS'));
 define('DB_PORT', getEnvVar('DB_PORT', '5432'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // APLICACIÓN - Configuración General
 // ═════════════════════════════════════════════════════════════════════════════════
-define('APP_NAME', 'La Cueva del Güero');
-define('APP_VERSION', '2.0.2');
-define('APP_ENV', 'production');  // development, staging, production
+define('APP_NAME', getEnvVar('APP_NAME', 'La Cueva del Güero'));
+define('APP_VERSION', getEnvVar('APP_VERSION', '2.0.2'));
+define('APP_ENV', strtolower(getEnvVar('APP_ENV', 'production')));
+define('APP_DEBUG', getBoolEnvVar('APP_DEBUG', false));
 define('ADMIN_USER', getEnvVar('ADMIN_USER', 'admin'));
-define('ADMIN_PASS', getEnvVar('ADMIN_PASS', 'eldesmadredelGuero1'));
+define('ADMIN_PASS', getEnvVar('ADMIN_PASS', 'Cueva2026!'));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // FUNCIÓN: Conexión a Base de Datos
 // ═════════════════════════════════════════════════════════════════════════════════
 function db_connect() {
     try {
-        $isCloudSqlSocket = (strpos(DB_HOST, '/cloudsql/') === 0 || substr_count(DB_HOST, ':') === 2);
-        $isPostgres = ($isCloudSqlSocket || DB_PORT == '5432' || strpos(DB_HOST, 'neon.tech') !== false || strpos(DB_HOST, 'supabase') !== false);
+        $host = DB_HOST;
+        $port = DB_PORT;
+        $database = DB_NAME;
+        $user = DB_USER;
+        $pass = DB_PASS;
+
+        if (preg_match('/^postgresql:\/\//i', $host)) {
+            $parsed = parse_url($host);
+            if (is_array($parsed) && isset($parsed['host'])) {
+                $host = $parsed['host'];
+                $port = $parsed['port'] ?? $port;
+                $database = isset($parsed['path']) ? ltrim($parsed['path'], '/') : $database;
+                $user = $parsed['user'] ?? $user;
+                $pass = $parsed['pass'] ?? $pass;
+            }
+        }
+
+        $isCloudSqlSocket = (strpos($host, '/cloudsql/') === 0 || substr_count($host, ':') === 2);
+        $isPostgres = ($isCloudSqlSocket || $port == '5432' || strpos($host, 'neon.tech') !== false || strpos($host, 'supabase') !== false);
         
         if ($isCloudSqlSocket) {
-            $socketPath = (strpos(DB_HOST, '/cloudsql/') === 0) ? DB_HOST : '/cloudsql/' . DB_HOST;
-            $dsn = "pgsql:host={$socketPath};port=" . DB_PORT . ";dbname=" . DB_NAME;
+            $socketPath = (strpos($host, '/cloudsql/') === 0) ? $host : '/cloudsql/' . $host;
+            $dsn = "pgsql:host={$socketPath};port={$port};dbname={$database}";
         } elseif ($isPostgres) {
-            $dsn = 'pgsql:host=' . DB_HOST . 
-                   ';port=' . DB_PORT . 
-                   ';dbname=' . DB_NAME . 
+                 $dsn = 'pgsql:host=' . $host .
+                     ';port=' . $port .
+                     ';dbname=' . $database .
                    ';sslmode=require' .
-                   ';connect_timeout=3';
+                   ';connect_timeout=10';
+
+            if (strpos($host, 'neon.tech') !== false) {
+                $endpoint = preg_replace('/-pooler\./', '.', $host);
+                $endpoint = preg_replace('/\..*$/', '', $endpoint);
+                if ($endpoint !== '' && stripos($endpoint, 'ep-') === 0) {
+                    $dsn .= ';options=endpoint=' . $endpoint;
+                }
+            }
         } else {
-            $dsn = 'mysql:host=' . DB_HOST . 
-                   ';port=' . DB_PORT . 
-                   ';dbname=' . DB_NAME . 
+                 $dsn = 'mysql:host=' . $host .
+                     ';port=' . $port .
+                     ';dbname=' . $database .
                    ';charset=utf8mb4';
         }
         
@@ -108,7 +198,7 @@ function db_connect() {
             PDO::ATTR_PERSISTENT         => false
         ];
         
-        $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
+        $pdo = new PDO($dsn, $user, $pass, $options);
         return $pdo;
     } catch (PDOException $e) {
         error_log('Database Connection Error: ' . $e->getMessage());
@@ -311,7 +401,7 @@ function call_gemini_generate($payload, $apiKey = null) {
         return ['success' => false, 'error' => 'No hay claves de API de Gemini configuradas.'];
     }
 
-    $models = ['gemini-3.6-flash', 'gemini-3-flash-preview'];
+    $models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
     $lastError = '';
 
     foreach ($models as $model) {

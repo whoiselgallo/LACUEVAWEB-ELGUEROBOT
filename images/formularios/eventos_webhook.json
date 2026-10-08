@@ -1,0 +1,16 @@
+[
+    {
+        "id": "EVT-SYS-001",
+        "tipo": "sistema_iniciado",
+        "titulo": "🚀 Monitor de Webhooks y Centro de Avisos Activo",
+        "icono": "fa-satellite-dish",
+        "color": "#00FFFF",
+        "timestamp": "2026-10-08 07:50:00",
+        "origen": "sistema_cueva",
+        "datos": {
+            "estado": "Monitoreo en vivo activado",
+            "eventos_soportados": "Entrevistas, Correcciones, Tracking de Episodios, Kanban, Analíticas, Blogs y Votaciones"
+        },
+        "leido": false
+    }
+]

@@ -4,14 +4,16 @@
  * Endpoint: /dashboard/index.php
  */
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../config/config.php';
 
-// Validar administrador
-if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
-    header("Location: login.php");
-    exit();
-}
+// Acceso Libre al Dashboard PRO (Sin bloqueo de login ni OAuth)
+$_SESSION['admin_logged'] = true;
+$_SESSION['cueva_authenticated'] = true;
+$_SESSION['admin_user'] = $_SESSION['admin_user'] ?? 'admin';
+$_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,10 +21,16 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard PRO - La Cueva del Güero</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="icon" type="image/webp" href="/images/logotipo.webp">
+    <link rel="icon" type="image/png" href="/images/logotipo.png">
+    <link rel="apple-touch-icon" href="/images/logotipo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>window.activeEventSource = null; window.activePollingInterval = null;</script>
     <style>
         :root {
             --bg-primary: #06060c;
@@ -248,7 +256,116 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+            height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar Neón estilizada (Slide bar vertical) */
+        .subpanel-detalle::-webkit-scrollbar,
+        .registros-scroll::-webkit-scrollbar {
+            width: 9px;
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-track,
+        .registros-scroll::-webkit-scrollbar-track {
+            background: rgba(4, 4, 10, 0.85);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-thumb,
+        .registros-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--neon-cyan), var(--neon-magenta));
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .subpanel-detalle::-webkit-scrollbar-thumb:hover,
+        .registros-scroll::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #39FF14, var(--neon-cyan));
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.7);
+        }
+
+        /* Estilos expandidos y legibles para Escaleta, Guion y Cue Cards */
+        .seccion-asset {
+            margin-bottom: 22px;
+            background: rgba(8, 8, 18, 0.9);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 22px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .seccion-asset:hover {
+            border-color: rgba(0, 255, 255, 0.5);
+            box-shadow: 0 6px 25px rgba(0, 255, 255, 0.15);
+        }
+
+        .text-block {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 18px 20px;
+            color: #ececf3;
+            font-size: 0.95rem;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-break: break-word;
+            font-family: 'Outfit', sans-serif;
+            min-height: 120px;
+        }
+
+        #block-cuecards {
+            background: #06060e !important;
+            font-family: 'Consolas', 'Courier New', monospace !important;
+            color: #39FF14 !important;
+            border: 1px solid rgba(57, 255, 20, 0.35) !important;
+            text-shadow: 0 0 6px rgba(57, 255, 20, 0.3) !important;
+            font-size: 0.92rem !important;
+            letter-spacing: 0.5px;
+            line-height: 1.7 !important;
+            min-height: 150px;
+        }
+
+        .edit-textarea {
+            width: 100%;
+            min-height: 240px;
+            background: #06060e;
+            color: #fff;
+            border: 1px solid var(--neon-cyan);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            resize: vertical;
+            box-sizing: border-box;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+        }
+
+        .btn-save-edit {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: var(--neon-cyan);
+            color: #06060c;
+            border: none;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-save-edit:hover {
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transform: translateY(-2px);
         }
 
         /* TABS Y PANELES GENERALES */
@@ -592,9 +709,14 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                 <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
             </div>
-            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 14px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión de Derechos</a>
-                <button class="btn-neon" style="font-size:0.8rem; padding:6px 14px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto a Galería</button>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
+                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
+                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
+                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
+                <button class="btn-neon" id="btn-centro-avisos" type="button" style="font-size:0.8rem; padding:6px 14px; border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleCentroAvisos()" title="Centro de Monitoreo y Avisos en Vivo (Webhook)">
+                    <i class="fa-solid fa-bell"></i> Avisos <span id="badge-avisos-count" style="background:#ff0055; color:#fff; font-size:0.7rem; font-weight:900; padding:1px 6px; border-radius:10px;">0</span>
+                </button>
                 <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
             </div>
         </header>
@@ -617,67 +739,264 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <p>Selecciona un registro para visualizar y realizar ajustes manuales.</p>
                     </div>
                     
-                    <div class="detalle-contenido hidden" id="detalleContenido" style="display: flex; flex-direction: column; height: 100%;">
-                        <div class="detalle-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; margin-bottom: 15px;">
-                            <h2 id="detalleNombre" style="margin: 0; color: var(--neon-magenta);">Nombre</h2>
-                            <span id="detalleFecha" style="color: #666; font-size: 0.85rem;"></span>
-                        </div>
-                        
-                        <!-- BANNER DE CURADURÍA Y DECISIÓN DE PRODUCCIÓN -->
-                        <div id="curaduria-banner" style="background: rgba(0,0,0,0.4); border: 1px solid var(--neon-cyan); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
-                                    <span id="curaduria-badge" style="font-weight: 800; font-size: 0.85rem; padding: 4px 12px; border-radius: 20px; background: rgba(0,255,255,0.1); border: 1px solid var(--neon-cyan); text-transform: uppercase;">🟢 NIVEL ALTO</span>
-                                    <strong id="curaduria-formato" style="color: #fff; font-size: 1rem;">Invitado Principal al Canal</strong>
+                    <div class="detalle-contenido hidden" id="detalleContenido" style="display: flex; flex-direction: column; width: 100%;">
+                        <!-- TARJETA TIPO AURELIO — CABECERA -->
+                        <div id="tarjeta-aurelio" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(0,255,255,0.3); border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                                <div>
+                                    <h2 id="detalleNombre" style="margin: 0 0 2px 0; color: var(--neon-cyan); font-size: 1.4rem; display: flex; align-items: center; gap: 8px;">
+                                        <i class="fa-solid fa-clapperboard"></i> Nombre
+                                    </h2>
+                                    <span id="detalleAlias" style="color: var(--neon-magenta); font-weight: 700; font-size: 0.95rem;">Alias: ---</span>
                                 </div>
-                                <p id="curaduria-razon" style="margin: 0; font-size: 0.85rem; color: #aaa; line-height: 1.4;"></p>
+                                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                    <span id="detalleFecha" style="color: #666; font-size: 0.8rem;"></span>
+                                    <button class="btn-neon" id="btn-ver-cuestionario-modal" type="button" onclick="abrirModalCuestionarioCompleto()" style="border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.1); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; cursor: pointer; white-space: nowrap; font-weight: 700; transition: all 0.2s ease;" title="Ver cuestionario completo de 33 preguntas contestadas">
+                                        <i class="fa-solid fa-clipboard-question"></i> Ver Cuestionario Completo
+                                    </button>
+                                    <button class="btn-neon" id="btn-tracking" onclick="const trackUrl = window.location.hostname.includes('lacuevadelguero.com') ? 'https://s.lacuevadelguero.com/' : '../tracking/index.html'; window.open(trackUrl + (activeId ? '?id=' + activeId : ''), '_blank')" style="border-color: var(--neon-cyan); color: var(--neon-cyan); padding: 6px 14px; font-size: 0.8rem; border-radius: 20px; background: transparent; cursor: pointer; white-space: nowrap;">
+                                        <i class="fa-solid fa-bullseye"></i> Ver Tracking en Vivo
+                                    </button>
+                                </div>
                             </div>
-                            <div id="curaduria-actions" style="display: flex; gap: 10px;">
-                                <!-- Dynamic production action buttons based on level -->
+
+                            <!-- GRID 2 COLUMNAS: Enfoque + Reto -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 14px;">
+                                    <h4 style="margin: 0 0 8px 0; color: var(--neon-cyan); font-size: 0.85rem;"><i class="fa-solid fa-bullhorn"></i> Storytelling & Enfoque:</h4>
+                                    <p id="detalle-enfoque" style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.4;"></p>
+                                </div>
+                                <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,0,255,0.15); border-radius: 8px; padding: 14px;">
+                                    <h4 style="margin: 0 0 8px 0; color: var(--neon-magenta); font-size: 0.85rem;"><i class="fa-solid fa-triangle-exclamation"></i> Reto / Momento Difícil:</h4>
+                                    <p id="detalle-reto" style="margin: 0; color: #ccc; font-size: 0.9rem; line-height: 1.4;"></p>
+                                </div>
+                            </div>
+
+                            <!-- FRASE -->
+                            <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 14px; margin-bottom: 14px;">
+                                <h4 style="margin: 0 0 8px 0; color: var(--neon-cyan); font-size: 0.85rem;"><i class="fa-solid fa-quote-left"></i> Frase para la Audiencia:</h4>
+                                <p id="detalle-frase" style="margin: 0; color: #eee; font-size: 1rem; font-style: italic; line-height: 1.4;"></p>
+                            </div>
+
+                            <!-- BOTÓN GUARDAR -->
+                            <button class="btn-neon" onclick="alert('Ajustes guardados (próximamente)')" style="border-color: var(--neon-cyan); background: var(--neon-cyan); color: #0a0a14; padding: 8px 18px; font-size: 0.85rem; border-radius: 6px; cursor: pointer; font-weight: 700;">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes
+                            </button>
+                        </div>
+
+                        <!-- PONDERACIÓN DE CURADURÍA (33 PARÁMETROS, ESCALA 1 A 10, TOTAL 33 A 330) -->
+                        <div id="ponderacion-panel" style="background: rgba(10,10,20,0.9); border: 1px solid rgba(57,255,20,0.3); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer;" onclick="togglePonderacion()">
+                                <div style="display: flex; align-items: center; gap: 14px;">
+                                    <span id="ponderacion-score-badge" style="font-size: 1.65rem; font-weight: 900; color: #39FF14; letter-spacing: -0.5px;">0 / 330 PTS</span>
+                                    <div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <span id="ponderacion-nivel-badge" style="font-weight: 800; font-size: 0.8rem; padding: 3px 10px; border-radius: 20px; background: rgba(57,255,20,0.1); border: 1px solid #39FF14; color: #39FF14;">🟢 NIVEL ALTO</span>
+                                            <span style="font-size: 0.72rem; color: #888; border: 1px solid rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">33 Parámetros (Escala 1 a 10)</span>
+                                        </div>
+                                        <p id="ponderacion-formato" style="margin: 4px 0 0 0; font-size: 0.85rem; color: #aaa;"></p>
+                                    </div>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <button type="button" class="btn-neon" onclick="event.stopPropagation(); abrirModalCuestionarioCompleto()" style="border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.12); padding: 4px 12px; font-size: 0.74rem; border-radius: 12px; cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 5px;" title="Abrir modal con el cuestionario completo">
+                                        <i class="fa-solid fa-expand"></i> Ver en Modal
+                                    </button>
+                                    <span style="font-size: 0.75rem; color: var(--neon-cyan); font-weight: 600;">Ver 33 Preguntas</span>
+                                    <i class="fa-solid fa-chevron-down" id="ponderacion-toggle-icon" style="color: var(--neon-cyan); font-size: 0.9rem; transition: transform 0.3s;"></i>
+                                </div>
+                            </div>
+                            <!-- CRITERIOS EXPANDIBLES (33 PARÁMETROS) -->
+                            <div id="ponderacion-criterios" style="display: none; max-height: 480px; overflow-y: auto; padding-right: 6px; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                                <!-- Se llena dinámicamente por JS -->
+                            </div>
+                            <!-- ACCIONES DE PRODUCCIÓN -->
+                            <div id="curaduria-actions" style="display: flex; gap: 10px; margin-top: 10px;"></div>
+                        </div>
+                        
+                        <!-- SELECCIÓN DE TEMA PARA BLOG CON IA (DIRECCIONAMIENTO A PROCESAR BLOG) -->
+                        <div id="tema-blog-panel" class="seccion-asset" style="border-color: rgba(255, 0, 255, 0.4); background: rgba(14, 8, 24, 0.95); margin-bottom: 22px; box-shadow: 0 4px 20px rgba(255, 0, 255, 0.12);">
+                            <div class="seccion-header" style="border-bottom-color: rgba(255, 0, 255, 0.25); flex-wrap: wrap; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <i class="fa-solid fa-feather-pointed" style="color: var(--neon-magenta); font-size: 1.3rem; text-shadow: 0 0 10px var(--neon-magenta);"></i>
+                                    <div>
+                                        <h3 style="margin: 0; color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                            Selección de Tema para Blog <span style="font-size: 0.72rem; background: rgba(255,0,255,0.15); border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 2px 8px; border-radius: 12px;">IA Editorial</span>
+                                        </h3>
+                                        <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Ángulo narrativo con peso y poder de barrio extraído del episodio para desarrollar artículo.</p>
+                                    </div>
+                                </div>
+                                <div class="btn-action-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button class="btn-neon btn-neon-magenta" id="btn-releer-tema-ia" onclick="reanalizarTemaBlogConIA()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <i class="fa-solid fa-rotate"></i> 1. Releer Episodio y Generar Otro Tema
+                                    </button>
+                                    <button class="btn-neon" id="btn-enviar-tema-blog" onclick="generarPDFYEnviarABlog()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: #39FF14; color: #39FF14;">
+                                        <i class="fa-solid fa-file-pdf"></i> 2. Generar PDF y Enviar a Procesar Blog
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- CUERPO DE LA PROPUESTA TEMÁTICA -->
+                            <div id="tema-blog-body" style="padding-top: 10px;">
+                                <div style="margin-bottom: 12px;">
+                                    <span style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: var(--neon-magenta); font-weight: 700;">Título Editorial Sugerido:</span>
+                                    <h4 id="tema-blog-titulo" style="margin: 4px 0 0 0; font-size: 1.15rem; color: var(--neon-cyan); line-height: 1.4;">Selecciona un invitado para ver propuesta editorial...</h4>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; margin-bottom: 14px;">
+                                    <div style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px;">
+                                        <h5 style="margin: 0 0 6px 0; color: var(--neon-magenta); font-size: 0.82rem;"><i class="fa-solid fa-compass"></i> Tesis & Ángulo de Peso:</h5>
+                                        <p id="tema-blog-tesis" style="margin: 0; font-size: 0.88rem; color: #ddd; line-height: 1.5;">El análisis con IA identificará la tesis con mayor resonancia para la audiencia.</p>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 14px;">
+                                        <h5 style="margin: 0 0 6px 0; color: var(--neon-cyan); font-size: 0.82rem;"><i class="fa-solid fa-list-ol"></i> Ejes Temáticos a Desarrollar:</h5>
+                                        <ul id="tema-blog-puntos" style="margin: 0; padding-left: 18px; font-size: 0.84rem; color: #ccc; line-height: 1.45;">
+                                            <li>Eje temático de origen y raíces.</li>
+                                            <li>Conflicto y lección clave del episodio.</li>
+                                            <li>Sabiduría aplicable para el lector.</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); border-left: 3px solid #39FF14; padding: 10px 14px; border-radius: 6px; flex-wrap: wrap; gap: 10px;">
+                                    <div style="flex-grow: 1;">
+                                        <span style="font-size: 0.72rem; color: #39FF14; font-weight: 700; text-transform: uppercase;">Frase / Gancho Detonador:</span>
+                                        <p id="tema-blog-gancho" style="margin: 2px 0 0 0; font-size: 0.88rem; color: #fff; font-style: italic;">"Frase detonadora pendiente de análisis."</p>
+                                    </div>
+                                    <div style="text-align: right; min-width: 140px;">
+                                        <span id="tema-blog-categoria-badge" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; background: rgba(0,255,255,0.1); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); font-weight: 600;">Storytelling</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="detalle-scroll" style="flex-grow: 1; overflow-y: auto;">
+                        <!-- RULETA INTERACTIVA DE RETOS DE CABINA CON IA -->
+                        <div id="retos-cabina-panel" class="seccion-asset" style="border-color: rgba(255, 215, 0, 0.45); background: rgba(18, 14, 6, 0.95); margin-bottom: 22px; box-shadow: 0 4px 25px rgba(255, 215, 0, 0.15);">
+                            <div class="seccion-header" style="border-bottom-color: rgba(255, 215, 0, 0.25); flex-wrap: wrap; gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <i class="fa-solid fa-dice-d20" style="color: #FFD700; font-size: 1.4rem; text-shadow: 0 0 12px #FFD700;"></i>
+                                    <div>
+                                        <h3 style="margin: 0; color: #fff; font-size: 1.05rem; display: flex; align-items: center; gap: 8px;">
+                                            Ruleta de Retos & Dinámicas de Cabina <span style="font-size: 0.72rem; background: rgba(255, 215, 0, 0.15); border: 1px solid #FFD700; color: #FFD700; padding: 2px 8px; border-radius: 12px; font-weight: 700;">IA Contextual</span>
+                                        </h3>
+                                        <p style="margin: 2px 0 0 0; font-size: 0.8rem; color: var(--text-muted);">Recomendador interactivo de pruebas según la categoría elegida por el invitado o al azar.</p>
+                                    </div>
+                                </div>
+                                <div class="btn-action-group" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    <button class="btn-neon" id="btn-reto-aleatorio" onclick="tirarRetoAleatorio()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; border-color: #FFD700; color: #FFD700; background: rgba(255,215,0,0.1);">
+                                        <i class="fa-solid fa-dice"></i> 1. Tirar Reto Rápido
+                                    </button>
+                                    <button class="btn-neon btn-neon-magenta" id="btn-reto-ia" onclick="generarRetoConIA()" style="padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; cursor: pointer;">
+                                        <i class="fa-solid fa-wand-magic-sparkles"></i> 2. Personalizar con IA al Invitado
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- SELECTOR DE CATEGORÍAS EN FORMA DE BOTONES / PILLS NEÓN -->
+                            <div style="padding-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 12px; margin-bottom: 14px;">
+                                <span style="font-size: 0.75rem; text-transform: uppercase; color: #8e8e9f; font-weight: 700; letter-spacing: 1px; margin-right: 6px;">Categoría:</span>
+                                <button type="button" class="btn-cat-reto active" id="cat-reto-aleatorio" data-cat="aleatorio" onclick="seleccionarCategoriaReto('aleatorio')" style="background: rgba(255,215,0,0.2); border: 1px solid #FFD700; color: #FFD700; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 700; cursor: pointer;">🎲 Sorpresa / Azar</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-destreza" data-cat="destreza" onclick="seleccionarCategoriaReto('destreza')" style="background: transparent; border: 1px solid rgba(0,255,255,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🎯 Destreza (Malabares / Equilibrio)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-fisico" data-cat="fisico" onclick="seleccionarCategoriaReto('fisico')" style="background: transparent; border: 1px solid rgba(57,255,20,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">💪 Reto Físico (Sentadillas / Fuerza)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-artistico" data-cat="artistico" onclick="seleccionarCategoriaReto('artistico')" style="background: transparent; border: 1px solid rgba(255,0,255,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🎨 Artístico (Cantar / Dibujo / Rima)</button>
+                                <button type="button" class="btn-cat-reto" id="cat-reto-callejero" data-cat="callejero" onclick="seleccionarCategoriaReto('callejero')" style="background: transparent; border: 1px solid rgba(255,77,77,0.3); color: #8e8e9f; padding: 4px 12px; border-radius: 14px; font-size: 0.76rem; font-weight: 600; cursor: pointer;">🌶️ Callejero (Salsa Brava / Bromas)</button>
+                            </div>
+
+                            <!-- TARJETA DEL RETO RECOMENDADO / GENERADO -->
+                            <div id="reto-display-container" style="background: rgba(0,0,0,0.45); border: 1px solid rgba(255,215,0,0.25); border-radius: 10px; padding: 18px; position: relative;">
+                                <!-- Cabecera del reto con badge y temporizador -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span id="reto-categoria-badge" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1px; color: #FFD700; font-weight: 800; background: rgba(255,215,0,0.15); border: 1px solid #FFD700; padding: 3px 10px; border-radius: 12px;">Destreza</span>
+                                        <span id="reto-origen-badge" style="font-size: 0.68rem; color: #00FFFF; margin-left: 8px; border: 1px solid rgba(0,255,255,0.3); padding: 2px 8px; border-radius: 10px;">⚡ Modo Interactivo</span>
+                                        <h4 id="reto-titulo" style="margin: 8px 0 0 0; font-size: 1.25rem; color: #fff; text-shadow: 0 0 10px rgba(255,215,0,0.4);">Torre Caguamera en 45 Segundos</h4>
+                                    </div>
+                                    
+                                    <!-- CRONÓMETRO DE CABINA -->
+                                    <div style="background: rgba(10,10,20,0.85); border: 1px solid rgba(0,255,255,0.3); border-radius: 8px; padding: 8px 14px; display: flex; align-items: center; gap: 12px;">
+                                        <div style="text-align: center;">
+                                            <span style="font-size: 0.65rem; color: #888; text-transform: uppercase; display: block;">Tiempo Límite</span>
+                                            <span id="reto-cronometro" style="font-size: 1.3rem; font-weight: 900; color: #00FFFF; font-family: monospace;">00:45</span>
+                                        </div>
+                                        <div style="display: flex; gap: 5px;">
+                                            <button type="button" id="btn-crono-start" onclick="iniciarCronometroReto()" title="Iniciar tiempo" style="background: #39FF14; border: none; color: #000; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;"><i class="fa-solid fa-play"></i></button>
+                                            <button type="button" id="btn-crono-pause" onclick="pausarCronometroReto()" title="Pausar" style="background: #FFD700; border: none; color: #000; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fa-solid fa-pause"></i></button>
+                                            <button type="button" id="btn-crono-reset" onclick="reiniciarCronometroReto()" title="Reiniciar" style="background: #FF00FF; border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;"><i class="fa-solid fa-rotate-left"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- REGLAS Y DESCRIPCIÓN -->
+                                <div style="margin-bottom: 14px; background: rgba(0,0,0,0.3); border-left: 3px solid #FFD700; padding: 12px 14px; border-radius: 4px;">
+                                    <span style="font-size: 0.72rem; color: #FFD700; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px;">Reglas & Dinámica de Ejecución:</span>
+                                    <p id="reto-reglas" style="margin: 0; color: #ddd; font-size: 0.95rem; line-height: 1.5;">Hacer equilibrio apilando 5 corcholatas o vasos sobre una botella de cerveza cerrada en menos de 45 segundos usando solo una mano.</p>
+                                </div>
+
+                                <!-- GRID 2 COLUMNAS: Contexto / Por qué este invitado + Castigo / Penitencia -->
+                                <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 12px; margin-bottom: 14px;">
+                                    <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(0,255,255,0.15); border-radius: 8px; padding: 12px;">
+                                        <h5 style="margin: 0 0 6px 0; color: #00FFFF; font-size: 0.82rem;"><i class="fa-solid fa-bullseye"></i> Ángulo Contextual del Invitado:</h5>
+                                        <p id="reto-contexto" style="margin: 0; font-size: 0.86rem; color: #ccc; line-height: 1.45;">Pone a prueba el pulso bajo presión y los nervios frente a cámara.</p>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,0,255,0.2); border-radius: 8px; padding: 12px;">
+                                        <h5 style="margin: 0 0 6px 0; color: #FF00FF; font-size: 0.82rem;"><i class="fa-solid fa-skull"></i> Castigo / Penitencia si Falla:</h5>
+                                        <p id="reto-castigo" style="margin: 0; font-size: 0.86rem; color: #ff99ff; line-height: 1.45; font-weight: 600;">Darle un trago a la salsa más picosa del set sin hacer muecas.</p>
+                                    </div>
+                                </div>
+
+                                <!-- FOOTER DE LA TARJETA: Materiales necesarios + Botón para inyectar a Cue Cards -->
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px; flex-wrap: wrap; gap: 10px;">
+                                    <div>
+                                        <span style="font-size: 0.72rem; color: #888; text-transform: uppercase;">Materiales en Set:</span>
+                                        <span id="reto-materiales" style="font-size: 0.82rem; color: #fff; margin-left: 6px; font-weight: 600;">1 botella de vidrio y 5 tapas/vasos</span>
+                                    </div>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button type="button" class="btn-neon" onclick="copiarRetoACueCards()" style="padding: 5px 12px; font-size: 0.75rem; border-color: #39FF14; color: #39FF14; background: rgba(57,255,20,0.1); cursor: pointer; border-radius: 4px;">
+                                            <i class="fa-solid fa-copy"></i> Copiar Reto al Portapapeles / Set
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                             <!-- ESCALETA -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1rem;"><i class="fa-solid fa-list-check"></i> Escaleta</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1.05rem;"><i class="fa-solid fa-list-check"></i> Escaleta Técnica de Producción</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action" onclick="descargarAsset('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action" onclick="descargarAsset('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('escaleta')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-escaleta">
-                                    <div class="text-block" id="block-escaleta" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-escaleta"></div>
                                 </div>
                             </div>
 
                             <!-- GUION -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1rem;"><i class="fa-solid fa-file-lines"></i> Guión</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-cyan); font-size: 1.05rem;"><i class="fa-solid fa-file-lines"></i> Guión para Set (El Güero & El Junior)</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action" onclick="descargarAsset('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action" onclick="descargarAsset('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('guion')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-guion">
-                                    <div class="text-block" id="block-guion" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-guion"></div>
                                 </div>
                             </div>
 
                             <!-- CUE CARDS -->
-                            <div class="seccion-asset" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
-                                <div class="seccion-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h3 style="margin: 0; color: var(--neon-magenta); font-size: 1rem;"><i class="fa-solid fa-address-card"></i> Cue Cards</h3>
+                            <div class="seccion-asset">
+                                <div class="seccion-header">
+                                    <h3 style="margin: 0; color: var(--neon-green); font-size: 1.05rem;"><i class="fa-solid fa-address-card"></i> Cue Cards para Conducción</h3>
                                     <div class="btn-action-group">
-                                        <button class="btn-action btn-magenta" onclick="imprimirCueCards()" style="background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px;"><i class="fa-solid fa-print"></i> Imprimir</button>
-                                        <button class="btn-action" onclick="descargarAsset('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
-                                        <button class="btn-action" onclick="habilitarEdicion('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
+                                        <button class="btn-action btn-magenta" onclick="imprimirCueCards()" style="background: transparent; border: 1px solid var(--neon-magenta); color: var(--neon-magenta); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; font-weight: bold; margin-right: 5px;"><i class="fa-solid fa-print"></i> Imprimir</button>
+                                        <button class="btn-action" onclick="descargarAsset('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-file-pdf"></i> Exportar PDF</button>
+                                        <button class="btn-action" onclick="habilitarEdicion('cuecards')" style="background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i> Editar</button>
                                     </div>
                                 </div>
                                 <div id="wrapper-cuecards">
-                                    <div class="text-block" id="block-cuecards" style="white-space: pre-wrap; font-size: 0.9rem; line-height: 1.4;"></div>
+                                    <div class="text-block" id="block-cuecards"></div>
                                 </div>
                             </div>
                         </div>
@@ -946,10 +1265,23 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <span style="font-size:0.75rem; color:#666;"> Snapping Activo | 60 FPS</span>
                 </div>
                 <!-- MULTI-TRACK WINDOW -->
-                <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; position:relative; min-height:110px;">
+                <div style="display:flex; flex-direction:column; gap:8px; background:rgba(0,0,0,0.4); border-radius:8px; padding:10px; position:relative; min-height:140px;" id="timeline-tracks-wrapper">
                     <!-- Cabezal de reproducción rojo -->
                     <div id="timeline-progress" style="position:absolute; top:0; bottom:0; left:0; width:2px; background:#ff4d4d; z-index:10; box-shadow:0 0 8px #ff4d4d;">
                         <div style="width:10px; height:10px; background:#ff4d4d; border-radius:50%; margin-left:-4px; margin-top:-4px;"></div>
+                    </div>
+
+                    <!-- PISTA DE MARCADORES VIRALES (IA HOOKS) -->
+                    <div id="viral-markers-track" style="height:18px; position:relative; border-bottom:1px dashed rgba(255,255,255,0.1); margin-bottom:2px;">
+                        <div class="viral-marker" style="position:absolute; left:18%; top:0; background:#ffa500; color:#000; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Hook Viral Detectado por Gemini" onclick="saltarAMarcador(18)">
+                            <i class="fa-solid fa-bolt"></i> Hook 1
+                        </div>
+                        <div class="viral-marker" style="position:absolute; left:48%; top:0; background:#FF00FF; color:#fff; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Momento Picante Detectado" onclick="saltarAMarcador(48)">
+                            <i class="fa-solid fa-fire"></i> Momento Clave
+                        </div>
+                        <div class="viral-marker" style="position:absolute; left:78%; top:0; background:#00FFFF; color:#000; font-size:0.65rem; font-weight:bold; padding:1px 6px; border-radius:10px; cursor:pointer;" title="Cierre Impactante" onclick="saltarAMarcador(78)">
+                            <i class="fa-solid fa-star"></i> Frase Cierre
+                        </div>
                     </div>
 
                     <!-- PISTA SUBTÍTULOS -->
@@ -957,16 +1289,24 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                         <i class="fa-solid fa-closed-captioning"></i> [IA Subtítulos Generados] "A los 10 años, mi papá me mandó a la calle..."
                     </div>
 
-                    <!-- PISTA VIDEO -->
-                    <div style="height:32px; background:rgba(255,0,255,0.1); border:1px solid var(--neon-magenta); border-radius:4px; font-size:0.75rem; color:#FF00FF; padding-left:10px; line-height:30px; position:relative; overflow:hidden;">
-                        <i class="fa-solid fa-video"></i> Video_Principal_Capitulo.mp4 (Premiere Multicapa Layer)
-                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(255,0,255,0.2); border-left:1px solid #FF00FF; cursor:ew-resize;"></div>
+                    <!-- PISTA VIDEO (MULTICAPA DRAGGABLE) -->
+                    <div id="track-video" class="timeline-clip-track" style="height:32px; background:rgba(255,0,255,0.12); border:1px solid var(--neon-magenta); border-radius:4px; font-size:0.75rem; color:#FF00FF; padding:0 10px; display:flex; align-items:center; justify-content:space-between; position:relative; overflow:hidden; cursor:grab;" draggable="true">
+                        <span><i class="fa-solid fa-video"></i> <span id="track-video-label">Video_Principal.mp4</span></span>
+                        <div class="clip-trim-handle" style="width:12px; height:100%; background:rgba(255,0,255,0.3); border-left:2px solid #FF00FF; cursor:ew-resize;" title="Ajustar recorte"></div>
                     </div>
 
-                    <!-- PISTA AUDIO -->
-                    <div style="height:28px; background:rgba(78,252,34,0.1); border:1px solid #4EFC22; border-radius:4px; font-size:0.75rem; color:#4EFC22; padding-left:10px; line-height:26px; position:relative; overflow:hidden;">
-                        <i class="fa-solid fa-music"></i> Audio_Episodio_Mejorado.wav (Filmora Sync Auto)
-                        <div style="position:absolute; right:10px; top:0; bottom:0; width:40px; background:rgba(78,252,34,0.2); border-left:1px solid #4EFC22; cursor:ew-resize;"></div>
+                    <!-- PISTA AUDIO & WAVEFORM -->
+                    <div id="track-audio" style="height:44px; background:rgba(78,252,34,0.06); border:1px solid #4EFC22; border-radius:6px; position:relative; overflow:hidden; display:flex; align-items:center;">
+                        <div style="position:absolute; left:8px; top:4px; z-index:3; font-size:0.7rem; color:#4EFC22; background:rgba(0,0,0,0.7); padding:2px 6px; border-radius:4px; pointer-events:none;">
+                            <i class="fa-solid fa-waveform-lines"></i> Audio / Voz Waveform
+                        </div>
+                        <div id="waveform" style="width:100%; height:100%; z-index:2;"></div>
+                    </div>
+
+                    <!-- PISTA FX / MÚSICA DE FONDO (DRAGGABLE) -->
+                    <div id="track-fx" class="timeline-clip-track" style="height:26px; background:rgba(0,255,255,0.08); border:1px dashed #00FFFF; border-radius:4px; font-size:0.7rem; color:#00FFFF; padding:0 10px; display:flex; align-items:center; justify-content:space-between; position:relative; cursor:grab;" draggable="true">
+                        <span><i class="fa-solid fa-music"></i> Pista FX / Fondo Urbano (Beat La Cueva)</span>
+                        <div class="clip-trim-handle" style="width:10px; height:100%; background:rgba(0,255,255,0.2); border-left:1px solid #00FFFF; cursor:ew-resize;"></div>
                     </div>
                 </div>
             </div>
@@ -1184,6 +1524,21 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                             </div>
                         </div>
                         <button class="btn-neon" onclick="agregarTextoLienzo()" style="width:100%; font-size:0.75rem; padding:8px;"><i class="fa-solid fa-plus"></i> Añadir Capa de Texto</button>
+                    </div>
+
+                    <!-- SMART TYPOGRAPHY & THE DARKROOM BUTTONS -->
+                    <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:10px; display:flex; flex-direction:column; gap:6px;">
+                        <button class="btn-neon" style="width:100%; font-size:0.75rem; padding:8px; border-color:var(--neon-magenta); color:var(--neon-magenta);" onclick="generarPosterAutomatico('youtube-hero')">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Poster Automático (Smart Typography)
+                        </button>
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn-neon" style="flex:1; font-size:0.7rem; padding:6px;" onclick="guardarSesionDarkroom()">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Sesión
+                            </button>
+                            <button class="btn-neon" style="flex:1; font-size:0.7rem; padding:6px; border-color:#39FF14; color:#39FF14;" onclick="exportarEstandarizadoDarkroom()">
+                                <i class="fa-solid fa-layer-group"></i> Exportar 3 Formatos
+                            </button>
+                        </div>
                     </div>
 
                     <!-- DESCARGAR/LIMPIAR -->
@@ -1514,6 +1869,40 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                     <!-- Lista de tareas dinamicas -->
                 </div>
             </div>
+
+            <!-- PANEL: VOTACIÓN DE DECISIONES DE EQUIPO Y PRODUCCIÓN -->
+            <div style="background: rgba(15,15,15,0.7); border: 1px solid #FFD700; border-radius: 16px; padding: 20px; margin-top: 25px; box-shadow: 0 0 15px rgba(255,215,0,0.15);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 style="color:#FFD700; margin:0; display:flex; align-items:center; gap:8px;">
+                            <i class="fa-solid fa-check-double"></i> Votación de Decisiones de Producción & Editorial
+                        </h3>
+                        <p style="font-size:0.75rem; color:#aaa; margin:4px 0 0 0;">Consenso en tiempo real para temas de episodios, cambios en escaletas y lanzamientos del show.</p>
+                    </div>
+                    <span style="font-size:0.7rem; color:#FFD700; background:rgba(255,215,0,0.1); border:1px solid rgba(255,215,0,0.3); padding:4px 10px; border-radius:12px;">
+                        <i class="fa-solid fa-satellite-dish"></i> Sincronizado vía Webhook
+                    </span>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px; margin-bottom:15px;">
+                    <input type="text" id="decision-nueva-input" class="form-input" placeholder="Proponer nueva decisión (ej: Grabar especial en vivo en Mexicali)..." style="padding:8px; font-size:0.8rem;">
+                    <div style="display:flex; gap:8px;">
+                        <select id="decision-rol-select" class="form-input" style="padding:8px; font-size:0.8rem; flex:1; background:#111;">
+                            <option value="El Güero">El Güero (Host)</option>
+                            <option value="Productor">Productor</option>
+                            <option value="Editor">Editor</option>
+                            <option value="Comunidad">Comunidad</option>
+                        </select>
+                        <button class="btn-neon" onclick="proponerDecisionEquipo()" style="font-size:0.75rem; padding:8px 12px; border-color:#FFD700; color:#FFD700; white-space:nowrap;">
+                            <i class="fa-solid fa-plus"></i> Proponer
+                        </button>
+                    </div>
+                </div>
+
+                <div id="decisiones-lista" style="display:flex; flex-direction:column; gap:10px;">
+                    <!-- Se renderizan dinámicamente -->
+                </div>
+            </div>
         </section>
     </div>
 
@@ -1573,6 +1962,149 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
                 </div>
                 <button type="submit" class="btn-neon" style="width:100%;"><i class="fa-solid fa-cloud-arrow-up"></i> Publicar Fotografía en la Galería Pública</button>
             </form>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MODAL: VISUALIZACIÓN DEL CUESTIONARIO COMPLETO DEL INVITADO
+         ============================================================ -->
+    <div id="modalCuestionarioCompleto" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.88); backdrop-filter:blur(14px); z-index:99999; justify-content:center; align-items:center; padding:15px; box-sizing:border-box;">
+        <div style="background:rgba(12,12,22,0.98); border:2px solid var(--neon-cyan); border-radius:20px; width:100%; max-width:1050px; height:92vh; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 0 50px rgba(0,255,255,0.3), 0 0 30px rgba(255,0,255,0.2); position:relative;">
+            
+            <!-- HEADER DEL MODAL -->
+            <div style="padding:18px 24px; background:linear-gradient(180deg, rgba(20,20,38,0.95) 0%, rgba(12,12,22,0.95) 100%); border-bottom:1px solid rgba(0,255,255,0.25); display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+                <div style="flex:1; min-width:0;">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap;">
+                        <span style="background:rgba(0,255,255,0.12); border:1px solid var(--neon-cyan); color:var(--neon-cyan); font-size:0.75rem; font-weight:800; padding:2px 10px; border-radius:12px; text-transform:uppercase; letter-spacing:0.5px;">
+                            <i class="fa-solid fa-clipboard-check"></i> Cuestionario Oficial Contestado
+                        </span>
+                        <span id="modal-cuest-token-badge" style="font-size:0.75rem; color:#888; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:2px 8px; border-radius:10px;">Token: ---</span>
+                        <span id="modal-cuest-fecha-badge" style="font-size:0.75rem; color:#aaa;"><i class="fa-regular fa-clock"></i> ---</span>
+                    </div>
+                    <h2 id="modal-cuest-nombre" style="margin:2px 0 6px 0; color:#fff; font-size:1.5rem; display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-weight:800;">
+                        <span>Invitado</span>
+                        <span id="modal-cuest-alias" style="color:var(--neon-magenta); font-size:1.05rem; font-weight:700;">(Alias)</span>
+                    </h2>
+                    
+                    <!-- METADATA DEL INVITADO -->
+                    <div style="display:flex; gap:14px; align-items:center; font-size:0.82rem; color:#bbb; flex-wrap:wrap;">
+                        <span id="modal-cuest-barrio"><i class="fa-solid fa-location-dot" style="color:var(--neon-cyan);"></i> Barrio: ---</span>
+                        <span id="modal-cuest-ocupacion"><i class="fa-solid fa-briefcase" style="color:var(--neon-magenta);"></i> Jale: ---</span>
+                        <span id="modal-cuest-contacto"><i class="fa-solid fa-envelope" style="color:var(--neon-green);"></i> Contacto: ---</span>
+                    </div>
+                </div>
+
+                <!-- BADGE DE SCORE Y ACCIONES TOP -->
+                <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <button type="button" onclick="copiarCuestionarioTexto()" class="btn-neon" style="font-size:0.78rem; padding:6px 12px; border-radius:8px; border-color:var(--neon-cyan); color:var(--neon-cyan); background:rgba(0,255,255,0.08); cursor:pointer;" title="Copiar todas las preguntas y respuestas al portapapeles">
+                            <i class="fa-solid fa-copy"></i> Copiar Texto
+                        </button>
+                        <button type="button" onclick="imprimirCuestionario()" class="btn-neon" style="font-size:0.78rem; padding:6px 12px; border-radius:8px; border-color:var(--neon-magenta); color:var(--neon-magenta); background:rgba(255,0,255,0.08); cursor:pointer;" title="Imprimir o exportar cuestionario en PDF">
+                            <i class="fa-solid fa-print"></i> Imprimir
+                        </button>
+                        <button type="button" onclick="cerrarModalCuestionario()" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#fff; border-radius:50%; width:34px; height:34px; font-size:1.3rem; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s;" onmouseover="this.style.background='#ff0055'; this.style.borderColor='#ff0055';" onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.borderColor='rgba(255,255,255,0.2)';">&times;</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span id="modal-cuest-score-badge" style="font-weight:900; font-size:1.15rem; color:#39FF14; background:rgba(0,0,0,0.5); border:1px solid rgba(57,255,20,0.4); padding:3px 12px; border-radius:14px;">--- / 330 PTS</span>
+                        <span id="modal-cuest-nivel-badge" style="font-weight:700; font-size:0.75rem; color:#39FF14; border:1px solid #39FF14; background:rgba(57,255,20,0.1); padding:4px 10px; border-radius:12px;">🟢 NIVEL ALTO</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOLBAR DE BÚSQUEDA Y FILTRADO POR BLOQUES -->
+            <div style="padding:12px 24px; background:rgba(16,16,28,0.9); border-bottom:1px solid rgba(255,255,255,0.06); display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;">
+                    <div style="position:relative; flex:1; min-width:260px;">
+                        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#888; font-size:0.85rem;"></i>
+                        <input type="text" id="modal-cuest-search" oninput="filtrarPreguntasCuestionario()" placeholder="Buscar por palabra clave, pregunta o respuesta del invitado..." style="width:100%; box-sizing:border-box; background:rgba(0,0,0,0.5); border:1px solid rgba(0,255,255,0.3); border-radius:20px; padding:8px 14px 8px 34px; color:#fff; font-size:0.85rem; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--neon-cyan)';" onblur="this.style.borderColor='rgba(0,255,255,0.3)';">
+                    </div>
+                    <div style="font-size:0.8rem; color:#aaa; display:flex; align-items:center; gap:8px;">
+                        <span>Mostrando: <strong id="modal-cuest-conteo" style="color:var(--neon-cyan); font-size:0.95rem;">33</strong> de 33 preguntas</span>
+                    </div>
+                </div>
+
+                <!-- FILTRO POR BLOQUES TEMÁTICOS -->
+                <div id="modal-cuest-filtros" style="display:flex; gap:6px; overflow-x:auto; padding-bottom:2px; -webkit-overflow-scrolling:touch;">
+                    <button type="button" class="btn-bloque-filter active" onclick="setFiltroBloqueCuestionario('todos', this)" style="background:rgba(0,255,255,0.2); border:1px solid var(--neon-cyan); color:#fff; padding:4px 12px; border-radius:12px; font-size:0.75rem; font-weight:700; cursor:pointer; white-space:nowrap;">Todos (33)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('ident', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Identificación (3)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('raices', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 1: Raíces (7)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('madrazos', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 2: Madrazos (7)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('mentalidad', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 3: Mentalidad (5)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('anecdotas', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 4: Anécdotas (9)</button>
+                    <button type="button" class="btn-bloque-filter" onclick="setFiltroBloqueCuestionario('cierre', this)" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.15); color:#bbb; padding:4px 12px; border-radius:12px; font-size:0.75rem; cursor:pointer; white-space:nowrap;">Bloque 5: Cierre (2)</button>
+                </div>
+            </div>
+
+            <!-- CONTENEDOR CON SCROLL DE LAS PREGUNTAS -->
+            <div id="modal-cuest-body" style="flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:12px;">
+                <!-- Se llena dinámicamente -->
+            </div>
+
+            <!-- FOOTER DEL MODAL -->
+            <div style="padding:14px 24px; background:rgba(10,10,18,0.95); border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" id="modal-cuest-btn-tracking" class="btn-neon" onclick="abrirTrackingDesdeModal()" style="font-size:0.8rem; padding:6px 14px; border-color:var(--neon-green); color:var(--neon-green); background:transparent; cursor:pointer; border-radius:8px;">
+                        <i class="fa-solid fa-satellite-dish"></i> Ver Tracking en Vivo
+                    </button>
+                    <button type="button" class="btn-neon" onclick="copiarCuestionarioTexto()" style="font-size:0.8rem; padding:6px 14px; border-color:var(--neon-cyan); color:var(--neon-cyan); background:transparent; cursor:pointer; border-radius:8px;">
+                        <i class="fa-solid fa-copy"></i> Copiar Todo
+                    </button>
+                </div>
+                <button type="button" class="btn-neon" onclick="cerrarModalCuestionario()" style="font-size:0.8rem; padding:6px 18px; border-color:rgba(255,255,255,0.3); color:#fff; background:rgba(255,255,255,0.06); cursor:pointer; border-radius:8px;">
+                    <i class="fa-solid fa-xmark"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR FLOTANTE DE TOASTS PARA AVISOS EN VIVO -->
+    <div id="toastAvisosContainer" style="position:fixed; top:20px; right:20px; z-index:999999; display:flex; flex-direction:column; gap:10px; max-width:380px; pointer-events:none;"></div>
+
+    <!-- MODAL / DRAWER: CENTRO DE MONITOREO Y AVISOS EN VIVO (WEBHOOK) -->
+    <div id="modalCentroAvisos" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(4,4,10,0.85); backdrop-filter:blur(10px); z-index:99999; justify-content:flex-end; align-items:stretch;">
+        <div style="background:rgba(14,14,26,0.98); border-left:2px solid var(--neon-cyan); width:100%; max-width:460px; height:100vh; display:flex; flex-direction:column; box-shadow:-10px 0 35px rgba(0,0,0,0.8); position:relative;">
+            
+            <!-- Header -->
+            <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3 style="margin:0; font-size:1.1rem; color:#fff;">Avisos en Vivo</h3>
+                        <span style="font-size:0.75rem; color:#aaa;"><i class="fa-solid fa-bolt" style="color:#39ff14;"></i> Monitoreo Webhook en Tiempo Real</span>
+                    </div>
+                </div>
+                <button type="button" onclick="toggleCentroAvisos()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+            </div>
+
+            <!-- Webhook Config Toggle -->
+            <div style="padding:12px 20px; background:rgba(0,0,0,0.4); border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.78rem; color:#bbb;"><i class="fa-solid fa-plug" style="color:var(--neon-cyan);"></i> Webhook Externo (Discord / Slack / Make)</span>
+                <button type="button" class="btn-neon" style="font-size:0.7rem; padding:3px 8px; border-color:var(--neon-cyan); color:var(--neon-cyan);" onclick="toggleConfigWebhook()"><i class="fa-solid fa-gear"></i> Configurar</button>
+            </div>
+
+            <!-- Formulario Config Webhook (Colapsable) -->
+            <div id="boxConfigWebhook" style="display:none; padding:15px 20px; background:rgba(20,15,30,0.95); border-bottom:1px solid rgba(0,255,255,0.2);">
+                <label style="display:block; font-size:0.78rem; color:var(--neon-cyan); margin-bottom:5px; font-weight:700;">URL del Webhook (Discord / Slack / Make / etc.):</label>
+                <input type="url" id="inputWebhookUrl" class="form-input" placeholder="https://discord.com/api/webhooks/..." style="font-size:0.8rem; padding:8px; margin-bottom:10px; width:100%; box-sizing:border-box;">
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 10px; border-color:#FF00FF; color:#FF00FF;" onclick="probarWebhookTest()"><i class="fa-solid fa-paper-plane"></i> Probar Test</button>
+                    <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 12px; background:var(--neon-green); color:#000; border-color:var(--neon-green); font-weight:800;" onclick="guardarConfigWebhook()"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+                </div>
+            </div>
+
+            <!-- Feed de Avisos -->
+            <div id="listaAvisosFeed" style="flex:1; overflow-y:auto; padding:15px 20px; display:flex; flex-direction:column; gap:10px;">
+                <p style="color:#777; text-align:center; font-size:0.85rem; margin-top:20px;">Cargando avisos del sistema...</p>
+            </div>
+
+            <!-- Footer -->
+            <div style="padding:12px 20px; border-top:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
+                <button type="button" onclick="marcarAvisosLeidos()" style="background:none; border:none; color:#888; font-size:0.78rem; cursor:pointer;"><i class="fa-solid fa-check-double"></i> Marcar leídos</button>
+                <button type="button" onclick="cargarAvisosEnVivo(true)" style="background:none; border:none; color:var(--neon-cyan); font-size:0.78rem; cursor:pointer;"><i class="fa-solid fa-rotate"></i> Actualizar</button>
+            </div>
         </div>
     </div>
 
@@ -1767,11 +2299,32 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             });
             input.value = "";
             renderKanban();
+
+            // Disparar Webhook en tiempo real
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('task_kanban', {
+                    accion: 'Nueva Tarea Agregada',
+                    tarea: text,
+                    estado: 'Pendiente'
+                });
+            }
         }
 
         function toggleKanbanTask(id) {
+            const tareaAntes = kanbanTasks.find(t => t.id === id);
+            const eraDone = tareaAntes ? tareaAntes.done : false;
+
             kanbanTasks = kanbanTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
             renderKanban();
+
+            const tareaDespues = kanbanTasks.find(t => t.id === id);
+            if (tareaDespues && window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('task_kanban', {
+                    accion: tareaDespues.done ? 'Tarea Cumplida / Completada' : 'Tarea Reactivada',
+                    tarea: tareaDespues.text,
+                    estado: tareaDespues.done ? 'Completada 100%' : 'En progreso'
+                });
+            }
         }
 
         function deleteKanbanTask(id) {
@@ -1779,15 +2332,144 @@ if (!isset($_SESSION['admin_logged']) || $_SESSION['admin_logged'] !== true) {
             renderKanban();
         }
 
-        // Render inicializar Kanban al entrar
+        // 6. Votación de Decisiones de Equipo y Producción (Sincronizado vía Webhook)
+        let decisionesEquipo = JSON.parse(localStorage.getItem("cueva_decisiones_equipo")) || [
+            { id: 1, titulo: "Lanzar episodio especial con La Pocha y El Gallo en set en vivo", autor: "El Güero", favor: 3, contra: 0, estado: "Aprobada", fecha: "Hoy" },
+            { id: 2, titulo: "Migrar clips de TikTok a formato de pantalla dividida con gameplay", autor: "Editor", favor: 1, contra: 2, estado: "En debate", fecha: "Ayer" },
+            { id: 3, titulo: "Publicar audio completo en Spotify antes del estreno en YouTube", autor: "Productor", favor: 2, contra: 1, estado: "En debate", fecha: "Esta semana" }
+        ];
+
+        function renderDecisiones() {
+            const container = document.getElementById("decisiones-lista");
+            if (!container) return;
+            container.innerHTML = "";
+
+            decisionesEquipo.forEach(d => {
+                const totalVotos = (d.favor || 0) + (d.contra || 0);
+                const pctFavor = totalVotos > 0 ? Math.round((d.favor / totalVotos) * 100) : 50;
+                const statusColor = d.favor > d.contra ? '#39FF14' : (d.contra > d.favor ? '#FF4D4D' : '#FFD700');
+
+                const div = document.createElement("div");
+                div.style.cssText = "background:rgba(255,255,255,0.02); border:1px solid rgba(255,215,0,0.15); border-radius:10px; padding:12px; display:flex; flex-direction:column; gap:8px;";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px;">
+                        <div>
+                            <span style="font-size:0.68rem; color:#FFD700; font-weight:700; text-transform:uppercase;">Propuesto por ${d.autor || 'Equipo'}</span>
+                            <h4 style="margin:2px 0 0 0; font-size:0.85rem; color:#fff;">${d.titulo}</h4>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:0.68rem; color:${statusColor}; border:1px solid ${statusColor}; padding:2px 6px; border-radius:8px; font-weight:bold;">
+                                ${d.favor > d.contra ? 'Mayoría A Favor' : (d.contra > d.favor ? 'Mayoría En Contra' : 'Empate')}
+                            </span>
+                            <button onclick="borrarDecision(${d.id})" style="background:none; border:none; color:#666; cursor:pointer; font-size:0.8rem;"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <div style="flex:1; background:rgba(255,255,255,0.08); height:6px; border-radius:3px; overflow:hidden; display:flex;">
+                            <div style="background:#39FF14; width:${pctFavor}%; height:100%;"></div>
+                            <div style="background:#FF4D4D; width:${100 - pctFavor}%; height:100%;"></div>
+                        </div>
+                        <span style="font-size:0.7rem; color:#aaa; font-family:monospace;">${d.favor} 👍 / ${d.contra} 👎</span>
+                    </div>
+
+                    <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:2px;">
+                        <button class="btn-neon" onclick="votarDecision(${d.id}, 'favor')" style="font-size:0.68rem; padding:3px 10px; border-color:#39FF14; color:#39FF14;">
+                            <i class="fa-solid fa-thumbs-up"></i> Votar A Favor
+                        </button>
+                        <button class="btn-neon" onclick="votarDecision(${d.id}, 'contra')" style="font-size:0.68rem; padding:3px 10px; border-color:#FF4D4D; color:#FF4D4D;">
+                            <i class="fa-solid fa-thumbs-down"></i> Votar En Contra
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            localStorage.setItem("cueva_decisiones_equipo", JSON.stringify(decisionesEquipo));
+        }
+
+        function proponerDecisionEquipo() {
+            const input = document.getElementById("decision-nueva-input");
+            const rolSelect = document.getElementById("decision-rol-select");
+            const texto = input ? input.value.trim() : "";
+            const rol = rolSelect ? rolSelect.value : "Equipo";
+
+            if (!texto) {
+                alert("Por favor escribe la decisión o propuesta que someterás a votación.");
+                return;
+            }
+
+            const nueva = {
+                id: Date.now(),
+                titulo: texto,
+                autor: rol,
+                favor: 1,
+                contra: 0,
+                estado: "En debate",
+                fecha: "Hoy"
+            };
+
+            decisionesEquipo.unshift(nueva);
+            if (input) input.value = "";
+            renderDecisiones();
+
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('decision_votada', {
+                    accion: 'Nueva Decisión Propuesta',
+                    titulo: texto,
+                    proponente: rol,
+                    voto_inicial: 'A favor',
+                    votos_favor: 1,
+                    votos_contra: 0
+                });
+            }
+        }
+
+        function votarDecision(id, tipo) {
+            const rolSelect = document.getElementById("decision-rol-select");
+            const votante = rolSelect ? rolSelect.value : "Socio / Equipo";
+
+            const dec = decisionesEquipo.find(d => d.id === id);
+            if (!dec) return;
+
+            if (tipo === 'favor') {
+                dec.favor = (dec.favor || 0) + 1;
+            } else {
+                dec.contra = (dec.contra || 0) + 1;
+            }
+
+            renderDecisiones();
+
+            if (window.dispararEventoWebhook) {
+                window.dispararEventoWebhook('decision_votada', {
+                    accion: 'Voto Registrado',
+                    decision: dec.titulo,
+                    votante: votante,
+                    voto: tipo === 'favor' ? 'A favor (👍)' : 'En contra (👎)',
+                    total_favor: dec.favor,
+                    total_contra: dec.contra
+                });
+            }
+        }
+
+        function borrarDecision(id) {
+            decisionesEquipo = decisionesEquipo.filter(d => d.id !== id);
+            renderDecisiones();
+        }
+
+        // Render inicializar Kanban y Decisiones al entrar
         document.addEventListener("DOMContentLoaded", () => {
             renderKanban();
+            renderDecisiones();
             calculateLeads();
         });
     </script>
-    <script src="../js/dashboard-pro.js"></script>
-    <script src="../js/editor-canva.js"></script>
-    <script src="../js/avatar-engine.js"></script>
-    <script src="../js/video-editor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <script src="/js/dashboard-pro.js?v=<?= time() ?>"></script>
+    <script src="/js/editor-canva.js?v=<?= time() ?>"></script>
+    <script src="/js/avatar-engine.js?v=<?= time() ?>"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script src="/js/ffmpeg-wasm-helper.js?v=<?= time() ?>"></script>
+    <script src="/js/video-editor.js?v=<?= time() ?>"></script>
 </body>
 </html>

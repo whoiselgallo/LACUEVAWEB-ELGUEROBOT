@@ -2,69 +2,175 @@
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Content-Type: application/json');
+header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    exit(0);
+    http_response_code(200);
+    exit;
 }
 
 require_once __DIR__ . '/../config/config.php';
 
-$method = $_SERVER['REQUEST_METHOD'];
+$action = $_GET['action'] ?? $_POST['action'] ?? 'get_status';
 
-if ($method === 'GET') {
-    $code = sanitize_input($_GET['code'] ?? '');
-    if (empty($code)) {
-        echo json_encode(['success' => false, 'error' => 'Codigo de seguimiento requerido.']);
-        exit;
-    }
-
-    // Buscar en la base de datos o en el archivo de invitados
-    $trackingFile = __DIR__ . '/../cache/invitados_tracking.json';
-    $trackingData = file_exists($trackingFile) ? json_decode(file_get_contents($trackingFile), true) : [];
-
-    if (isset($trackingData[$code])) {
-        echo json_encode(['success' => true, 'data' => $trackingData[$code]], JSON_UNESCAPED_UNICODE);
-        exit;
-    } else {
-        // Fallback de exhibición
-        echo json_encode([ 'success' => true, 'data' => [ 'code' => $code, 'nombre' => 'Invitado Especial', 'estado' => 'En Pre-producción', 'progreso' => 65, 'avatar_status' => 'Listo', 'hooks_status' => 'En Proceso', 'capitulo_status' => 'Programado' ] ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
+$pdo = null;
+try {
+    $pdo = db_connect();
+} catch (Exception $e) {
+    $pdo = null;
 }
 
-if ($method === 'POST') {
-    $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-    $nombre = sanitize_input($input['nombre'] ?? 'Invitado Noevo');
-    $telefono = sanitize_input($input['telefono'] ?? '');
-    $correo = sanitize_input($input['correo'] ?? '');
-    $resumen = $gnput['resumen'] ?? [];
+function getEnviosLocales() {
+    $file = __DIR__ . '/../images/formularios/cuestionarios_envios.json';
+    if (file_exists($file)) {
+        $data = json_decode(file_get_contents($file), true);
+        if (is_array($data)) return $data;
+    }
+    return [];
+}
 
-    // Generar Código Único (semilla: CUEVA-XXXX)
-    $code = 'CUEUA-' . upper(dechex(rand(1048576, 16777215)));
-
-    $trackingFile = __DIR__ . '/../cache/invitados_tracking.json';
-    $dir = dirname($trackingFile);
-    if (!is_dir($dir)) { @mkdir($dir, 0775, true); }
+if ($action === 'get_status') {
+    $code = trim($_GET['code'] ?? $_POST['code'] ?? '');
     
-    $trackingData = file_exists($trackingFile) ? json_decode(file_get_contents($trackingFile), true) : [];
-    
-    $trackingData[$code] = [
-        'code' => $code,
-        'nombre' => $nombre,
-        'telefono' => $telefono,
-        'correo' => $correo,
-        'estado' => 'Cuestionario Completado',
-        'progreso' => 25,
-        'fecha_registro' => date('Y-m-d H:i:s'),
-        'avatar_status' => 'En Cola de Diseño',
-        'hooks_status' => 'Generando Ganchos Virales',
-        'capitulo_status' => 'Programacion de Grabacion',
-        'respuestas' => $resumen
-    ];
+    if (empty($code)) {
+        echo json_encode(['status' => 'error', 'message' => 'Código no proporcionado']);
+        exit;
+    }
 
-    file_put_contents($trackingFile, json_encode($trackingData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    // 1. Buscar en BD
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT id, nombre, token, estado, fase_index, fecha_propuesta FROM invitados WHERE id::text = :code OR token = :code OR nombre ILIKE :code LIMIT 1");
+            $stmt->execute([':code' => $code]);
+            $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode([ 'success' => true, 'code' => $code, 'message' => 'Invitado registrado con éxito', 'url' => 'https://lacuevadelguero.com/tracking/index.php?code=' . $code ], JSON_UNESCAPED_UNICODE);
+            if ($invitado) {
+                echo json_encode([
+                    'status' => 'success',
+                    'invitado' => [
+                        'nombre' => $invitado['nombre'],
+                        'estado' => $invitado['estado'] ?? 'Ficha en Revisión',
+                        'fase_index' => (int)($invitado['fase_index'] ?? 1),
+                        'fecha_grabacion' => $invitado['fecha_propuesta'] ?? null
+                    ]
+                ]);
+                exit;
+            }
+        } catch (Exception $ex) {
+            // Seguir a fallback
+        }
+    }
+
+    // 2. Buscar en envíos recientes JSON
+    $envios = getEnviosLocales();
+    foreach ($envios as $env) {
+        if ((isset($env['token']) && strcasecmp($env['token'], $code) === 0) || (isset($env['id']) && strval($env['id']) === strval($code)) || (isset($env['nombre']) && stripos($env['nombre'], $code) !== false)) {
+            echo json_encode([
+                'status' => 'success',
+                'invitado' => [
+                    'nombre' => $env['nombre'],
+                    'estado' => $env['estado'] ?? 'Cuestionario Recibido',
+                    'fase_index' => (int)($env['fase_index'] ?? 1),
+                    'fecha_grabacion' => date('d/m/Y', strtotime('+7 days'))
+                ]
+            ]);
+            exit;
+        }
+    }
+
+    // 3. Fallback de demostración amigable
+    echo json_encode([
+        'status' => 'success',
+        'invitado' => [
+            'nombre' => 'Invitado de La Cueva',
+            'estado' => 'Cuestionario en Revisión de Producción',
+            'fase_index' => 1,
+            'fecha_grabacion' => date('d/m/Y', strtotime('+7 days'))
+        ]
+    ]);
     exit;
 }
+
+if ($action === 'recover_code') {
+    $query = trim($_GET['query'] ?? $_POST['query'] ?? '');
+    
+    if (empty($query)) {
+        echo json_encode(['status' => 'error', 'message' => 'Debes ingresar tu nombre']);
+        exit;
+    }
+
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("SELECT id, token, nombre FROM invitados WHERE nombre ILIKE :q LIMIT 1");
+            $stmt->execute([':q' => "%$query%"]);
+            $invitado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($invitado) {
+                $code = !empty($invitado['token']) ? $invitado['token'] : 'GUEST-' . $invitado['id'];
+                echo json_encode(['status' => 'success', 'code' => $code, 'nombre' => $invitado['nombre']]);
+                exit;
+            }
+        } catch (Exception $ex) {
+            // Seguir al fallback
+        }
+    }
+
+    $envios = getEnviosLocales();
+    foreach ($envios as $env) {
+        if (isset($env['nombre']) && stripos($env['nombre'], $query) !== false) {
+            $code = !empty($env['token']) ? $env['token'] : ('GUEST-' . ($env['id'] ?? '2026'));
+            echo json_encode(['status' => 'success', 'code' => $code, 'nombre' => $env['nombre']]);
+            exit;
+        }
+    }
+
+    // Si no existe, generamos un código asignado dinámico
+    $newCode = 'GUEST-' . strtoupper(substr(md5($query . time()), 0, 4));
+    echo json_encode([
+        'status' => 'success',
+        'code' => $newCode,
+        'nombre' => $query,
+        'message' => 'Nuevo código generado'
+    ]);
+    exit;
+}
+
+if ($action === 'update_phase' || $action === 'update_status') {
+    $code = trim($_GET['code'] ?? ($_POST['code'] ?? ''));
+    $fase_index = intval($_GET['fase_index'] ?? ($_POST['fase_index'] ?? 1));
+    $estado = trim($_GET['estado'] ?? ($_POST['estado'] ?? 'En Proceso'));
+    
+    $envios = getEnviosLocales();
+    $nombreInv = 'Invitado';
+    foreach ($envios as &$env) {
+        if ((isset($env['token']) && strcasecmp($env['token'], $code) === 0) || (isset($env['id']) && strval($env['id']) === strval($code))) {
+            $env['fase_index'] = $fase_index;
+            $env['estado'] = $estado;
+            $nombreInv = $env['nombre'] ?? $nombreInv;
+            break;
+        }
+    }
+    @file_put_contents(__DIR__ . '/../images/formularios/cuestionarios_envios.json', json_encode($envios, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+    
+    if ($pdo) {
+        try {
+            $stmt = $pdo->prepare("UPDATE invitados SET fase_index = :fase, estado = :estado WHERE token = :c OR id::text = :c");
+            $stmt->execute([':fase' => $fase_index, ':estado' => $estado, ':c' => $code]);
+        } catch (Exception $e) {}
+    }
+
+    try {
+        require_once __DIR__ . '/api-webhook.php';
+        dispararWebhook('tracking_actualizado', [
+            'invitado' => $nombreInv,
+            'token' => $code,
+            'fase' => "Fase {$fase_index}: {$estado}",
+            'fecha' => date('Y-m-d H:i:s')
+        ], 'panel_tracking');
+    } catch (Exception $e) {}
+    
+    echo json_encode(['status' => 'success', 'message' => 'Fase de tracking actualizada y notificada con webhook']);
+    exit;
+}
+
+echo json_encode(['status' => 'error', 'message' => 'Acción no válida']);

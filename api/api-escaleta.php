@@ -54,8 +54,13 @@ foreach ($campos as $c) {
 $momento = htmlspecialchars(trim($input['momento'] ?? 'Superación y resiliencia'), ENT_QUOTES, 'UTF-8');
 $logros  = htmlspecialchars(trim($input['logros'] ?? 'Éxito y consolidación'), ENT_QUOTES, 'UTF-8');
 
-$prompt = "# ROL: PRODUCTOR EJECUTIVO Y JEFE DE PISO - LA CUEVA DEL GÜERO PODCAST\n\n" .
-          "Genera la ESCALETA TÉCNICA DE PRODUCCIÓN, un RESUMEN DEL GUIÓN y las CUE CARDS para el set de grabación en Mexicali con el siguiente invitado:\n\n" .
+$prompt = "# ROL: DIRECTOR CREATIVO Y PRODUCTOR EJECUTIVO JAVIER GALLARDO 'EL GALLO' - LA CUEVA DEL GÜERO PODCAST\n\n" .
+          "Genera la ESCALETA TÉCNICA DE PRODUCCIÓN, un RESUMEN DEL GUIÓN y las CUE CARDS para el set de grabación en Mexicali, B.C.\n\n" .
+          "EQUIPO CANÓNICO DEL SHOW:\n" .
+          "- Personaje Principal & Mascota Inspiración: 'El Güero' el perro (presencia en set y marca).\n" .
+          "- CEO & Host Conductor: Ariel Higuera 'El Junior' (frente a micrófonos).\n" .
+          "- Director Creativo & Productor Ejecutivo: Javier Gallardo 'El Gallo' (dirección y dinámicas).\n" .
+          "- Socia Ángel & Finanzas: Maria Elena Anguiano 'La Mary' (administración y marcas).\n\n" .
           "- Invitado: {$datos['nombre']}\n" .
           "- Ocupación: {$datos['ocupacion']}\n" .
           "- Barrio: {$datos['barrio']}\n" .
@@ -68,9 +73,9 @@ $prompt = "# ROL: PRODUCTOR EJECUTIVO Y JEFE DE PISO - LA CUEVA DEL GÜERO PODCA
           "FORMATO DE SALIDA REQUERIDO:\n" .
           "Debes responder ESTRICTAMENTE un JSON válido (sin texto antes ni después) con las siguientes 3 claves:\n" .
           "{\n" .
-          "  \"escaleta\": \"(Texto detallado de la escaleta técnica con parrilla de tiempos por bloques, timecodes, dinámicas, menciones de patrocinadores y cortes)\",\n" .
-          "  \"guion\": \"(Estructura base del guión conversacional para El Güero y El Junior con ganchos y remates)\",\n" .
-          "  \"cue_cards\": \"(Lista de viñetas claras con las 5 preguntas más detonantes e incómodas para que El Güero las lea en cabina)\"\n" .
+          "  \"escaleta\": \"(Parrilla técnica con timecodes, tiros de cámara, cortes, menciones de marcas administradas por La Mary y coordinación de El Gallo)\",\n" .
+          "  \"guion\": \"(Estructura conversacional base para Ariel Higuera 'El Junior' con preguntas detonantes y remates)\",\n" .
+          "  \"cue_cards\": \"(Lista de viñetas claras con las preguntas más detonantes para que Ariel 'El Junior' las lea en cabina)\"\n" .
           "}";
 
 $payload = [

@@ -11,6 +11,25 @@ require_once __DIR__ . '/../config/config.php';
 try {
     $pdo = db_connect();
     echo "✓ Conectado a la base de datos PostgreSQL exitosamente.\n";
+
+    // Crear tabla invitados si no existe
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS invitados (
+            id               SERIAL PRIMARY KEY,
+            nombre           VARCHAR(255) NOT NULL,
+            ocupacion        TEXT,
+            signo            VARCHAR(50),
+            fecha_nacimiento DATE,
+            barrio           VARCHAR(255),
+            trayectoria      TEXT,
+            herida           TEXT,
+            incomodo         TEXT,
+            gustos           TEXT,
+            fecha_propuesta  DATE,
+            created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_invitados_nombre ON invitados (nombre);
+    ");
 } catch (Exception $e) {
     die("❌ Error de conexión: " . $e->getMessage() . "\n");
 }
