@@ -4,16 +4,31 @@
  * Endpoint nativo Vercel Serverless Function
  */
 
-// Función para obtener claves de Gemini con rotación
-function getGeminiApiKey() {
-    const rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
-    if (!rawKeys) return '';
-    const keys = rawKeys.split(',').map(k => k.trim()).filter(Boolean);
-    if (!keys.length) return '';
-    return keys[Math.floor(Math.random() * keys.length)];
+const fs = require('fs');
+const path = require('path');
+
+// Obtener todas las claves disponibles (desde process.env o .env local)
+function getAllGeminiKeys() {
+    let rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
+    
+    // Fallback: si no están en process.env, intentar leer .env local
+    if (!rawKeys) {
+        try {
+            const envPath = path.resolve(__dirname, '../.env');
+            if (fs.existsSync(envPath)) {
+                const content = fs.readFileSync(envPath, 'utf8');
+                const matchKeys = content.match(/GEMINI_API_KEYS=([^\r\n]+)/);
+                const matchKey = content.match(/GEMINI_API_KEY=([^\r\n]+)/);
+                rawKeys = (matchKeys && matchKeys[1]) || (matchKey && matchKey[1]) || '';
+            }
+        } catch (e) {}
+    }
+
+    if (!rawKeys) return [];
+    return rawKeys.split(',').map(k => k.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
 }
 
-// Motor de Respuestas Nativas Inteligentes de El Güero Bot
+// Motor de Respuestas Nativas Inteligentes de El Güero Bot (Fallback de Reglas)
 function gueroBotSmartResponse(query, visitType = 'guest') {
     const q = (query || '').toLowerCase();
 
@@ -64,9 +79,10 @@ function gueroBotSmartResponse(query, visitType = 'guest') {
     return "¡Qué onda carnal! 🐾 *olfatea la pantalla* Aquí en La Cueva del Güero andamos siempre al tiro. Si quieres jalarte como invitado llena tu [Cuestionario de Storytelling](storytelling-invitado.html) o mándale mensaje al Junior por [WhatsApp](https://wa.me/526862124372). ¡Pásale a la cueva!";
 }
 
-// Llamada a Gemini con timeout y modelos de respaldo
-async function callGemini(query, apiKey) {
-    if (!apiKey) return null;
+// Llamada multi-clave y multi-modelo a Google Gemini AI
+async function callGemini(query) {
+    const keys = getAllGeminiKeys();
+    if (!keys.length) return null;
 
     const systemPrompt = "# SYSTEM INSTRUCTIONS: EL GÜERO BOT - LA CUEVA DEL GÜERO PODCAST\n" +
         "- Identidad: Eres 'El Güero Bot', el perro guardián inteligente y mascota/imagen oficial del podcast 'La Cueva del Güero' en Mexicali, BC.\n" +
@@ -77,12 +93,12 @@ async function callGemini(query, apiKey) {
         "  * Maria Elena Anguiano 'La Mary': Socia Ángel del Proyecto y Administradora de Finanzas.\n" +
         "  * Javier Gallardo 'El Gallo': Socio Intelectual, Director Creativo y Productor Ejecutivo.\n" +
         "- WhatsApp oficial: +52 686 212 4372\n" +
-        "- Enlaces clave:\n" +
+        "- Enlaces clave del show (inclúyelos según la pregunta del usuario):\n" +
         "  * Cuestionario de invitado: storytelling-invitado.html\n" +
         "  * Tracking de episodio: https://s.lacuevadelguero.com/\n" +
         "  * Cesión de derechos: cesion-derechos.html\n" +
         "  * YouTube: https://www.youtube.com/@LacuevadelGueroPodcast\n" +
-        "- Respuestas directas, chidas y breves (máximo 3 o 4 oraciones).";
+        "- Respuestas directas, chidas, divertidas y breves (máximo 3 o 4 oraciones).";
 
     const payload = {
         contents: [
@@ -100,31 +116,40 @@ async function callGemini(query, apiKey) {
         }
     };
 
-    const models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
+    // Modelos activos verificados en producción
+    const models = [
+        'gemini-flash-latest',
+        'gemini-3.5-flash-lite',
+        'gemini-flash-lite-latest',
+        'gemini-3.1-flash-lite'
+    ];
 
-    for (const model of models) {
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 7000);
+    // Iterar a través de claves y modelos con failover automático
+    for (const apiKey of keys) {
+        for (const model of models) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 6500);
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
 
-            if (res.ok) {
-                const data = await res.json();
-                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (text && text.trim()) {
-                    return { text: text.trim(), model };
+                if (res.ok) {
+                    const data = await res.json();
+                    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text && text.trim()) {
+                        return { text: text.trim(), model };
+                    }
                 }
+            } catch (err) {
+                // Siguiente modelo/clave
             }
-        } catch (err) {
-            // Continúa con el siguiente modelo si falla o hace timeout
         }
     }
     return null;
@@ -135,12 +160,10 @@ async function logConversationToDb(userId, visitType, query, answer) {
     try {
         const dbUrl = process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED;
         if (!dbUrl || !dbUrl.includes('@')) return;
-        // Si hay URL de Neon válida con host HTTP de consulta
         const match = dbUrl.match(/postgresql:\/\/([^:]+):([^@]+)@([^/]+)\/(.+)/);
         if (!match) return;
         const [, user, pass, host, db] = match;
         
-        // Llamada fetch simple al endpoint de Neon SQL HTTP si el host es de neon
         if (host.includes('neon.tech')) {
             const cleanHost = host.replace(/-pooler\./, '.');
             const sqlEndpoint = `https://${cleanHost}/sql`;
@@ -158,7 +181,7 @@ async function logConversationToDb(userId, visitType, query, answer) {
             }).catch(() => {});
         }
     } catch (e) {
-        // Silencioso para no tumbar la respuesta del bot
+        // Silencioso
     }
 }
 
@@ -196,14 +219,11 @@ module.exports = async function handler(req, res) {
     let answer = '';
     let modelUsed = 'guero-bot-engine-v2';
 
-    // 1. Intentar Gemini AI si hay clave configurada
-    const apiKey = getGeminiApiKey();
-    if (apiKey) {
-        const geminiResult = await callGemini(query, apiKey);
-        if (geminiResult && geminiResult.text) {
-            answer = geminiResult.text;
-            modelUsed = geminiResult.model;
-        }
+    // 1. Invocar Gemini AI real con rotación de claves y modelos
+    const geminiResult = await callGemini(query);
+    if (geminiResult && geminiResult.text) {
+        answer = geminiResult.text;
+        modelUsed = geminiResult.model;
     }
 
     // 2. Si Gemini no está disponible o falló, usar el motor nativo de El Güero Bot
@@ -211,7 +231,7 @@ module.exports = async function handler(req, res) {
         answer = gueroBotSmartResponse(query, visitType);
     }
 
-    // 3. Registrar en BD de forma asíncrona (sin bloquear respuesta)
+    // 3. Registrar en BD de forma asíncrona
     logConversationToDb(userId, visitType, query, answer).catch(() => {});
 
     return res.status(200).json({

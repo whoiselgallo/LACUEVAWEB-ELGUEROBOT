@@ -40,6 +40,14 @@
       "dest": "/api/guero-bot.js"
     },
     {
+      "src": "/api/api-escaleta(\\.php)?",
+      "dest": "/api/ai-escaleta.js"
+    },
+    {
+      "src": "/api/api-hooks-ai(\\.php)?",
+      "dest": "/api/ai-hooks.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
