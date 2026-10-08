@@ -33,11 +33,11 @@
     },
     {
       "src": "/api/api-el-guero-bot\\.php",
-      "dest": "/api/api-el-guero-bot.js"
+      "dest": "/api/guero-bot.js"
     },
     {
       "src": "/api/api-el-guero-bot",
-      "dest": "/api/api-el-guero-bot.js"
+      "dest": "/api/guero-bot.js"
     },
     {
       "src": "/api/(.*)",
