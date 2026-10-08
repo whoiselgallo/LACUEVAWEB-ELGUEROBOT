@@ -1,6 +1,7 @@
 {
   "name": "lacuevaweb-elguerobot",
   "version": "2.5.0",
+  "type": "commonjs",
   "description": "Ecosistema Digital La Cueva del Güero & El Güero Bot",
   "engines": {
     "node": "24.x"
