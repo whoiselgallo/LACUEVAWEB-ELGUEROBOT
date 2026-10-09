@@ -192,13 +192,14 @@ $FALLBACK_INVITADOS = [
         'guion' => "GUIÓN - Sergio Coronado\nEl Güero: Hoy vamos a hablar de la raza que hace que las cosas funcionen...",
         'cue_cards' => "CUE CARDS\n• Preguntas rápidas de cabina y 3 hooks virales.",
         'curaduria' => [
-            'nivel' => 'MEDIO',
-            'badge' => '🟡 NIVEL MEDIO',
-            'formato' => 'Entrevista Corta / Segmento (10 min)',
-            'color' => '#00FFFF',
-            'razon' => 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.'
+            'nivel' => 'BAJO',
+            'badge' => '🔴 NIVEL BAJO',
+            'formato' => 'Micro-contenido / Reto en Cabina / Shorts (30 - 60 seg)',
+            'color' => '#FF00FF',
+            'razon' => 'Respuestas breves y sin ocupación fija. Inviable para formato largo; canalizar a micro-contenido y retos.'
         ],
-        'ponderacion' => ['score_total' => 78, 'criterios' => []]
+        'ponderacion_score' => 152,
+        'ponderacion' => ['score_total' => 152, 'criterios' => []]
     ],
     8 => [
         'id' => 8,

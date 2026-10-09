@@ -2,7 +2,7 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Plática con El Güero | Cuestionario Oficial de 33 Preguntas</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="shortcut icon" href="/favicon.ico">
@@ -10,6 +10,7 @@
   <link rel="apple-touch-icon" href="images/logotipo.png">
   
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/mobile-first-duo.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Permanent+Marker&display=swap" rel="stylesheet">
   
@@ -24,7 +25,39 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      min-height: 100dvh;
       box-sizing: border-box;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 0 !important;
+        align-items: stretch !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+      }
+      .chat-interview-card {
+        max-width: 100% !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        border-radius: 0 !important;
+        border: none !important;
+      }
+      .chat-header {
+        padding: 10px 14px !important;
+        padding-top: max(10px, var(--safe-top, 0px)) !important;
+      }
+      .chat-messages {
+        padding: 12px 14px !important;
+      }
+      .msg {
+        max-width: 90% !important;
+        padding: 12px 14px !important;
+        font-size: 0.94rem !important;
+      }
+      .chat-input-bar {
+        padding: 10px 12px !important;
+        padding-bottom: max(12px, var(--safe-bottom, 0px)) !important;
+      }
     }
     .chat-interview-card {
       width: 100%;

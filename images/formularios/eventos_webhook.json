@@ -1,5 +1,161 @@
 [
     {
+        "id": "EVT-20261008180617-592",
+        "tipo": "cuestionario_aprobado_produccion",
+        "titulo": "✅ Cuestionario Aprobado por Producción",
+        "icono": "fa-circle-check",
+        "color": "#39FF14",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "estado": "Aprobado 100% por Producción",
+            "fase": "Fase 2: Escaleta & Curaduría en marcha",
+            "curaduria_nivel": "ALTO",
+            "fecha_aprobacion": "2026-10-08 18:06:17"
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180617-558",
+        "tipo": "guion_narrativa_actualizada",
+        "titulo": "🎬 Guión, Escaleta y Narrativa Actualizados",
+        "icono": "fa-file-lines",
+        "color": "#FF00FF",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "motor_storytelling_ia",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "elementos_actualizados": "Escaleta de 5 bloques, Guión broadcast, Cue Cards de cabina y Storytelling sintetizado",
+            "estado": "Sincronizado automáticamente en base de datos y dashboard."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180617-809",
+        "tipo": "correccion_invitado_enviada",
+        "titulo": "✍️ Nuevas Respuestas Enviadas por Invitado",
+        "icono": "fa-pen-nib",
+        "color": "#00FFFF",
+        "timestamp": "2026-10-08 18:06:17",
+        "origen": "tracking_invitado",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "preguntas_modificadas": "P13, P25",
+            "total_modificadas": 2,
+            "estado": "Respuestas recibidas con éxito. Listo para revisión de producción."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180615-562",
+        "tipo": "solicitud_correccion_enviada",
+        "titulo": "⚠️ Solicitud de Corrección Enviada a Invitado",
+        "icono": "fa-triangle-exclamation",
+        "color": "#FF6600",
+        "timestamp": "2026-10-08 18:06:15",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "preguntas_observadas": 2,
+            "productor": "El Güero (Host Principal)",
+            "detalles": "\n• Pregunta 13 [Incoherente] - \"Contradice la respuesta 4 sobre quién manejaba tu música.\"\n• Pregunta 25 [Confusa] - \"Muy ambigua. La mesa requiere la exclusiva real con contexto.\"",
+            "enlace_tracking": "http:\/\/s.lacuevadelguero.com\/tracking\/?code=GUEST-5293"
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008180523-742",
+        "tipo": "solicitud_correccion_enviada",
+        "titulo": "⚠️ Solicitud de Corrección Enviada a Invitado",
+        "icono": "fa-triangle-exclamation",
+        "color": "#FF6600",
+        "timestamp": "2026-10-08 18:05:23",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Eduardo \"El Gallo\" Ramos",
+            "token": "GUEST-5293",
+            "preguntas_observadas": 2,
+            "productor": "El Güero (Host Principal)",
+            "detalles": "\n• Pregunta 13 [Incoherente] - \"Esta respuesta contradice lo platicado en la pregunta 4. Explica bien el problema con el mánager.\"\n• Pregunta 25 [Confusa] - \"Demasiado ambigua. La mesa de La Cueva requiere la anécdota real sin filtro.\"",
+            "enlace_tracking": "http:\/\/s.lacuevadelguero.com\/tracking\/?code=GUEST-5293"
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008175831-310",
+        "tipo": "cuestionario_aprobado_produccion",
+        "titulo": "✅ Cuestionario Aprobado por Producción",
+        "icono": "fa-circle-check",
+        "color": "#39FF14",
+        "timestamp": "2026-10-08 17:58:31",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Rosalva \"la pocha\"",
+            "token": "GUEST-POCHA",
+            "estado": "Aprobado 100% por Producción",
+            "fase": "Fase 2: Escaleta & Curaduría en marcha",
+            "curaduria_nivel": "ALTO",
+            "fecha_aprobacion": "2026-10-08 17:58:31"
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008175734-752",
+        "tipo": "guion_narrativa_actualizada",
+        "titulo": "🎬 Guión, Escaleta y Narrativa Actualizados",
+        "icono": "fa-file-lines",
+        "color": "#FF00FF",
+        "timestamp": "2026-10-08 17:57:34",
+        "origen": "motor_storytelling_ia",
+        "datos": {
+            "invitado": "Rosalva \"la pocha\"",
+            "token": "GUEST-POCHA",
+            "elementos_actualizados": "Escaleta de 5 bloques, Guión broadcast, Cue Cards de cabina y Storytelling sintetizado",
+            "estado": "Sincronizado automáticamente en base de datos y dashboard."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008175734-596",
+        "tipo": "correccion_invitado_enviada",
+        "titulo": "✍️ Nuevas Respuestas Enviadas por Invitado",
+        "icono": "fa-pen-nib",
+        "color": "#00FFFF",
+        "timestamp": "2026-10-08 17:57:34",
+        "origen": "tracking_invitado",
+        "datos": {
+            "invitado": "Rosalva \"la pocha\"",
+            "token": "GUEST-POCHA",
+            "preguntas_modificadas": "P12",
+            "total_modificadas": 1,
+            "estado": "Respuestas recibidas con éxito. Listo para revisión de producción."
+        },
+        "leido": false
+    },
+    {
+        "id": "EVT-20261008175705-683",
+        "tipo": "solicitud_correccion_enviada",
+        "titulo": "⚠️ Solicitud de Corrección Enviada a Invitado",
+        "icono": "fa-triangle-exclamation",
+        "color": "#FF6600",
+        "timestamp": "2026-10-08 17:57:05",
+        "origen": "dashboard_produccion",
+        "datos": {
+            "invitado": "Rosalva \"la pocha\"",
+            "token": "GUEST-POCHA",
+            "preguntas_observadas": 1,
+            "productor": "El Güero",
+            "detalles": "\n• Pregunta 12 [Confusa] - \"Platícanos con más detalle qué pasó en el otro lado\"",
+            "enlace_tracking": "http:\/\/s.lacuevadelguero.com\/tracking\/?code=GUEST-POCHA"
+        },
+        "leido": false
+    },
+    {
         "id": "EVT-SYS-001",
         "tipo": "sistema_iniciado",
         "titulo": "🚀 Monitor de Webhooks y Centro de Avisos Activo",

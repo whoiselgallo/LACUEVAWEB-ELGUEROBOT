@@ -2,13 +2,14 @@
 <html lang="es-MX">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Carta de Consentimiento y Cesión de Derechos - La Cueva del Güero</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="icon" type="image/webp" href="images/logotipo.webp">
     <link rel="icon" type="image/png" href="images/logotipo.png">
     <link rel="apple-touch-icon" href="images/logotipo.png">
+    <link rel="stylesheet" href="css/mobile-first-duo.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -35,6 +36,17 @@
             font-family: 'Outfit', sans-serif;
             line-height: 1.6;
             padding: 40px 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px 10px;
+                padding-bottom: max(24px, env(safe-area-inset-bottom));
+            }
+            .container {
+                padding: 24px 16px !important;
+                border-radius: 14px !important;
+            }
         }
 
         .container {

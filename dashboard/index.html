@@ -1,25 +1,8 @@
-<?php
-/**
- * Dashboard PRO Completo - La Cueva del Güero
- * Endpoint: /dashboard/index.php
- */
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-require_once __DIR__ . '/../config/config.php';
-
-// Acceso Libre al Dashboard PRO (Sin bloqueo de login ni OAuth)
-$_SESSION['admin_logged'] = true;
-$_SESSION['cueva_authenticated'] = true;
-$_SESSION['admin_user'] = $_SESSION['admin_user'] ?? 'admin';
-$_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
-?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Dashboard PRO - La Cueva del Güero</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -30,6 +13,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/mobile-first-duo.css">
     <script>window.activeEventSource = null; window.activePollingInterval = null;</script>
     <style>
         :root {
@@ -717,7 +701,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 <button class="btn-neon" id="btn-centro-avisos" type="button" style="font-size:0.8rem; padding:6px 14px; border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleCentroAvisos()" title="Centro de Monitoreo y Avisos en Vivo (Webhook)">
                     <i class="fa-solid fa-bell"></i> Avisos <span id="badge-avisos-count" style="background:#ff0055; color:#fff; font-size:0.7rem; font-weight:900; padding:1px 6px; border-radius:10px;">0</span>
                 </button>
-                <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
+                <div class="admin-badge">Admin: admin</div>
             </div>
         </header>
 
@@ -2500,11 +2484,11 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
         });
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
-    <script src="/js/dashboard-pro.js?v=<?= time() ?>"></script>
-    <script src="/js/editor-canva.js?v=<?= time() ?>"></script>
-    <script src="/js/avatar-engine.js?v=<?= time() ?>"></script>
+    <script src="/js/dashboard-pro.js?v=2.5"></script>
+    <script src="/js/editor-canva.js?v=2.5"></script>
+    <script src="/js/avatar-engine.js?v=2.5"></script>
     <script src="https://unpkg.com/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
-    <script src="/js/ffmpeg-wasm-helper.js?v=<?= time() ?>"></script>
-    <script src="/js/video-editor.js?v=<?= time() ?>"></script>
+    <script src="/js/ffmpeg-wasm-helper.js?v=2.5"></script>
+    <script src="/js/video-editor.js?v=2.5"></script>
 </body>
 </html>

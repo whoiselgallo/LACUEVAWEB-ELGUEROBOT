@@ -1,8 +1,12 @@
 {
   "version": 2,
   "functions": {
+    "api/*.js": {
+      "maxDuration": 30
+    },
     "api/index.php": {
-      "runtime": "vercel-php@0.7.3"
+      "runtime": "vercel-php@0.9.0",
+      "maxDuration": 30
     }
   },
   "routes": [
@@ -31,6 +35,42 @@
       "dest": "/favicon.png"
     },
     {
+      "src": "/api/api-el-guero-bot\\.php",
+      "dest": "/api/guero-bot.js"
+    },
+    {
+      "src": "/api/api-el-guero-bot",
+      "dest": "/api/guero-bot.js"
+    },
+    {
+      "src": "/api/api-escaleta(\\.php)?",
+      "dest": "/api/ai-escaleta.js"
+    },
+    {
+      "src": "/api/api-hooks-ai(\\.php)?",
+      "dest": "/api/ai-hooks.js"
+    },
+    {
+      "src": "/api/api-guero-knowledge(\\.php)?",
+      "dest": "/api/guero-knowledge.js"
+    },
+    {
+      "src": "/api/api-db-test(\\.php)?",
+      "dest": "/api/db-test.js"
+    },
+    {
+      "src": "/api/api-youtube-analytics(\\.php)?",
+      "dest": "/api/youtube-analytics.js"
+    },
+    {
+      "src": "/api/api-youtube-actions(\\.php)?",
+      "dest": "/api/youtube-actions.js"
+    },
+    {
+      "src": "/api/auth-google(\\.php)?",
+      "dest": "/api/oauth-google.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
@@ -52,7 +92,7 @@
         }
       ],
       "src": "/(.*)",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/index.html"
     },
     {
       "src": "/tracking",
@@ -60,11 +100,11 @@
     },
     {
       "src": "/dashboard/(.*)",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/$1"
     },
     {
       "src": "/dashboard",
-      "dest": "/api/index.php"
+      "dest": "/dashboard/index.html"
     },
     {
       "src": "/(.*)",

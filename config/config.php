@@ -126,11 +126,29 @@ define('DIFY_TIMEOUT', (int)getEnvVar('DIFY_TIMEOUT', 60));
 // ═════════════════════════════════════════════════════════════════════════════════
 // BASE DE DATOS - PostgreSQL / Neon.tech (Render + Neon)
 // ═════════════════════════════════════════════════════════════════════════════════
-define('DB_HOST', getRequiredEnvVar('DB_HOST'));
-define('DB_NAME', getRequiredEnvVar('DB_NAME'));
-define('DB_USER', getRequiredEnvVar('DB_USER'));
-define('DB_PASS', getRequiredEnvVar('DB_PASS'));
-define('DB_PORT', getEnvVar('DB_PORT', '5432'));
+$neonDbUrl = getEnvVar('DATABASE_URL') ?: getEnvVar('DATABASE_URL_UNPOOLED');
+$neonHost = '';
+$neonDb = '';
+$neonUser = '';
+$neonPass = '';
+$neonPort = '5432';
+
+if (!empty($neonDbUrl) && preg_match('/^postgresql:\/\//i', $neonDbUrl)) {
+    $parsedNeon = parse_url($neonDbUrl);
+    if (is_array($parsedNeon)) {
+        $neonHost = $parsedNeon['host'] ?? '';
+        $neonPort = (string)($parsedNeon['port'] ?? '5432');
+        $neonDb   = isset($parsedNeon['path']) ? ltrim($parsedNeon['path'], '/') : '';
+        $neonUser = $parsedNeon['user'] ?? '';
+        $neonPass = $parsedNeon['pass'] ?? '';
+    }
+}
+
+define('DB_HOST', getEnvVar('DB_HOST', $neonHost));
+define('DB_NAME', getEnvVar('DB_NAME', $neonDb));
+define('DB_USER', getEnvVar('DB_USER', $neonUser));
+define('DB_PASS', getEnvVar('DB_PASS', $neonPass));
+define('DB_PORT', getEnvVar('DB_PORT', $neonPort));
 
 // ═════════════════════════════════════════════════════════════════════════════════
 // APLICACIÓN - Configuración General
@@ -175,7 +193,7 @@ function db_connect() {
                      ';port=' . $port .
                      ';dbname=' . $database .
                    ';sslmode=require' .
-                   ';connect_timeout=10';
+                   ';connect_timeout=4';
 
             if (strpos($host, 'neon.tech') !== false) {
                 $endpoint = preg_replace('/-pooler\./', '.', $host);
@@ -401,7 +419,7 @@ function call_gemini_generate($payload, $apiKey = null) {
         return ['success' => false, 'error' => 'No hay claves de API de Gemini configuradas.'];
     }
 
-    $models = ['gemini-2.5-flash', 'gemini-1.5-flash', 'gemini-2.0-flash'];
+    $models = ['gemini-flash-latest', 'gemini-3.5-flash-lite', 'gemini-flash-lite-latest', 'gemini-3.1-flash-lite'];
     $lastError = '';
 
     foreach ($models as $model) {
@@ -411,7 +429,7 @@ function call_gemini_generate($payload, $apiKey = null) {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
             CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_TIMEOUT => 8,
             CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_SSL_VERIFYHOST => 0
         ]);

@@ -42,8 +42,12 @@ function switchView(view) {
 
     // Ocultar la barra lateral en celular después de elegir una sección
     const sidebar = document.querySelector(".sidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
     if (sidebar) {
         sidebar.classList.remove("active");
+    }
+    if (backdrop) {
+        backdrop.classList.remove("active");
     }
 
     // Actualizar título del header
@@ -81,15 +85,15 @@ window.switchView = switchView;
    ============================================================ */
 
 const INVITADOS_DEFAULT = [
-    { id: 2, nombre: "Leo Camacho Higuera", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Expediente de alta potencia narrativa y lealtad de barrio.' } },
-    { id: 3, nombre: "Javi Domz (jeyb)", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Director creativo de cine y TV. Storytelling visual de alto impacto.' } },
-    { id: 4, nombre: "Marcelo Ivan Maciel Maldonado", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Tribunal estatal de justicia administrativa y visión social del barrio.' } },
-    { id: 5, nombre: "Aurelio Gonzalez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Negocios y trayectoria comercial en la frontera desde la Carbajal.' } },
-    { id: 6, nombre: "Guillermina Ayala Quiñonez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Empleada doméstica. Historia humana conmovedora del barrio Libertad.' } },
-    { id: 7, nombre: "Sergio Rene Coronado Vega", created_at: "2026-09-12", curaduria: { nivel: 'MEDIO', badge: '🟡 NIVEL MEDIO', color: '#00FFFF', formato: 'Entrevista Corta / Segmento (10 min)', razon: 'Respuestas breves. Canalizar a 3 hooks virales y clip vertical.' } },
-    { id: 8, nombre: "Sergio Noe Escobar Perez", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Llantero hondureño. Migración, superación y trabajo honesto en la frontera.' } },
-    { id: 9, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } },
-    { id: 10, nombre: "Rosalva \"la pocha\"", created_at: "2026-09-29", curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal', razon: 'Personaje urbano icónico binacional (Estados Unidos USA). Vida de frontera y resiliencia.' } }
+    { id: 2, nombre: "Leo Camacho Higuera", created_at: "2026-09-12", ponderacion_score: 279, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 40-50 min)', razon: 'Expediente de alta potencia narrativa y lealtad de barrio.' } },
+    { id: 3, nombre: "Javi Domz (jeyb)", created_at: "2026-09-12", ponderacion_score: 305, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 45-60 min)', razon: 'Director creativo de cine y TV. Storytelling visual de alto impacto.' } },
+    { id: 4, nombre: "Marcelo Ivan Maciel Maldonado", created_at: "2026-09-12", ponderacion_score: 271, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 40 min)', razon: 'Tribunal estatal de justicia administrativa y visión social del barrio.' } },
+    { id: 5, nombre: "Aurelio Gonzalez", created_at: "2026-09-12", ponderacion_score: 268, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 40 min)', razon: 'Negocios y trayectoria comercial en la frontera desde la Carbajal.' } },
+    { id: 6, nombre: "Guillermina Ayala Quiñonez", created_at: "2026-09-12", ponderacion_score: 282, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 40-50 min)', razon: 'Empleada doméstica. Historia humana conmovedora del barrio Libertad.' } },
+    { id: 7, nombre: "Sergio Rene Coronado Vega", created_at: "2026-09-12", ponderacion_score: 152, curaduria: { nivel: 'BAJO', badge: '🔴 NIVEL BAJO', color: '#FF00FF', formato: 'Micro-contenido / Reto en Cabina / Shorts (30 - 60 seg)', razon: 'Respuestas breves y sin ocupación fija. Inviable para formato largo; canalizar a micro-contenido y retos.' } },
+    { id: 8, nombre: "Sergio Noe Escobar Perez", created_at: "2026-09-12", ponderacion_score: 301, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 45-60 min)', razon: 'Llantero hondureño. Migración, superación y trabajo honesto en la frontera.' } },
+    { id: 9, nombre: "Yessica Lizbeth Fierro Vindiola", created_at: "2026-09-12", ponderacion_score: 264, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 40 min)', razon: 'Ama de casa de Puertas del Sol. Perspectiva femenina auténtica del barrio.' } },
+    { id: 10, nombre: "Rosalva \"la pocha\"", created_at: "2026-09-29", ponderacion_score: 322, curaduria: { nivel: 'ALTO', badge: '🟢 NIVEL ALTO', color: '#39FF14', formato: 'Invitado Principal al Canal (Episodio Completo 45+ min)', razon: 'Personaje urbano icónico binacional (Estados Unidos USA). Vida de frontera y resiliencia.' } }
 ];
 
 async function cargarRegistros() {
@@ -138,17 +142,19 @@ function mostrarRegistros(registros) {
         const fecha = formatDate(reg.created_at || "");
         const id = reg.id;
         let rawScore = reg.ponderacion_score || '';
-        let scoreDisplay = '';
-        if (rawScore) {
-            let n = parseInt(rawScore, 10);
-            if (n <= 100) n = Math.round(n * 3.3);
-            scoreDisplay = `${n} / 330`;
+        let n = parseInt(rawScore, 10);
+        if (isNaN(n) || n <= 0) {
+            n = (reg.curaduria && reg.curaduria.nivel === 'BAJO') ? 152 : ((reg.curaduria && reg.curaduria.nivel === 'MEDIO') ? 210 : 275);
         }
+        if (n <= 100) n = Math.round(n * 3.3);
+        if (n < 33) n = 33;
+        if (n > 330) n = 330;
+        const scoreDisplay = `${n} / 330`;
 
-        // Extraer objeto curaduría si viene en el registro
-        const curaduria = reg.curaduria || { nivel: 'ALTO', badge: '🟢 ALTO', color: '#39FF14' };
-        const badgeTag = curaduria.badge || (curaduria.nivel === 'BAJO' ? '🔴 BAJO' : (curaduria.nivel === 'MEDIO' ? '🟡 MEDIO' : '🟢 ALTO'));
-        const badgeColor = curaduria.color || (curaduria.nivel === 'BAJO' ? '#FF00FF' : (curaduria.nivel === 'MEDIO' ? '#00FFFF' : '#39FF14'));
+        // Clasificación estrictamente ligada al puntaje numérico
+        const tier = (n >= 260) ? 'ALTO' : ((n >= 165) ? 'MEDIO' : 'BAJO');
+        const badgeTag = (tier === 'ALTO') ? '🟢 ALTO' : ((tier === 'MEDIO') ? '🟡 MEDIO' : '🔴 BAJO');
+        const badgeColor = (tier === 'ALTO') ? '#39FF14' : ((tier === 'MEDIO') ? '#00FFFF' : '#FF00FF');
 
         html += `
             <div class="registro-card" id="card-${id}" onclick="mostrarDetalle(${id})">
@@ -240,16 +246,24 @@ async function mostrarDetalle(id) {
         }
 
         // PONDERACIÓN DE CURADURÍA - 33 PARÁMETROS (1 A 10 POR PREGUNTA, SUMATORIA 33 A 330)
+        let rawScore = reg.ponderacion_score || '';
+        let targetScore = parseInt(rawScore, 10);
+        if (isNaN(targetScore) || targetScore <= 0) {
+            targetScore = (reg.curaduria && reg.curaduria.nivel === 'BAJO') ? 152 : ((reg.curaduria && reg.curaduria.nivel === 'MEDIO') ? 210 : 275);
+        }
+        if (targetScore <= 100) targetScore = Math.round(targetScore * 3.3);
+        if (targetScore < 33) targetScore = 33;
+        if (targetScore > 330) targetScore = 330;
+
         let criterios33 = [];
         const respuestasObj = reg.respuestas || {};
 
         if (reg.ponderacion && Array.isArray(reg.ponderacion.criterios) && reg.ponderacion.criterios.length === 33) {
             criterios33 = reg.ponderacion.criterios;
         } else {
-            // Generar los 33 parámetros evaluados dinámicamente si vienen de registros heredados
             const defRespuestas = {
                 1: reg.nombre || "Invitado",
-                2: reg.alias || reg.nombre ? reg.nombre.split(' ')[0] : "Compa",
+                2: reg.alias || (reg.nombre ? reg.nombre.split(' ')[0] : "Compa"),
                 3: reg.contacto || "contacto@lacuevadelguero.com",
                 4: reg.ocupacion || "Invitado Especial",
                 5: reg.definicion || "Auténtico, trabajador, de barrio",
@@ -319,26 +333,27 @@ async function mostrarDetalle(id) {
                 { acto: 'Bloque 5: Cierre', titulo: 'Mensaje Motivacional (No Tirar la Toalla)' }
             ];
 
+            const baseScoreVal = Math.floor(targetScore / 33);
+            let remScoreVal = targetScore - (baseScoreVal * 33);
+
             for (let i = 1; i <= 33; i++) {
                 const p = PREGUNTAS_TITULOS[i - 1];
                 const resp = String(respuestasObj[i] || defRespuestas[i] || '').trim();
-                const len = resp.length;
-                let sc = 8;
-                let just = `Respuesta de barrio: "${resp}"`;
-
-                if (len === 0 || ['.', 'nada', 'no', 'nose', 'no se', 'ninguno'].includes(resp.toLowerCase())) {
-                    sc = 4;
-                    just = len > 0 ? `Respuesta breve: "${resp}". Requiere dinamización del Güero.` : "Pregunta pendiente de responder.";
-                } else if (len < 15) {
-                    sc = 7;
-                } else if (len < 40) {
-                    sc = 8;
-                } else if (len < 90) {
-                    sc = 9;
-                } else {
-                    sc = 10;
-                    just = `Profundidad narrativa sobresaliente: "${resp}"`;
+                let sc = baseScoreVal;
+                if (remScoreVal > 0) {
+                    sc++;
+                    remScoreVal--;
                 }
+                if (sc > 10) sc = 10;
+                if (sc < 1) sc = 1;
+
+                let just = sc >= 9 
+                    ? `Profundidad narrativa sobresaliente: "${resp}"`
+                    : (sc >= 7 
+                        ? `Aporte sólido de barrio: "${resp}"`
+                        : (sc >= 5 
+                            ? `Respuesta sintética: "${resp}". Requiere dinamización del Güero.`
+                            : `Respuesta monosilábica o escasa: "${resp}". Inviable para formato largo.`));
 
                 criterios33.push({
                     num: i,
@@ -352,23 +367,47 @@ async function mostrarDetalle(id) {
             }
         }
 
-        // Calcular sumatoria total (Escala 33 a 330)
+        // Sumatoria matemática exacta: garantizar que sum(criterios33.score) === targetScore
         let totalCalculado = criterios33.reduce((acc, c) => acc + (c.score || 0), 0);
-        if (totalCalculado < 33) totalCalculado = 33;
-        if (totalCalculado > 330) totalCalculado = 330;
+        let deltaDiff = targetScore - totalCalculado;
+        if (deltaDiff !== 0) {
+            for (let i = 0; i < 33 && deltaDiff !== 0; i++) {
+                const idx = (33 - 1 - i); // distribuir desde el final hacia el inicio
+                if (deltaDiff > 0 && criterios33[idx].score < 10) {
+                    criterios33[idx].score++;
+                    deltaDiff--;
+                } else if (deltaDiff < 0 && criterios33[idx].score > 1) {
+                    criterios33[idx].score--;
+                    deltaDiff++;
+                }
+            }
+            totalCalculado = criterios33.reduce((acc, c) => acc + (c.score || 0), 0);
+        }
 
         window.activeRegistro = reg;
         window.activeCriterios33 = criterios33;
 
+        // Regla estricta de umbrales:
+        // ALTO: >= 260 / 330
+        // MEDIO: 165 a 259 / 330
+        // BAJO: < 165 / 330
         const nivelAuto = (totalCalculado >= 260) ? 'ALTO' : ((totalCalculado >= 165) ? 'MEDIO' : 'BAJO');
         const badgeAuto = (nivelAuto === 'ALTO') ? '🟢 NIVEL ALTO' : ((nivelAuto === 'MEDIO') ? '🟡 NIVEL MEDIO' : '🔴 NIVEL BAJO');
         const colorAuto = (nivelAuto === 'ALTO') ? '#39FF14' : ((nivelAuto === 'MEDIO') ? '#00FFFF' : '#FF00FF');
-        const formatoAuto = (nivelAuto === 'ALTO') ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' : ((nivelAuto === 'MEDIO') ? 'Entrevista Corta / Segmento (10 - 15 min)' : 'Micro-contenido / Shorts (30 - 60 seg)');
+        const formatoAuto = (nivelAuto === 'ALTO') 
+            ? 'Invitado Principal al Canal (Episodio Completo 45+ min)' 
+            : ((nivelAuto === 'MEDIO') 
+                ? 'Entrevista Corta / Segmento Dinámico (15 - 25 min)' 
+                : 'Micro-contenido / Reto en Cabina / Shorts (30 - 60 seg)');
 
-        const curaduria = reg.curaduria || {
-            nivel: nivelAuto, badge: badgeAuto, formato: formatoAuto,
-            color: colorAuto, razon: `Evaluación de 33 parámetros (1-10). Puntaje: ${totalCalculado}/330.`
+        const curaduria = {
+            nivel: nivelAuto,
+            badge: badgeAuto,
+            formato: (reg.curaduria && reg.curaduria.formato) ? reg.curaduria.formato : formatoAuto,
+            color: colorAuto,
+            razon: (reg.curaduria && reg.curaduria.razon) ? reg.curaduria.razon : `Evaluación estricta de 33 parámetros (1-10). Puntaje: ${totalCalculado}/330.`
         };
+        reg.curaduria = curaduria;
 
         // Score badge (33 a 330)
         const scoreBadge = document.getElementById("ponderacion-score-badge");
@@ -1594,6 +1633,8 @@ function abrirModalCuestionarioCompleto() {
         primerBtn.style.color = "#fff";
     }
 
+    preguntasObservadasProduccion = {};
+    actualizarContadorMarcadas();
     renderModalCuestionario();
     modal.style.display = "flex";
 }
@@ -1628,6 +1669,156 @@ function setFiltroBloqueCuestionario(bloque, btnEl) {
     filtrarPreguntasCuestionario();
 }
 window.setFiltroBloqueCuestionario = setFiltroBloqueCuestionario;
+
+let preguntasObservadasProduccion = {};
+
+function escapeJs(str) {
+    if (!str) return '';
+    return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, ' ');
+}
+
+function toggleMarcarPreguntaError(num, nombre, respOriginal) {
+    if (preguntasObservadasProduccion[num]) {
+        delete preguntasObservadasProduccion[num];
+    } else {
+        preguntasObservadasProduccion[num] = {
+            id_pregunta: num,
+            pregunta: nombre,
+            respuesta_original: respOriginal,
+            causa: 'confusa',
+            nota: ''
+        };
+    }
+    actualizarContadorMarcadas();
+    filtrarPreguntasCuestionario();
+}
+window.toggleMarcarPreguntaError = toggleMarcarPreguntaError;
+
+function actualizarCausaError(num, causa) {
+    if (preguntasObservadasProduccion[num]) {
+        preguntasObservadasProduccion[num].causa = causa;
+    }
+}
+window.actualizarCausaError = actualizarCausaError;
+
+function actualizarNotaError(num, nota) {
+    if (preguntasObservadasProduccion[num]) {
+        preguntasObservadasProduccion[num].nota = nota;
+    }
+}
+window.actualizarNotaError = actualizarNotaError;
+
+function actualizarContadorMarcadas() {
+    const count = Object.keys(preguntasObservadasProduccion).length;
+    const countEl = document.getElementById("modal-cuest-marcadas-count");
+    if (countEl) countEl.textContent = count;
+    const btn = document.getElementById("btn-enviar-correccion-invitado");
+    if (btn) {
+        btn.disabled = count === 0;
+        btn.style.opacity = count === 0 ? "0.5" : "1";
+    }
+}
+window.actualizarContadorMarcadas = actualizarContadorMarcadas;
+
+async function enviarSolicitudCorreccionDesdeModal() {
+    const reg = window.activeRegistro;
+    if (!reg) return;
+    const observaciones = Object.values(preguntasObservadasProduccion);
+    if (observaciones.length === 0) {
+        alert("Por favor marca al menos una pregunta que requiera corrección.");
+        return;
+    }
+
+    const btn = document.getElementById("btn-enviar-correccion-invitado");
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando solicitud...';
+    btn.disabled = true;
+
+    try {
+        const token = reg.token || ('GUEST-' + (reg.id || '001'));
+        const res = await fetch("/api/api-guest-corrections.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "solicitar_correccion",
+                token: token,
+                observaciones: observaciones,
+                productor: "Producción La Cueva"
+            })
+        });
+        const data = await res.json();
+        if (data.status === "success" || data.success) {
+            // Mostrar modal de compartir
+            const modalComp = document.getElementById("modalCompartirSolicitud");
+            const inputLink = document.getElementById("inputLinkCorreccion");
+            const btnWa = document.getElementById("btnWaCorreccionDirecto");
+
+            if (inputLink) inputLink.value = data.tracking_link || "";
+            if (btnWa) btnWa.href = data.whatsapp_url || "#";
+            if (modalComp) modalComp.style.display = "flex";
+
+            // Limpiar marcadas y refrescar avisos
+            preguntasObservadasProduccion = {};
+            actualizarContadorMarcadas();
+            filtrarPreguntasCuestionario();
+
+            if (window.cargarAvisosEnVivo) window.cargarAvisosEnVivo(true);
+        } else {
+            alert("Error al enviar solicitud: " + (data.message || "Desconocido"));
+        }
+    } catch (err) {
+        alert("Error de conexión: " + err.message);
+    } finally {
+        btn.innerHTML = originalText;
+        actualizarContadorMarcadas();
+    }
+}
+window.enviarSolicitudCorreccionDesdeModal = enviarSolicitudCorreccionDesdeModal;
+
+function copiarLinkCorreccionDirecto() {
+    const input = document.getElementById("inputLinkCorreccion");
+    if (!input || !input.value) return;
+    navigator.clipboard.writeText(input.value).then(() => {
+        alert("✓ Enlace directo de tracking y corrección copiado al portapapeles.");
+    }).catch(() => {
+        prompt("Copia el enlace manualmente:", input.value);
+    });
+}
+window.copiarLinkCorreccionDirecto = copiarLinkCorreccionDirecto;
+
+async function aprobarCuestionarioDesdeModal() {
+    const reg = window.activeRegistro;
+    if (!reg) return;
+    const nombre = reg.nombre || "Invitado";
+
+    if (!confirm(`¿Aprobar definitivamente el cuestionario de "${nombre}"?\n\nEsto marcará el cuestionario como revisado y avanzará el tracking del episodio a la Fase 2 (Escaleta & Curaduría).`)) {
+        return;
+    }
+
+    try {
+        const token = reg.token || ('GUEST-' + (reg.id || '001'));
+        const res = await fetch("/api/api-guest-corrections.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "aprobar_cuestionario",
+                token: token
+            })
+        });
+        const data = await res.json();
+        if (data.status === "success" || data.success) {
+            alert(`✓ ¡Cuestionario de "${nombre}" aprobado al 100%!\n\nSe ha disparado la alerta por webhook y el episodio avanzó a la Fase 2 de Escaleta.`);
+            cerrarModalCuestionario();
+            if (activeId) mostrarDetalle(activeId);
+            if (window.cargarAvisosEnVivo) window.cargarAvisosEnVivo(true);
+        } else {
+            alert("Error: " + (data.message || "No se pudo aprobar."));
+        }
+    } catch (err) {
+        alert("Falla de red: " + err.message);
+    }
+}
+window.aprobarCuestionarioDesdeModal = aprobarCuestionarioDesdeModal;
 
 function filtrarPreguntasCuestionario() {
     const query = (document.getElementById("modal-cuest-search")?.value || "").toLowerCase().trim();
@@ -1680,9 +1871,11 @@ function renderModalCuestionario(busqueda = "") {
         const tagBadge = c.etiqueta ? `<span style="font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:6px; background:rgba(0,0,0,0.5); border:1px solid ${color}; color:${color};">${escapeHtml(c.etiqueta)}</span>` : '';
         const respText = (c.respuesta || '').trim();
         const justText = (c.justificacion || '').trim();
+        const isMarcada = !!preguntasObservadasProduccion[c.num];
+        const obsActual = preguntasObservadasProduccion[c.num] || { causa: 'confusa', nota: '' };
 
         html += `
-            <div style="background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.06); border-left:4px solid ${color}; border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:8px;">
+            <div style="background:rgba(0,0,0,0.5); border:${isMarcada ? '1px solid #FF6600' : '1px solid rgba(255,255,255,0.06)'}; border-left:4px solid ${isMarcada ? '#FF6600' : color}; border-radius:12px; padding:16px 20px; display:flex; flex-direction:column; gap:8px; box-shadow:${isMarcada ? '0 0 15px rgba(255,102,0,0.2)' : 'none'};">
                 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                     <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
                         ${actoBadge}
@@ -1721,6 +1914,35 @@ function renderModalCuestionario(busqueda = "") {
                         <div><strong style="color:#ddd;">Estrategia Host / Set:</strong> ${escapeHtml(justText)}</div>
                     </div>
                 ` : ''}
+
+                <!-- PANEL DE OBSERVACIÓN / SOLICITUD DE CORRECCIÓN (PRODUCCIÓN) -->
+                <div style="margin-top:6px; border-top:1px dashed rgba(255,255,255,0.08); padding-top:8px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <button type="button" class="btn-flag-pregunta" onclick="toggleMarcarPreguntaError(${c.num}, '${escapeJs(c.nombre || `Pregunta ${c.num}`)}', '${escapeJs(respText)}')" style="background:${isMarcada ? 'rgba(255,102,0,0.2)' : 'rgba(255,255,255,0.03)'}; border:1px solid ${isMarcada ? '#FF6600' : 'rgba(255,255,255,0.15)'}; color:${isMarcada ? '#FF6600' : '#888'}; padding:4px 12px; border-radius:6px; font-size:0.75rem; cursor:pointer; font-weight:700; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s;">
+                            <i class="fa-solid fa-flag"></i> ${isMarcada ? 'Observación Activa para Corrección' : 'Marcar para Corrección'}
+                        </button>
+                        ${isMarcada ? `<span style="font-size:0.72rem; color:#FF6600; font-weight:bold;"><i class="fa-solid fa-circle-exclamation"></i> Se incluirá en la solicitud enviada al invitado</span>` : ''}
+                    </div>
+
+                    ${isMarcada ? `
+                        <div style="margin-top:8px; background:rgba(255,102,0,0.06); border:1px solid rgba(255,102,0,0.3); border-radius:8px; padding:10px; display:grid; grid-template-columns:1fr 2fr; gap:10px;">
+                            <div>
+                                <label style="font-size:0.7rem; color:#ffcc99; font-weight:700; display:block; margin-bottom:3px;">Causa de la Observación:</label>
+                                <select class="form-input" onchange="actualizarCausaError(${c.num}, this.value)" style="padding:6px 8px; font-size:0.75rem; background:#080812; border-color:rgba(255,102,0,0.4); color:#fff; width:100%;">
+                                    <option value="confusa" ${obsActual.causa === 'confusa' ? 'selected' : ''}>🟠 Confusa / Poco clara</option>
+                                    <option value="inadecuada" ${obsActual.causa === 'inadecuada' ? 'selected' : ''}>🔴 Inadecuada / Lenguaje no apto</option>
+                                    <option value="error_captura" ${obsActual.causa === 'error_captura' ? 'selected' : ''}>🟡 Error de captura / Incompleta</option>
+                                    <option value="incoherente" ${obsActual.causa === 'incoherente' ? 'selected' : ''}>🟣 Incoherente con la historia</option>
+                                    <option value="otra" ${obsActual.causa === 'otra' ? 'selected' : ''}>⚪ Otra observación</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.7rem; color:#ffcc99; font-weight:700; display:block; margin-bottom:3px;">Nota o instrucción para el invitado:</label>
+                                <input type="text" class="form-input" value="${escapeHtml(obsActual.nota || '')}" oninput="actualizarNotaError(${c.num}, this.value)" placeholder="Ej: Por favor platícanos más de cómo saliste adelante..." style="padding:6px 8px; font-size:0.75rem; background:#080812; border-color:rgba(255,102,0,0.4); color:#fff; width:100%;">
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
             </div>
         `;
     });
