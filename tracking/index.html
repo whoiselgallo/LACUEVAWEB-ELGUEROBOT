@@ -2,7 +2,7 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Tracking de Invitado | La Cueva del Güero</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="shortcut icon" href="/favicon.ico">
@@ -10,6 +10,7 @@
   <link rel="icon" type="image/png" href="/images/logotipo.png">
   <link rel="apple-touch-icon" href="/images/logotipo.png">
   <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile-first-duo.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     body {
@@ -22,6 +23,23 @@
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      min-height: 100dvh;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px !important;
+        align-items: flex-start !important;
+      }
+      .tracking-card {
+        padding: 20px 14px !important;
+        border-radius: 14px !important;
+      }
+      .tracking-title {
+        font-size: 1.4rem !important;
+      }
+      .btn-neon {
+        width: 100% !important;
+      }
     }
     .tracking-card {
       background: rgba(15, 15, 25, 0.95);

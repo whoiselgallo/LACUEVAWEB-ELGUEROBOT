@@ -42,8 +42,12 @@ function switchView(view) {
 
     // Ocultar la barra lateral en celular después de elegir una sección
     const sidebar = document.querySelector(".sidebar");
+    const backdrop = document.getElementById("sidebarBackdrop");
     if (sidebar) {
         sidebar.classList.remove("active");
+    }
+    if (backdrop) {
+        backdrop.classList.remove("active");
     }
 
     // Actualizar título del header

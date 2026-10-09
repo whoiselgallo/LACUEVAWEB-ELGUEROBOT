@@ -2,7 +2,7 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>La Cueva del Güero</title>
   <meta name="description" content="La Cueva del Güero: podcast urbano, invitados reales, historias crudas y reflexión con estilo neon.">
@@ -13,6 +13,7 @@
   <link rel="apple-touch-icon" href="images/logotipo.png">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/paw-agent.css">
+  <link rel="stylesheet" href="css/mobile-first-duo.css">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,83 +26,83 @@
         referrerpolicy="no-referrer" />
 
   <style>
-    /* Navbar custom overrides to keep layout inline and responsive */
+    /* Mobile-First & iPhone Duo Navbar Rules */
     header.secondary nav {
       flex-direction: row !important;
       align-items: center !important;
       justify-content: space-between !important;
       flex-wrap: nowrap !important;
-      padding: 10px 20px !important;
+      padding: 8px 16px !important;
+      min-height: 64px !important;
     }
-    .nav-toggle {
-      display: none !important;
-    }
-    .nav-links {
-      display: flex !important;
-      opacity: 1 !important;
-      transform: none !important;
-      width: auto !important;
-      position: relative !important;
-    }
-    .nav-actions {
-      display: flex !important;
-      width: auto !important;
-      order: 0 !important;
-      padding: 0 !important;
-      overflow: visible !important;
-    }
-    .dropdown-toggle:hover {
-      box-shadow: 0 0 15px var(--cian-neon) !important;
-      background: rgba(0, 255, 255, 0.12) !important;
-    }
-    @media (max-width: 580px) {
+    @media (min-width: 769px) {
+      header.secondary nav {
+        min-height: 110px !important;
+        padding: 12px 24px !important;
+      }
       .nav-logo-circular {
-        height: 38px !important;
-        width: 38px !important;
+        height: 65px !important;
+        width: 65px !important;
       }
       .nav-brand-logo-img {
-        height: 28px !important;
-        max-width: 110px !important;
+        height: 120px !important;
+        max-width: 320px !important;
       }
+    }
+    @media (max-width: 768px) {
       header.secondary nav {
-        padding: 8px 12px !important;
-        gap: 6px !important;
+        min-height: 60px !important;
+        padding: 6px 12px !important;
+      }
+      .nav-logo-circular {
+        height: 42px !important;
+        width: 42px !important;
+      }
+      .nav-brand-logo-img {
+        height: 38px !important;
+        max-width: 140px !important;
       }
       .nav-right-container {
         gap: 6px !important;
       }
-      .dropdown-menu {
-        min-width: 220px !important;
+    }
+    @media (max-width: 380px) {
+      .nav-brand-container {
+        display: none !important;
+      }
+      .nav-brand-logo-img {
+        height: 32px !important;
+        max-width: 120px !important;
       }
     }
   </style>
 </head>
 <body>
   <header class="secondary">
-    <nav style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: nowrap; position: relative; min-height: 160px; padding: 0 20px;">
+    <nav class="cueva-navbar">
       
       <!-- LEFT: Circular Logo -->
-      <div class="nav-brand-container" style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; z-index: 10;">
+      <div class="nav-brand-container" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0; z-index: 10;">
         <a href="#inicio" class="nav-logo-link" style="display: inline-flex; align-items: center;">
           <picture>
             <source srcset="images/logotipo.webp" type="image/webp">
-            <img src="images/logotipo.png" alt="Logo La Cueva" class="nav-logo-circular" style="height: 70px; width: 70px; border-radius: 50%; border: 2px solid var(--cian-neon); box-shadow: 0 0 15px rgba(0,255,255,0.5); object-fit: cover;">
+            <img src="images/logotipo.png" alt="Logo La Cueva" class="nav-logo-circular">
           </picture>
         </a>
       </div>
 
-      <!-- CENTER: Graffiti Logo (Enlarged by 400% - centered absolutely) -->
-      <div class="nav-center-logo" style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: auto;">
+      <!-- CENTER: Graffiti Logo -->
+      <div class="nav-center-logo">
         <a href="#inicio" class="nav-brand-logo-link" style="display: inline-flex; align-items: center;">
           <picture>
             <source srcset="images/LACUEVADELGUERO-TRANSPARENTE.webp" type="image/webp">
-            <img src="images/LACUEVADELGUERO-TRANSPARENTE.png" alt="La Cueva del Güero" class="nav-brand-logo-img" style="height: 150px; object-fit: contain; filter: drop-shadow(0 0 12px var(--magenta-neon)); transition: all 0.3s ease;">
+            <img src="images/LACUEVADELGUERO-TRANSPARENTE.png" alt="La Cueva del Güero" class="nav-brand-logo-img">
           </picture>
         </a>
       </div>
 
       <!-- RIGHT: Social Links + Hamburger menu -->
-      <div class="nav-right-container" style="display: flex; align-items: center; gap: 16px; margin-left: auto; z-index: 10;">
+      <div class="nav-right-container">
         
         <!-- SOCIAL ACTIONS -->
         <div class="nav-actions" style="display: flex; align-items: center; gap: 8px; overflow: visible;">
