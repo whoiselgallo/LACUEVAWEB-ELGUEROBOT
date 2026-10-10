@@ -30,6 +30,8 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/mobile-first-duo.css">
+    <link rel="stylesheet" href="/css/dashboard-pro.css">
     <script>window.activeEventSource = null; window.activePollingInterval = null;</script>
     <style>
         :root {
@@ -58,20 +60,28 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 radial-gradient(at 100% 100%, rgba(0, 255, 255, 0.04) 0px, transparent 50%);
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Drawer Hamburguesa Desplegable) */
         .sidebar {
-            width: 260px;
+            width: 320px;
+            max-width: 88vw;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
-            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.6);
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(15px);
+            z-index: 2500;
+            transform: translateX(-105%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+            box-shadow: 15px 0 50px rgba(0, 255, 255, 0.2), 0 0 100px rgba(0, 0, 0, 0.9);
         }
 
         .sidebar-brand {
@@ -170,12 +180,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         /* MAIN CONTENT CONTAINER */
         .main-content {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            height: 100vh;
+            margin-left: 0 !important;
+            width: 100% !important;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         /* HEADER */
@@ -657,6 +667,268 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 justify-content: space-between;
             }
         }
+
+        /* ==========================================================================
+           DESKTOP WORKSTATION & LARGE DISPLAY PROPORTION HARMONIZATION (>= 1200px)
+           admin.lacuevadelguero.com - Preservando 100% Mobile-First
+           ========================================================================== */
+        @media (min-width: 1200px) {
+            /* 1. Header & Navbar */
+            header, .dashboard-header {
+                padding: 14px 36px !important;
+                background: rgba(8, 8, 16, 0.94) !important;
+                border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+                backdrop-filter: blur(14px) !important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+                min-height: 68px;
+            }
+            .header-brand-wrap {
+                display: flex !important;
+                align-items: center !important;
+                gap: 16px !important;
+            }
+            #view-header-title {
+                font-size: clamp(1.2rem, 1.35vw, 1.55rem) !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+            }
+            .desktop-workstation-badge {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 4px 12px !important;
+                font-size: 0.72rem !important;
+                font-weight: 800 !important;
+                letter-spacing: 1px !important;
+                color: var(--neon-cyan) !important;
+                background: rgba(0, 255, 255, 0.08) !important;
+                border: 1px solid rgba(0, 255, 255, 0.35) !important;
+                border-radius: 20px !important;
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.4) !important;
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.1) !important;
+                text-transform: uppercase;
+            }
+            .header-actions-bar {
+                display: flex !important;
+                gap: 10px !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+            }
+            .header-actions-bar .btn-neon {
+                padding: 7px 15px !important;
+                font-size: 0.8rem !important;
+                font-weight: 700 !important;
+                border-radius: 8px !important;
+                white-space: nowrap !important;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                background: rgba(10, 10, 18, 0.6) !important;
+                backdrop-filter: blur(8px) !important;
+            }
+            .header-actions-bar .btn-neon:hover {
+                transform: translateY(-2px) !important;
+            }
+            .admin-badge {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                padding: 6px 14px !important;
+                font-size: 0.8rem !important;
+                font-weight: 700 !important;
+                background: rgba(0, 255, 255, 0.08) !important;
+                border: 1px solid var(--neon-cyan) !important;
+                border-radius: 20px !important;
+                white-space: nowrap !important;
+                letter-spacing: 0.5px;
+            }
+            .admin-badge::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #39FF14;
+                box-shadow: 0 0 8px #39FF14, 0 0 15px rgba(57, 255, 20, 0.6);
+                display: inline-block;
+                animation: pulseLiveDot 2s infinite ease-in-out;
+            }
+            @keyframes pulseLiveDot {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.6; transform: scale(0.85); }
+            }
+
+            /* 2. Área de vistas */
+            .view-section {
+                padding: 24px 36px !important;
+                height: calc(100vh - 68px) !important;
+            }
+
+            /* 3. Episodios y Fichas: proporción fija para lista (360px) y flexible para detalle */
+            .episodios-layout {
+                display: flex !important;
+                gap: 24px !important;
+                height: 100% !important;
+                align-items: stretch !important;
+            }
+            .subpanel-lista {
+                width: 360px !important;
+                min-width: 340px !important;
+                max-width: 380px !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                border: 1px solid rgba(0, 255, 255, 0.2) !important;
+                background: rgba(12, 12, 22, 0.8) !important;
+            }
+            .subpanel-detalle {
+                flex: 1 !important;
+                width: auto !important;
+                max-width: calc(100% - 384px) !important;
+                height: 100% !important;
+                padding: 26px 32px !important;
+                border: 1px solid rgba(255, 0, 255, 0.2) !important;
+                background: rgba(12, 12, 22, 0.8) !important;
+            }
+            #ponderacion-criterios {
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
+                gap: 12px !important;
+                max-height: 480px !important;
+            }
+
+            /* 4. Canva Editor PRO: panel de controles estilizado y viewport amplio */
+            .canva-editor-workspace {
+                display: grid !important;
+                grid-template-columns: 390px minmax(520px, 1fr) !important;
+                gap: 24px !important;
+                align-items: stretch !important;
+                height: calc(100vh - 165px) !important;
+                min-height: 580px !important;
+            }
+            .canva-controls-card {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow-y: auto !important;
+                background: rgba(12, 12, 22, 0.85) !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                border-radius: 16px !important;
+                padding: 20px !important;
+                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5) !important;
+            }
+            .canva-viewport-card {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                background: radial-gradient(circle at center, rgba(16, 16, 30, 0.9) 0%, rgba(6, 6, 12, 0.98) 100%) !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                border-radius: 16px !important;
+                padding: 24px !important;
+                box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 255, 255, 0.08) !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+            #canvaCanvas {
+                max-width: 100% !important;
+                max-height: calc(100vh - 240px) !important;
+                object-fit: contain !important;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 255, 255, 0.2) !important;
+                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+            }
+
+            /* 5. Editor de Video: proporción 280px / 1fr / 340px y altura profesional */
+            .video-editor-workspace {
+                display: grid !important;
+                grid-template-columns: 280px minmax(460px, 1fr) 340px !important;
+                gap: 20px !important;
+                height: min(530px, calc(100vh - 380px)) !important;
+                min-height: 460px !important;
+                margin-bottom: 20px !important;
+                align-items: stretch !important;
+            }
+            .video-panel-assets, .video-panel-inspector {
+                height: 100% !important;
+                overflow-y: auto !important;
+                background: rgba(12, 12, 22, 0.85) !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            }
+            .video-panel-preview {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                background: #030308 !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                box-shadow: 0 0 35px rgba(0, 0, 0, 0.8) !important;
+                border-radius: 14px !important;
+            }
+            #preview-wrapper-box {
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+            }
+            #editor-preview-video {
+                max-height: 100% !important;
+                max-width: 100% !important;
+                border-radius: 8px !important;
+            }
+            .video-timeline-card {
+                background: #0d0d16 !important;
+                border: 1px solid rgba(0, 255, 255, 0.2) !important;
+                border-radius: 14px !important;
+                padding: 16px 20px !important;
+            }
+            #timeline-tracks-wrapper {
+                min-height: 155px !important;
+                gap: 10px !important;
+            }
+
+            /* 6. Hooks y Blog */
+            .hooks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                gap: 24px !important;
+            }
+            .blog-content-view {
+                max-width: 1300px !important;
+                margin: 0 auto !important;
+            }
+            #blog-content {
+                min-height: 380px !important;
+                font-size: 0.98rem !important;
+                line-height: 1.7 !important;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .subpanel-lista {
+                width: 380px !important;
+                max-width: 400px !important;
+            }
+            .subpanel-detalle {
+                max-width: calc(100% - 404px) !important;
+                padding: 30px 42px !important;
+            }
+            .canva-editor-workspace {
+                grid-template-columns: 420px minmax(650px, 1fr) !important;
+                gap: 28px !important;
+            }
+            #canvaCanvas {
+                max-height: calc(100vh - 220px) !important;
+            }
+            .video-editor-workspace {
+                grid-template-columns: 310px minmax(560px, 1fr) 370px !important;
+                height: min(600px, calc(100vh - 360px)) !important;
+                min-height: 520px !important;
+            }
+            .hooks-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 28px !important;
+            }
+        }
         .hidden {
             display: none !important;
         }
@@ -664,17 +936,26 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 </head>
 <body>
 
-    <!-- SIDEBAR DE NAVEGACIÓN -->
-    <nav class="sidebar">
+    <!-- OVERLAY DEL MENÚ HAMBURGUESA -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+    <!-- MENÚ HAMBURGUESA DESPLEGABLE AJUSTADO A LA PANTALLA (DRAWER OFFCANVAS) -->
+    <nav class="sidebar" id="sidebarDrawer" aria-label="Navegación de Secciones">
+        <button class="sidebar-close-btn" type="button" onclick="toggleSidebar(false)" title="Cerrar Menú" aria-label="Cerrar Menú">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
         <div class="sidebar-brand">
             <h2>LA CUEVA <span>PRO</span></h2>
+            <p style="margin: 6px 0 0 0; font-size: 0.76rem; color: #8e8e9f; letter-spacing: 0.5px;">Ecosistema Digital de Producción</p>
         </div>
+
         <ul class="sidebar-menu">
-            <li class="menu-item active" id="menu-episodios" onclick="switchView('episodios')">
-                <i class="fa-solid fa-microphone"></i> Episodios y Fichas
+            <li class="menu-item active" id="menu-hub" onclick="switchView('hub')">
+                <i class="fa-solid fa-grip"></i> Centro de Mando (Hub)
             </li>
-            <li class="menu-item" id="menu-blog" onclick="switchView('blog')">
-                <i class="fa-solid fa-pen-nib"></i> Gestor de Blog
+            <li class="menu-item" id="menu-episodios" onclick="switchView('episodios')">
+                <i class="fa-solid fa-microphone"></i> Episodios y Fichas
             </li>
             <li class="menu-item" id="menu-hooks" onclick="switchView('hooks')">
                 <i class="fa-solid fa-magnet"></i> Generador de Hooks
@@ -685,44 +966,341 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             <li class="menu-item" id="menu-canva" onclick="switchView('canva')">
                 <i class="fa-solid fa-palette"></i> Editor Canva PRO
             </li>
+            <li class="menu-item" id="menu-blog" onclick="switchView('blog')">
+                <i class="fa-solid fa-pen-nib"></i> Gestor de Blog
+            </li>
             <li class="menu-item" id="menu-avatar" onclick="switchView('avatar')">
                 <i class="fa-solid fa-masks-theater"></i> Avatar Engine
             </li>
             <li class="menu-item" id="menu-mesa" onclick="switchView('mesa')">
                 <i class="fa-solid fa-chalkboard-user"></i> Mesa de Trabajo
             </li>
+
+            <!-- SEPARADOR DE ACCESOS RÁPIDOS Y MODALES -->
+            <li style="padding: 16px 24px 6px 24px; font-size: 0.7rem; font-weight: 800; color: #55556a; text-transform: uppercase; letter-spacing: 1px;">
+                Herramientas en Vivo
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); if(window.location.hostname.includes('lacuevadelguero.com')){window.open('https://s.lacuevadelguero.com/', '_blank');}else{window.open('../tracking/index.html', '_blank');}">
+                <i class="fa-solid fa-satellite-dish" style="color: var(--neon-green);"></i> Radar de Tracking
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); window.open('../storytelling-invitado.html', '_blank');">
+                <i class="fa-solid fa-clipboard-user" style="color: var(--neon-cyan);"></i> Cuestionario Invitado
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); window.open('../cesion-derechos.html', '_blank');">
+                <i class="fa-solid fa-file-contract" style="color: var(--neon-magenta);"></i> Cesión de Derechos
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); document.getElementById('modalSubirFotoGaleria').style.display='flex';">
+                <i class="fa-solid fa-camera" style="color: #00FFFF;"></i> Subir Foto Galería
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); toggleCentroAvisos();">
+                <i class="fa-solid fa-bell" style="color: #FFD700;"></i> Avisos & Webhook
+            </li>
         </ul>
+
         <div class="sidebar-footer">
             <a href="../index.html" class="btn-home" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; font-weight: 700; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,255,255,0.4); box-shadow: 0 0 5px rgba(0,255,255,0.1); box-sizing: border-box; transition: all 0.2s ease;">
                 <i class="fa-solid fa-house"></i> Ir a Inicio
             </a>
-            <form action="logout.php" method="POST" style="margin: 0;">
-                <button type="submit" class="btn-logout"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</button>
-            </form>
+            <button type="button" class="btn-logout" onclick="cerrarSesionPro()">
+                <i class="fa-solid fa-power-off"></i> Cerrar Sesión
+            </button>
         </div>
     </nav>
 
-    <!-- ÁREA PRINCIPAL -->
+    <!-- ÁREA PRINCIPAL FULL WIDTH -->
     <div class="main-content">
-        <header>
-            <div style="display:flex; align-items:center;">
-                <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-                <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
+        <!-- CABECERA ESTÁTICA Y FIJA -->
+        <header class="dashboard-header">
+            <div class="header-left-cluster">
+                <!-- BOTÓN HAMBURGUESA DESPLEGABLE -->
+                <button class="btn-hamburger" id="btnHamburger" type="button" onclick="toggleSidebar()" title="Abrir Menú de Secciones">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <!-- FLECHA PARA VOLVER EN TODO MOMENTO -->
+                <button class="btn-header-back hidden" id="btnHeaderBack" type="button" onclick="goBackOrHub()" title="Volver a la pantalla anterior">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Volver</span>
+                </button>
+
+                <!-- TÍTULO ESTÁTICO DE LA CABECERA -->
+                <h1 class="header-static-title">
+                    La Cueva del Güero <span class="badge-pro">PRO</span>
+                    <span class="header-active-view-name" id="viewHeaderSubtitle">/ Centro de Mando</span>
+                </h1>
             </div>
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
-                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
-                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
-                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
+
+            <!-- CLUSTER DE ACCIONES RÁPIDAS -->
+            <div class="header-actions-bar" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);" title="Abrir Cuestionario para Invitados en pestaña nueva">
+                    <i class="fa-solid fa-clipboard-user"></i> Cuestionario
+                </a>
+                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);" title="Abrir Radar de Tracking de Invitados">
+                    <i class="fa-solid fa-satellite-dish"></i> Tracking
+                </a>
+                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);" title="Abrir Generador de Cesión Legal">
+                    <i class="fa-solid fa-file-contract"></i> Cesión
+                </a>
+                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'" title="Subir imagen a la galería de producción">
+                    <i class="fa-solid fa-camera"></i> Subir Foto
+                </button>
                 <button class="btn-neon" id="btn-centro-avisos" type="button" style="font-size:0.8rem; padding:6px 14px; border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleCentroAvisos()" title="Centro de Monitoreo y Avisos en Vivo (Webhook)">
                     <i class="fa-solid fa-bell"></i> Avisos <span id="badge-avisos-count" style="background:#ff0055; color:#fff; font-size:0.7rem; font-weight:900; padding:1px 6px; border-radius:10px;">0</span>
                 </button>
-                <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
+                <button class="btn-neon" type="button" onclick="cerrarSesionPro()" style="border-color:#ff4d4d; color:#ff4d4d; font-size:0.8rem; padding:6px 12px;" title="Cerrar Sesión de Forma Segura">
+                    <i class="fa-solid fa-power-off"></i> Salir
+                </button>
             </div>
         </header>
 
+        <!-- VIEW 0: HUB DE FUNCIONES PRO (TARJETAS FLOTANTES MAGNÉTICAS CON LUZ CYAN) -->
+        <section class="view-section active" id="view-hub">
+            <div class="hub-container">
+                <div class="hub-hero">
+                    <h2>Centro de Mando & <span>Automatización PRO</span></h2>
+                    <p>Selecciona una sección en las tarjetas interactivas o accede al menú hamburguesa en la cabecera. Todas las áreas cuentan con retorno inmediato.</p>
+                </div>
+
+                <!-- GRID DE TARJETAS FLOTANTES MAGNÉTICAS -->
+                <div class="magnetic-grid" id="magneticGrid">
+                    <!-- TARJETA 1: EPISODIOS Y FICHAS -->
+                    <div class="magnetic-card" onclick="switchView('episodios')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </div>
+                                <span class="card-tag">PostgreSQL Neon</span>
+                            </div>
+                            <h3 class="card-title">Episodios y Fichas</h3>
+                            <p class="card-description">Curaduría de 33 criterios de storytelling, expedientes en vivo, generación de escaleta técnica, guiones y cue cards para set.</p>
+                            <div class="card-footer-action">
+                                <span>Abrir Expedientes</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 2: GENERADOR DE HOOKS -->
+                    <div class="magnetic-card" onclick="switchView('hooks')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-magnet"></i>
+                                </div>
+                                <span class="card-tag">Gemini AI</span>
+                            </div>
+                            <h3 class="card-title">Generador de Hooks</h3>
+                            <p class="card-description">Algoritmos de alta retención viral con IA para TikTok, Instagram Reels, YouTube Shorts y Spotify con copys adaptados.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Generar Ganchos</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 3: EDITOR DE VIDEO -->
+                    <div class="magnetic-card" onclick="switchView('video')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(57, 255, 20, 0.4); color: var(--neon-green);">
+                                    <i class="fa-solid fa-video"></i>
+                                </div>
+                                <span class="card-tag">FFmpeg & NLE</span>
+                            </div>
+                            <h3 class="card-title">Editor de Video Multi-Pista</h3>
+                            <p class="card-description">Postproducción en cabina, timeline interactivo, nivelación de audio a -14 LUFS, cortes rápidos y presets de exportación.</p>
+                            <div class="card-footer-action" style="color: var(--neon-green);">
+                                <span>Abrir Timeline</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 4: EDITOR CANVA PRO -->
+                    <div class="magnetic-card" onclick="switchView('canva')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-palette"></i>
+                                </div>
+                                <span class="card-tag">Fabric Canvas</span>
+                            </div>
+                            <h3 class="card-title">Editor Canva PRO</h3>
+                            <p class="card-description">Compositor gráfico cyberpunk para miniaturas de YouTube, portadas de podcast, corte inteligente y activos de branding.</p>
+                            <div class="card-footer-action">
+                                <span>Diseñar Miniaturas</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 5: GESTOR DE BLOG -->
+                    <div class="magnetic-card" onclick="switchView('blog')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </div>
+                                <span class="card-tag">CMS Transmedia</span>
+                            </div>
+                            <h3 class="card-title">Gestor de Blog</h3>
+                            <p class="card-description">Conversión de fichas PDF a notas de prensa y redacción asistida por Gemini para la comunidad y posicionamiento SEO.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Redactar Artículos</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 6: AVATAR ENGINE -->
+                    <div class="magnetic-card" onclick="switchView('avatar')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-masks-theater"></i>
+                                </div>
+                                <span class="card-tag">Interactive AI</span>
+                            </div>
+                            <h3 class="card-title">Avatar Engine</h3>
+                            <p class="card-description">Personalización y control del comportamiento visual y gestual de El Güero Bot para streaming y respuestas interactivas.</p>
+                            <div class="card-footer-action">
+                                <span>Configurar Avatar</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 7: MESA DE TRABAJO -->
+                    <div class="magnetic-card" onclick="switchView('mesa')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 215, 0, 0.4); color: #FFD700;">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                </div>
+                                <span class="card-tag">Auditoría & Equipo</span>
+                            </div>
+                            <h3 class="card-title">Mesa de Trabajo</h3>
+                            <p class="card-description">Monitoreo de latencia de PostgreSQL, simulador de conversión de leads, pruebas de Stripe y votación de acuerdos en vivo.</p>
+                            <div class="card-footer-action" style="color: #FFD700;">
+                                <span>Abrir Mesa</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 8: RADAR DE TRACKING EN VIVO -->
+                    <div class="magnetic-card" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){window.open('https://s.lacuevadelguero.com/', '_blank');}else{window.open('../tracking/index.html', '_blank');}">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(57, 255, 20, 0.4); color: var(--neon-green);">
+                                    <i class="fa-solid fa-satellite-dish"></i>
+                                </div>
+                                <span class="card-tag">S.LACUEVADELGUERO</span>
+                            </div>
+                            <h3 class="card-title">Radar de Tracking</h3>
+                            <p class="card-description">Monitoreo en 5 fases del avance de cuestionarios de invitados, códigos de seguimiento y enlaces directos de WhatsApp.</p>
+                            <div class="card-footer-action" style="color: var(--neon-green);">
+                                <span>Abrir Portal Tracking</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 9: CUESTIONARIO DE STORYTELLING -->
+                    <div class="magnetic-card" onclick="window.open('../storytelling-invitado.html', '_blank')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-clipboard-user"></i>
+                                </div>
+                                <span class="card-tag">33 Criterios</span>
+                            </div>
+                            <h3 class="card-title">Cuestionario Invitados</h3>
+                            <p class="card-description">Formulario público dinámico para captar vivencias, momentos difíciles, frases y anécdotas auténticas de los participantes.</p>
+                            <div class="card-footer-action">
+                                <span>Ver Cuestionario</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 10: CESIÓN DE DERECHOS -->
+                    <div class="magnetic-card" onclick="window.open('../cesion-derechos.html', '_blank')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-file-contract"></i>
+                                </div>
+                                <span class="card-tag">Legal Tech</span>
+                            </div>
+                            <h3 class="card-title">Cesión de Derechos</h3>
+                            <p class="card-description">Contratos legales automatizados de imagen y voz con firma digitalizada listos para exportar a PDF antes de grabar.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Generar Contrato</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 11: SUBIR FOTO A GALERÍA -->
+                    <div class="magnetic-card" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+                                <span class="card-tag">Modal Rápido</span>
+                            </div>
+                            <h3 class="card-title">Galería de Producción</h3>
+                            <p class="card-description">Sube y cataloga fotografías detrás de cámara, invitados y momentos cumbre directo al feed público.</p>
+                            <div class="card-footer-action">
+                                <span>Subir Imagen</span>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 12: CENTRO DE AVISOS Y WEBHOOK -->
+                    <div class="magnetic-card" onclick="toggleCentroAvisos()">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 215, 0, 0.4); color: #FFD700;">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <span class="card-tag">Webhooks en Vivo</span>
+                            </div>
+                            <h3 class="card-title">Centro de Avisos</h3>
+                            <p class="card-description">Monitoreo de eventos síncronos, notificaciones de captación de leads y alertas operativas en set.</p>
+                            <div class="card-footer-action" style="color: #FFD700;">
+                                <span>Ver Alertas</span>
+                                <i class="fa-solid fa-satellite-dish"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- VIEW 1: EPISODIOS Y FICHAS -->
-        <section class="view-section active" id="view-episodios">
+        <section class="view-section" id="view-episodios">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-folder-open"></i> Expedientes y Curaduría Neon PostgreSQL</span>
+            </div>
             <div class="episodios-layout">
                 <!-- LISTA DE REGISTROS -->
                 <div class="subpanel-lista">
@@ -1007,6 +1585,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 2: GESTOR DE BLOG -->
         <section class="view-section" id="view-blog">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-newspaper"></i> Publicaciones y Artículos Transmedia</span>
+            </div>
             <h2 class="section-title"><i class="fa-solid fa-newspaper"></i> Gestor de Artículos de Blog</h2>
             
             <div class="blog-tabs">
@@ -1065,6 +1649,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 3: GENERADOR DE HOOKS -->
         <section class="view-section" id="view-hooks">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-magnet"></i> Algoritmos Virales con Gemini AI</span>
+            </div>
             <h2 class="section-title"><i class="fa-solid fa-magnet"></i> Generador de Hooks (Redes Sociales)</h2>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Ingresa el tema o frase central de la plática para generar automáticamente ganchos y copys adaptados al flow de cada red social.</p>
             
@@ -1138,6 +1728,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 4: EDITOR DE VIDEO (LA CUEVA VIDEO EDITOR PRO) -->
         <section class="view-section" id="view-video" style="padding: 15px 25px;">
+            <div class="section-return-bar" style="margin-bottom: 15px;">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-video"></i> Postproducción NLE & Masterización -14 LUFS</span>
+            </div>
             <!-- TOP BAR -->
             <div style="display:flex; justify-content:space-between; align-items:center; background:#0f0f18; border:1px solid rgba(0,255,255,0.2); border-radius:12px; padding:10px 20px; margin-bottom:15px; box-shadow:0 0 15px rgba(0,255,255,0.1);">
                 <div style="display:flex; align-items:center; gap:15px;">
@@ -1158,9 +1754,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             </div>
 
             <!-- WORKSPACE GRID (LEFT, CENTER, RIGHT PANELS) -->
-            <div style="display:grid; grid-template-columns: 240px 1fr 280px; gap:15px; height:380px; align-items:stretch; margin-bottom:15px;">
+            <div class="video-editor-workspace" style="display:grid; grid-template-columns: 240px 1fr 280px; gap:15px; height:380px; align-items:stretch; margin-bottom:15px;">
                 <!-- PANEL IZQUIERDO: BIBLIOTECA & MODELOS IA -->
-                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
+                <div class="video-panel-assets" style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
                     <h4 style="color:#00FFFF; margin:0 0 5px 0; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-folder"></i> Recursos e IA</h4>
                     <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
                         <span style="color:#aaa; font-weight:bold;">🚀 Modelos de IA Directa</span>
@@ -1178,7 +1774,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- PANEL CENTRAL: VISTA PREVIA -->
-                <div style="background:#050508; border:1px solid rgba(255,255,255,0.05); border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; padding:15px; position:relative; overflow:hidden;">
+                <div class="video-panel-preview" style="background:#050508; border:1px solid rgba(255,255,255,0.05); border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; padding:15px; position:relative; overflow:hidden;">
                     <div id="preview-wrapper-box" style="flex-grow:1; display:flex; justify-content:center; align-items:center; overflow:hidden; transition: all 0.3s ease;">
                         <video id="editor-preview-video" style="max-height:100%; max-width:100%; border-radius:8px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></video>
                     </div>
@@ -1196,7 +1792,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- PANEL DERECHO: PROPIEDADES & AUDIO/VIDEO -->
-                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; font-size:0.8rem;">
+                <div class="video-panel-inspector" style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; font-size:0.8rem;">
                     <h4 style="color:#FF00FF; margin:0; border-bottom:1px solid rgba(255,0,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-sliders"></i> Ajustes del Clip</h4>
                     <div>
                         <span style="color:#aaa; font-weight:bold;">Transformación</span>
@@ -1254,7 +1850,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             </div>
 
             <!-- TIMELINE (BOTTOM PANEL) -->
-            <div style="background:#0f0f15; border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; position:relative;">
+            <div class="video-timeline-card" style="background:#0f0f15; border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; position:relative;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px;">
                     <div style="display:flex; gap:10px; align-items:center; font-size:0.8rem; color:#aaa;">
                         <button class="btn-neon" style="font-size:0.7rem; padding:2px 8px;" onclick="ejecutarIAVideo('Edición Rápida TikTok')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Edición IA</button>
@@ -1430,11 +2026,17 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 5: EDITOR CANVA PRO (GIMP/CANVA/EXPRESS ALTERNATIVE) -->
         <section class="view-section" id="view-canva">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-palette"></i> Suite Gráfica Cyberpunk & Miniaturas YouTube</span>
+            </div>
             <p style="color: var(--text-muted); margin-bottom: 20px;">Diseño y composición profesional (Photoshop & Canva). Sube imágenes locales o sincroniza tus archivos desde la nube, aplica capas, filtros cyberpunk y tipografía neón.</p>
 
-            <div style="display: grid; grid-template-columns: 360px 1fr; gap: 25px; align-items: start;">
+            <div class="canva-editor-workspace" style="display: grid; grid-template-columns: 360px 1fr; gap: 25px; align-items: start;">
                 <!-- CONTROLES TABULADOS -->
-                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 15px; display:flex; flex-direction:column; gap:15px;">
+                <div class="canva-controls-card" style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 15px; display:flex; flex-direction:column; gap:15px;">
                     <!-- HEADER TABS -->
                     <div style="display:flex; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:10px; gap:5px;">
                         <button class="btn-neon active" id="canva-tab-cloud" onclick="switchCanvaTab('cloud')" style="flex:1; font-size:0.7rem; padding:6px 4px;"><i class="fa-solid fa-cloud"></i> Nube / Presets</button>
@@ -1553,7 +2155,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- LIENZO HTML5 -->
-                <div style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(0,255,255,0.3); border-radius: 16px; padding: 20px; text-align: center; min-height: 450px; display: flex; justify-content: center; align-items: center;">
+                <div class="canva-viewport-card" style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(0,255,255,0.3); border-radius: 16px; padding: 20px; text-align: center; min-height: 450px; display: flex; justify-content: center; align-items: center;">
                     <canvas id="canvaCanvas" style="max-width:100%; max-height:550px; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></canvas>
                 </div>
             </div>
@@ -1561,6 +2163,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 6: AVATAR ENGINE -->
         <section class="view-section" id="view-avatar">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-masks-theater"></i> Generador de Personajes & Comportamiento Visual</span>
+            </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <div>
                     <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-masks-theater"></i> Avatar-Engine: Creador de Personajes</h2>
@@ -1661,6 +2269,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 7: MESA DE TRABAJO INTERACTIVA (AUDITORÍA & LEADS CONTROLLER) -->
         <section class="view-section" id="view-mesa" style="overflow-y:auto; padding: 25px;">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-chalkboard-user"></i> Mesa de Trabajo, Auditoría & Toma de Decisiones</span>
+            </div>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Mesa de control interactiva para auditoría del sistema, simulación de pagos Stripe, mapeo de flujos y colaboración del equipo.</p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
@@ -1907,11 +2521,16 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     </div>
 
     <!-- MODAL OCULTO: IMPORTAR AVATAR PRE-EXISTENTE -->
-    <div id="modalImportarAvatarExistente" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-magenta); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(255,0,255,0.4);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="margin:0; color:#FF00FF;"><i class="fa-solid fa-file-import"></i> Importar Avatar Existente</h3>
-                <button onclick="cerrarModalImportarExistente()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+    <div id="modalImportarAvatarExistente" class="modal-translucent-overlay" style="display:none;">
+        <div class="modal-translucent-card" style="max-width:520px;">
+            <div class="modal-header-row">
+                <button type="button" class="btn-section-back" onclick="cerrarModalImportarExistente()">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
+                <h3 class="modal-header-title" style="margin:0; font-size:1.15rem; color:#FF00FF;">
+                    <i class="fa-solid fa-file-import"></i> Importar Avatar Existente
+                </h3>
+                <button class="btn-modal-close" onclick="cerrarModalImportarExistente()" title="Cerrar">&times;</button>
             </div>
             <form onsubmit="guardarAvatarPreExistente(event)">
                 <div class="form-group">
@@ -1936,11 +2555,16 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     </div>
 
     <!-- MODAL: SUBIR FOTOS A LA GALERÍA -->
-    <div id="modalSubirFotoGaleria" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-cyan); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(0,255,255,0.4);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="margin:0; color:#00FFFF;"><i class="fa-solid fa-camera"></i> Subir Foto a la Galería</h3>
-                <button onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+    <div id="modalSubirFotoGaleria" class="modal-translucent-overlay" style="display:none;">
+        <div class="modal-translucent-card" style="max-width:520px;">
+            <div class="modal-header-row">
+                <button type="button" class="btn-section-back" onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
+                <h3 class="modal-header-title" style="margin:0; font-size:1.15rem; color:#00FFFF;">
+                    <i class="fa-solid fa-camera"></i> Subir Foto a la Galería
+                </h3>
+                <button class="btn-modal-close" onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'" title="Cerrar">&times;</button>
             </div>
             <form onsubmit="guardarFotoGaleriaDashboard(event)">
                 <div class="form-group">
@@ -2103,6 +2727,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             <!-- Header -->
             <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" class="btn-section-back" onclick="toggleCentroAvisos()" style="font-size:0.75rem; padding:4px 10px;" title="Volver al Hub">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </button>
                     <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
                         <i class="fa-solid fa-bell"></i>
                     </div>
@@ -2128,6 +2755,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                     <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 10px; border-color:#FF00FF; color:#FF00FF;" onclick="probarWebhookTest()"><i class="fa-solid fa-paper-plane"></i> Probar Test</button>
                     <button type="button" class="btn-neon" style="font-size:0.72rem; padding:4px 12px; background:var(--neon-green); color:#000; border-color:var(--neon-green); font-weight:800;" onclick="guardarConfigWebhook()"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
                 </div>
+                <div id="boxWebhookTestFeedback" style="display:none; margin-top:10px; padding:10px 12px; border-radius:8px; font-size:0.75rem; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1);"></div>
             </div>
 
             <!-- Feed de Avisos -->

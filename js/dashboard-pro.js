@@ -19,66 +19,152 @@ let activeTemaBlog = null;
    NAVEGACIÓN DE VISTAS (TAB SWITCHER)
    ============================================================ */
 
-function toggleSidebar() {
+let currentView = 'hub';
+let previousView = 'hub';
+
+function toggleSidebar(forceState) {
     const sidebar = document.querySelector(".sidebar");
-    if (sidebar) {
-        sidebar.classList.toggle("active");
+    const overlay = document.getElementById("sidebarOverlay");
+    if (!sidebar) return;
+    
+    const shouldOpen = (forceState !== undefined) ? forceState : !sidebar.classList.contains("active");
+    if (shouldOpen) {
+        sidebar.classList.add("active");
+        if (overlay) overlay.classList.add("active");
+    } else {
+        sidebar.classList.remove("active");
+        if (overlay) overlay.classList.remove("active");
     }
 }
 window.toggleSidebar = toggleSidebar;
 
 function switchView(view) {
+    if (view !== currentView) {
+        previousView = currentView;
+        currentView = view;
+    }
+
     // Quitar active de todos los menús
     document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
-    // Añadir active al menú seleccionado
     const activeMenu = document.getElementById(`menu-${view}`);
     if (activeMenu) activeMenu.classList.add("active");
 
     // Ocultar todas las secciones
     document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
-    // Mostrar la sección seleccionada
     const activeSec = document.getElementById(`view-${view}`);
-    if (activeSec) activeSec.classList.add("active");
-
-    // Ocultar la barra lateral en celular después de elegir una sección
-    const sidebar = document.querySelector(".sidebar");
-    const backdrop = document.getElementById("sidebarBackdrop");
-    if (sidebar) {
-        sidebar.classList.remove("active");
-    }
-    if (backdrop) {
-        backdrop.classList.remove("active");
+    if (activeSec) {
+        activeSec.classList.add("active");
+        if (activeSec.scrollTo) activeSec.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Actualizar título del header
-    const titleEl = document.getElementById("view-header-title");
-    if (titleEl) {
-        switch(view) {
-            case 'episodios':
-                titleEl.innerHTML = `Episodios y <span>Fichas</span>`;
-                break;
-            case 'blog':
-                titleEl.innerHTML = `Gestor de <span>Blog</span>`;
-                break;
-            case 'hooks':
-                titleEl.innerHTML = `Generador de <span>Hooks</span>`;
-                break;
-            case 'video':
-                titleEl.innerHTML = `Editor de <span>Video</span>`;
-                break;
-            case 'canva':
-                titleEl.innerHTML = `Editor Canva <span>PRO</span>`;
-                break;
-            case 'avatar':
-                titleEl.innerHTML = `Avatar <span>Engine</span>`;
-                break;
-            case 'mesa':
-                titleEl.innerHTML = `Mesa de <span>Trabajo</span>`;
-                break;
+    // Cerrar el drawer hamburguesa
+    toggleSidebar(false);
+
+    // Controlar botón de volver en la cabecera
+    const btnBack = document.getElementById("btnHeaderBack");
+    const subTitleEl = document.getElementById("viewHeaderSubtitle");
+    
+    if (btnBack) {
+        if (view === 'hub') {
+            btnBack.classList.add("hidden");
+        } else {
+            btnBack.classList.remove("hidden");
+        }
+    }
+
+    const viewNames = {
+        hub: 'Centro de Mando',
+        episodios: 'Episodios y Fichas',
+        blog: 'Gestor de Blog',
+        hooks: 'Generador de Hooks',
+        video: 'Editor de Video',
+        canva: 'Editor Canva PRO',
+        avatar: 'Avatar Engine',
+        mesa: 'Mesa de Trabajo'
+    };
+
+    if (subTitleEl) {
+        subTitleEl.textContent = `/ ${viewNames[view] || view}`;
+    }
+
+    // Si entra a episodios por primera vez, asegurar carga de registros
+    if (view === 'episodios' && typeof cargarRegistros === 'function') {
+        const cont = document.getElementById("registrosContainer");
+        if (cont && cont.children.length <= 1) {
+            cargarRegistros();
         }
     }
 }
 window.switchView = switchView;
+
+function goBackOrHub() {
+    if (currentView !== 'hub') {
+        switchView('hub');
+    } else if (previousView && previousView !== 'hub') {
+        switchView(previousView);
+    } else {
+        window.location.href = '../index.html';
+    }
+}
+window.goBackOrHub = goBackOrHub;
+
+function cerrarSesionPro() {
+    if (confirm("¿Estás seguro de que deseas cerrar sesión en La Cueva del Güero Pro?")) {
+        try {
+            localStorage.removeItem("cueva_token");
+            localStorage.removeItem("auth_user");
+            sessionStorage.clear();
+            document.cookie.split(";").forEach(c => {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+        } catch(e) {}
+        window.location.href = "../index.html";
+    }
+}
+window.cerrarSesionPro = cerrarSesionPro;
+
+// Inicializador de Tarjetas Flotantes Magnéticas con Sensibilidad de Luz Cyan
+function initMagneticCards() {
+    const cards = document.querySelectorAll(".magnetic-card");
+    cards.forEach(card => {
+        let bounds;
+        
+        function updateBounds() {
+            bounds = card.getBoundingClientRect();
+        }
+        
+        card.addEventListener("mouseenter", updateBounds);
+        
+        card.addEventListener("mousemove", (e) => {
+            if (!bounds) updateBounds();
+            const mouseX = e.clientX - bounds.left;
+            const mouseY = e.clientY - bounds.top;
+            
+            card.style.setProperty("--mouse-x", `${mouseX}px`);
+            card.style.setProperty("--mouse-y", `${mouseY}px`);
+            
+            const centerX = bounds.width / 2;
+            const centerY = bounds.height / 2;
+            const deltaX = (mouseX - centerX) / centerX;
+            const deltaY = (mouseY - centerY) / centerY;
+            
+            const rotateX = (-deltaY * 7).toFixed(2);
+            const rotateY = (deltaX * 7).toFixed(2);
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.025, 1.025, 1.025)`;
+        });
+        
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+        });
+    });
+}
+window.initMagneticCards = initMagneticCards;
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMagneticCards();
+});
+
 
 /* ============================================================
    SECCIÓN 1: CONTROLADOR DE EPISODIOS
@@ -2082,30 +2168,72 @@ async function guardarConfigWebhook() {
     if (!input) return;
     const url = input.value.trim();
 
+    if (url) {
+        try {
+            const parsed = new URL(url);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+                alert("Por favor ingresa una URL válida con protocolo https://");
+                return;
+            }
+        } catch (_) {
+            alert("La URL del webhook no es válida. Verifica que comience con https:// y no tenga espacios.");
+            return;
+        }
+    }
+
     try {
         const res = await fetch("/api/api-webhook.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "guardar_config", webhook_url: url, activo: true })
         });
+
+        if (!res.ok) {
+            let errMsg = `Error del servidor (${res.status})`;
+            try {
+                const errJson = await res.json();
+                errMsg = errJson.error || errJson.message || errMsg;
+            } catch (_) {}
+            alert("No se pudo guardar: " + errMsg);
+            return;
+        }
+
         const data = await res.json();
         alert(data.message || "Webhook configurado con éxito.");
         toggleConfigWebhook();
     } catch (err) {
-        alert("Error al guardar: " + err.message);
+        alert("Error de comunicación: " + err.message);
     }
 }
 window.guardarConfigWebhook = guardarConfigWebhook;
 
 async function probarWebhookTest() {
     const input = document.getElementById("inputWebhookUrl");
+    const feedback = document.getElementById("boxWebhookTestFeedback");
     const url = input ? input.value.trim() : "";
     if (!url) {
-        alert("Ingresa primero la URL de tu webhook (Discord, Slack o Make).");
+        alert("Ingresa primero la URL de tu webhook (Discord, Slack, Make o TSolutions).");
         return;
     }
 
     try {
+        const parsed = new URL(url);
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+            alert("Por favor ingresa una URL válida con protocolo https://");
+            return;
+        }
+    } catch (_) {
+        alert("La URL del webhook no es válida. Verifica que comience con https:// y no tenga espacios.");
+        return;
+    }
+
+    if (feedback) {
+        feedback.style.display = "block";
+        feedback.innerHTML = `<span style="color:#00ffff;"><i class="fa-solid fa-spinner fa-spin"></i> Enviando paquete de telemetría a ${escapeHtml(url)}...</span>`;
+    }
+
+    try {
+        const startTime = Date.now();
         const res = await fetch("/api/api-webhook.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -2119,18 +2247,97 @@ async function probarWebhookTest() {
                 }
             })
         });
+
+        const totalClientMs = Date.now() - startTime;
+
+        if (!res.ok) {
+            let errMsg = `Error ${res.status}`;
+            try {
+                const errJson = await res.json();
+                errMsg = errJson.error || errJson.message || errMsg;
+            } catch (_) {}
+            if (feedback) {
+                feedback.innerHTML = `
+                    <div style="color:#ff4444; font-weight:bold; margin-bottom:4px;">
+                        <i class="fa-solid fa-circle-xmark"></i> Falla en el Servidor (${res.status})
+                    </div>
+                    <div style="color:#ccc; font-size:0.72rem;">${escapeHtml(errMsg)}</div>
+                `;
+            } else {
+                alert("Falla al enviar prueba: " + errMsg);
+            }
+            return;
+        }
+
         const data = await res.json();
-        alert("¡Aviso de prueba enviado! Revisa tu canal de Discord/Slack.");
+        const t = data.webhook_status || {};
+        const isOk = t.success || t.code >= 200 && t.code < 300;
+        const httpCode = t.code || 200;
+        const latency = t.latency_ms || totalClientMs;
+
+        if (feedback) {
+            feedback.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-weight:bold; color:${isOk ? '#39FF14' : '#ff4444'};">
+                        <i class="fa-solid ${isOk ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> 
+                        ${isOk ? 'Entrega Exitosa' : 'Respuesta con Error'}
+                    </span>
+                    <span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:4px; font-size:0.7rem; color:#fff;">
+                        HTTP ${httpCode} • ${latency} ms
+                    </span>
+                </div>
+                <div style="font-size:0.7rem; color:#aaa; word-break:break-all;">
+                    <strong>Destino:</strong> ${escapeHtml(url)}
+                </div>
+                ${t.response ? `<div style="margin-top:4px; font-size:0.68rem; color:#888; background:rgba(0,0,0,0.4); padding:4px 6px; border-radius:4px; max-height:60px; overflow-y:auto;"><strong>Respuesta:</strong> ${escapeHtml(String(t.response))}</div>` : ''}
+            `;
+        } else {
+            alert(`¡Aviso de prueba enviado! Código HTTP ${httpCode} (${latency} ms).`);
+        }
         cargarAvisosEnVivo(true);
     } catch (err) {
-        alert("Falla de envío: " + err.message);
+        if (feedback) {
+            feedback.innerHTML = `<span style="color:#ff4444;"><i class="fa-solid fa-triangle-exclamation"></i> Error de conexión: ${escapeHtml(err.message)}</span>`;
+        } else {
+            alert("Falla de red al enviar prueba: " + err.message);
+        }
     }
 }
 window.probarWebhookTest = probarWebhookTest;
 
+async function reenviarEventoWebhook(eventoId) {
+    if (!eventoId) return;
+    try {
+        const res = await fetch("/api/api-webhook.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "reenviar", evento_id: eventoId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert("No se pudo reenviar: " + (data.error || "Error desconocido"));
+            return;
+        }
+        alert("✓ Evento reenviado con éxito al webhook.");
+        cargarAvisosEnVivo(true);
+    } catch (e) {
+        alert("Error de red al reenviar evento: " + e.message);
+    }
+}
+window.reenviarEventoWebhook = reenviarEventoWebhook;
+
+function togglePayloadInspector(eventoId) {
+    const el = document.getElementById(`payload-${eventoId}`);
+    if (el) {
+        el.style.display = (el.style.display === "none") ? "block" : "none";
+    }
+}
+window.togglePayloadInspector = togglePayloadInspector;
+
 async function cargarAvisosEnVivo(esManual = false) {
     try {
         const res = await fetch("/api/api-webhook.php?action=listar&limit=40");
+        if (!res.ok) return;
         const data = await res.json();
         if (!data.eventos) return;
 
@@ -2149,6 +2356,16 @@ async function cargarAvisosEnVivo(esManual = false) {
             const color = ev.color || '#00FFFF';
             const icono = ev.icono || 'fa-bell';
             const fecha = ev.timestamp || '';
+            const t = ev.webhook_telemetry || {};
+
+            let statusBadge = "";
+            if (t.success) {
+                statusBadge = `<span style="background:rgba(57,255,20,0.15); color:#39FF14; border:1px solid #39FF14; border-radius:4px; padding:2px 6px; font-size:0.65rem;" title="Entregado"><i class="fa-solid fa-check"></i> HTTP ${t.code || 200} (${t.latency_ms || 0}ms)</span>`;
+            } else if (t.code && t.code >= 400) {
+                statusBadge = `<span style="background:rgba(255,68,68,0.15); color:#ff4444; border:1px solid #ff4444; border-radius:4px; padding:2px 6px; font-size:0.65rem;" title="Error en webhook destino"><i class="fa-solid fa-triangle-exclamation"></i> HTTP ${t.code}</span>`;
+            } else {
+                statusBadge = `<span style="background:rgba(255,255,255,0.06); color:#aaa; border-radius:4px; padding:2px 6px; font-size:0.65rem;">Local</span>`;
+            }
 
             let datosHtml = "";
             if (ev.datos && typeof ev.datos === 'object') {
@@ -2165,12 +2382,25 @@ async function cargarAvisosEnVivo(esManual = false) {
                         <span style="font-size:0.85rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:6px;">
                             <i class="fa-solid ${icono}" style="color:${color};"></i> ${escapeHtml(ev.titulo)}
                         </span>
-                        <span style="font-size:0.7rem; color:#888; white-space:nowrap;">${fecha.split(' ')[1] || fecha}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            ${statusBadge}
+                            <span style="font-size:0.7rem; color:#888; white-space:nowrap;">${fecha.split(' ')[1] || fecha}</span>
+                        </div>
                     </div>
                     ${datosHtml ? `<div style="background:rgba(255,255,255,0.03); border-radius:6px; padding:6px 10px; display:flex; flex-direction:column; gap:2px;">${datosHtml}</div>` : ''}
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#777;">
+                    
+                    <!-- Acciones Rápidas: Inspector y Replay -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#777; margin-top:2px;">
                         <span>Origen: ${escapeHtml(ev.origen || 'sistema')}</span>
-                        <span>${fecha.split(' ')[0] || ''}</span>
+                        <div style="display:flex; gap:6px;">
+                            <button type="button" class="btn-neon" style="font-size:0.65rem; padding:2px 6px; border-color:#888; color:#bbb;" onclick="togglePayloadInspector('${escapeHtml(ev.id)}')"><i class="fa-solid fa-code"></i> Payload</button>
+                            <button type="button" class="btn-neon" style="font-size:0.65rem; padding:2px 6px; border-color:var(--neon-cyan); color:var(--neon-cyan);" onclick="reenviarEventoWebhook('${escapeHtml(ev.id)}')"><i class="fa-solid fa-rotate-right"></i> Reenviar</button>
+                        </div>
+                    </div>
+
+                    <!-- Inspector de Payload (Colapsable) -->
+                    <div id="payload-${escapeHtml(ev.id)}" style="display:none; background:#080810; border:1px solid rgba(0,255,255,0.2); border-radius:6px; padding:8px; margin-top:6px; overflow-x:auto;">
+                        <pre style="margin:0; font-size:0.68rem; color:#00ffcc; font-family:monospace; white-space:pre-wrap;">${escapeHtml(JSON.stringify(ev, null, 2))}</pre>
                     </div>
                 </div>
             `;

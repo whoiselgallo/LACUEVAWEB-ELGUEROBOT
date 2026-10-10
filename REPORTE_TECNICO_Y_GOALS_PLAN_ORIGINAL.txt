@@ -1,0 +1,318 @@
+================================================================================
+REPORTE TÉCNICO INTEGRAL, AUDITORÍA DE CONECTIVIDAD Y GOALS DEL PLAN ORIGINAL
+PROYECTO: LA CUEVA DEL GÜERO & EL GÜERO BOT (v2.5 PRO)
+UBICACIÓN DEL PROYECTO: Mexicali, Baja California
+FECHA DE GENERACIÓN: 2026-10-09
+================================================================================
+
+TABLA DE CONTENIDOS:
+1. RESUMEN EJECUTIVO Y VISIÓN DEL PROYECTO
+2. EQUIPO CANÓNICO Y ESTRUCTURA DE ROLES
+3. GOALS Y METAS ESTRATÉGICAS DEL PLAN ORIGINAL (FASES 1 A 4)
+4. CONECTIVIDAD CON PLATAFORMAS DE STREAMING Y REDES SOCIALES
+5. INVENTARIO Y FUNCIONALIDAD DE APIS, SERVICIOS Y SCRIPTS
+6. EVALUACIÓN Y AUDITORÍA DE UI / UX
+7. ÁREAS DE OPORTUNIDAD POR SECCIÓN TÉCNICA
+8. MATRIZ DE TAREAS PENDIENTES (KANBAN BACKLOG)
+9. ARQUITECTURA DE SEGURIDAD Y DESPLIEGUE HÍBRIDO
+
+================================================================================
+1. RESUMEN EJECUTIVO Y VISIÓN DEL PROYECTO
+================================================================================
+"La Cueva del Güero" es un ecosistema tecnológico integral diseñado para transformar
+un podcast independiente en una cadena de medios transmedia automatizada. 
+
+El sistema combina:
+- Una Landing Page de alta conversión e inmersión estética Cyberpunk.
+- Asistente conversacional 24/7 con RAG e identidad propia ("El Güero Bot / Paw Agent").
+- Suite de preproducción con cuestionarios para invitados, guiones broadcast,
+  escaletas de cabina, cue cards interactivas y contratos legales de cesión de derechos.
+- Suite de postproducción de audio y video con IA (FFmpeg, Demucs, LUFS -14, Whisper).
+- Extractor de clips virales y ganchos de neuromarketing para TikTok/Shorts/Reels.
+- Portal de tracking en vivo de invitados en 5 fases.
+- Editor gráfico tipo Canva PRO con eliminación de fondo e integración en la nube.
+- Doble arquitectura de despliegue: Apache/PHP tradicional en Hostinger y Serverless
+  Node.js (v24) en Vercel con microservicios en Cloud Run.
+
+Impacto esperado del proyecto:
+- Ahorro de más de 15 horas semanales de trabajo por episodio.
+- 80% de incremento en retención de audiencia en cabina.
+- 100% de blindaje legal frente a reclamos de imagen o voz.
+- 3x a 5x de aumento en alcance orgánico multicanal.
+
+================================================================================
+2. EQUIPO CANÓNICO Y ESTRUCTURA DE ROLES
+================================================================================
+Documentado en docs/EQUIPO_CANONICO.md como la estructura inmutable del proyecto:
+
+A. "El Güero" (El Perro)
+   - Rol: Mascota Oficial, Imagen Central e Inspiración del Show.
+   - Presencia: Isotipo, logotipo, espíritu del set y voz del Paw Agent.
+   - Personalidad: Callejero noble, leal, norteño urbano, protector de la manada.
+
+B. Ariel Higuera "El Junior"
+   - Rol: CEO y Conductor Principal (Host).
+   - Funciones: Conducción de entrevistas, conexión con invitados, lectura de
+     Cue Cards de cabina y relaciones corporativas del show.
+
+C. Maria Elena Anguiano "La Mary"
+   - Rol: Socia Ángel y Administradora de Finanzas.
+   - Funciones: Inversión, validación presupuestal, administración de set y
+     cierre de acuerdos con patrocinadores comerciales.
+
+D. Javier Gallardo "El Gallo"
+   - Rol: Socio Intelectual, Director Creativo y Productor Ejecutivo.
+   - Funciones: Arquitectura narrativa, curaduría de invitados, dirección de
+     piso/cabina, dinámicas de preguntas y retos, y supervisión de postproducción.
+
+================================================================================
+3. GOALS Y METAS ESTRATÉGICAS DEL PLAN ORIGINAL
+================================================================================
+
+--- GOAL 1: PREPRODUCCIÓN INTELIGENTE Y CRM DE INVITADOS ---
+- Objetivo: Eliminar la improvisación y estructurar historias de alto impacto.
+- Metas Específicas:
+  1. Cuestionario dinámico de storytelling interactivo (storytelling-invitado.html).
+  2. Portal de seguimiento en tiempo real en 5 fases (s.lacuevadelguero.com / tracking/index.html).
+  3. Guión broadcast de 6 bloques con timecodes y acotaciones tecnicas (api-guion.php).
+  4. Escaleta de cabina sincronizada con preguntas punzantes (api-escaleta.php).
+  5. Tarjetas Cue Cards A5 de alto contraste para tablet en set (api-cuecards.php).
+  6. Contratos de cesión de derechos con firma digital y exportación PDF (cesion-derechos.html).
+
+--- GOAL 2: POSTPRODUCCIÓN ACELERADA CON INTELIGENCIA ARTIFICIAL ---
+- Objetivo: Reducir los tiempos de edición de audio y video de 10 horas a minutos.
+- Metas Específicas:
+  1. Detección automática de silencios y cortes de edición basada en texto.
+  2. Aislamiento vocal mediante Demucs y masterización a estándar broadcast de -14 LUFS.
+  3. Extracción automatizada de momentos clave y clips virales en formato 9:16.
+  4. Desacoplamiento de procesamiento pesado a microservicios en Google Cloud Run.
+
+--- GOAL 3: DISTRIBUCIÓN TRANSMEDIA Y VIRALIDAD AUTOMATIZADA ---
+- Objetivo: Multiplicar el alcance de cada episodio en todas las plataformas digitales.
+- Metas Específicas:
+  1. Generador de ganchos (hooks) con neuro-marketing de 3 segundos para TikTok/Shorts.
+  2. Redacción de artículos completos de blog SEO a partir de la transcripción.
+  3. Integración de feeds sociales en vivo (YouTube, Spotify, Meta, TikTok) en la web.
+  4. Sincronización continua con YouTube Data API para analítica de reproducciones.
+
+--- GOAL 4: EXPERIENCIA DIGITAL INMERSIVA Y AGENTE CONVERSACIONAL ---
+- Objetivo: Maximizar la retención de la comunidad en la web y captar nuevos oyentes.
+- Metas Específicas:
+  1. Hero animado cinematográfico con motor de partículas HTML5 neón a 60 FPS.
+  2. "El Güero Bot / Paw Agent" con RAG contextual sobre episodios anteriores.
+  3. Mapa interactivo de la manada (SVG con zoom/pan y pines de oyentes mundiales).
+  4. Selector de flow por emojis y formulario directo de retroalimentación.
+
+--- GOAL 5: SUITE DE DISEÑO GRÁFICO (CANVA PRO CYBERPUNK) ---
+- Objetivo: Diseñar miniaturas y piezas promocionales sin requerir software externo.
+- Metas Específicas:
+  1. Editor multipista en HTML5 Canvas con capas y tipografías neón.
+  2. Remoción de fondo automática con modelos de IA.
+  3. Conector Cloud Picker para Google Drive, Dropbox, OneDrive y TeraBox.
+  4. Generador de avatares e ilustraciones neón con Google Imagen 3.
+
+--- ROADMAP DE FASES DEL PLAN ORIGINAL ---
+* FASE 1 (Completada): Landing Cyberpunk, Paw Agent con Gemini, Canva PRO Neón,
+  Storytelling, Escaletas IA y Portal de Tracking de Invitados.
+* FASE 2 (Corto Plazo): Clipping automático 9:16 con subtítulos animados palabra por
+  palabra, cola de tareas con Redis y workers en Cloud Run.
+* FASE 3 (Mediano Plazo): Portal autoservicio del invitado sincronizado con Google
+  Calendar / Calendly, firma biométrica móvil y CRM de patrocinadores.
+* FASE 4 (Largo Plazo): Publicación automatizada en 1 clic a YouTube y Spotify,
+  módulo de monetización VIP con Stripe y audio ads dinámicos.
+
+================================================================================
+4. CONECTIVIDAD CON PLATAFORMAS DE STREAMING Y REDES SOCIALES
+================================================================================
+
+1. YOUTUBE GAMING / PODCASTS
+   - Conectividad: YouTube Data API v3 y YouTube Analytics API.
+   - Implementación: api-youtube-latest.php, api-youtube-analytics.php y youtube-actions.js.
+   - Mecanismo: Cache local para mitigar la cuota de 10,000 unidades diarias; consulta
+     de último video y analítica de métricas clave.
+
+2. SPOTIFY FOR PODCASTERS
+   - Conectividad: Spotify Web Playback & Embeds.
+   - Implementación: Iframe reactivo en la landing para reproducción directa de audio.
+   - Estado: Pendiente integración con API directa de publicación automática.
+
+3. KICK STREAMING
+   - Conectividad: Kick API v1/v2 & Pusher WebSockets.
+   - Arquitectura: Suscripción a clúster de Pusher para eventos de chat y alertas
+     en vivo de transmisiones.
+
+4. TIKTOK LIVE & CLIPS
+   - Conectividad: Webcast Connector (captura de regalos, comentarios) y Feed Embed.
+   - Implementación: Muro social multicanal en la landing y pipeline de exportación 9:16.
+
+5. META (INSTAGRAM & FACEBOOK)
+   - Conectividad: Instagram Graph API & Facebook Pages API.
+   - Implementación: Muro social adaptativo incrustado en index.html para visualización
+     de reels y publicaciones del show.
+
+6. DISCORD
+   - Conectividad: Discord Gateway v10 & REST API.
+   - Funcionalidad: Notificaciones de transmisión en vivo mediante Webhooks enriquecidos
+     (Embeds) y sincronización de roles para miembros de la manada.
+
+7. X (TWITTER)
+   - Conectividad: Twitter API v2.
+   - Funcionalidad: Publicación automatizada de alertas de estreno de episodios y clips.
+
+================================================================================
+5. INVENTARIO Y FUNCIONALIDAD DE APIS Y SERVICIOS DEL BACKEND
+================================================================================
+
+--- MICROSERVICIOS PRINCIPALES (PHP & VERCEL JS) ---
+
+* api-el-guero-bot.php / guero-bot.js:
+  Motor conversacional del agente con personalidad de "El Güero". Integra balanceador
+  de Google Gemini para respuestas norteñas urbanas y captura de leads.
+
+* api-guero-knowledge.php / guero-knowledge.js:
+  Base de conocimiento contextual (RAG) con resúmenes, anécdotas y detalles de los
+  episodios anteriores y datos del equipo.
+
+* api-guest-tracking.php:
+  Servicio de consulta y avance de estados (fases 1 a 5) del invitado con soporte
+  para recuperación de token y compartición vía WhatsApp.
+
+* api-escaleta.php / ai-escaleta.js:
+  Generador inteligente de escaletas técnicas de grabación a partir del cuestionario
+  de storytelling del invitado.
+
+* api-guion.php:
+  Generador de guiones broadcast de 6 bloques cinematográficos con timecodes.
+
+* api-cuecards.php:
+  Generador y despachador de tarjetas de cabina A5 de alto contraste para tablet.
+
+* api-hooks-ai.php / ai-hooks.js:
+  Generador de ganchos virales con técnicas de neuromarketing y fórmulas de retención.
+
+* api-invitados-save.php / api-invitados-get.php:
+  Almacenamiento persistente y recuperación de respuestas del cuestionario de invitados.
+
+* api-export-pdf.php:
+  Motor de renderizado y exportación de contratos de cesión de derechos y escaletas en PDF.
+
+* api-avatar-engine.php / api-imagen-generator.php:
+  Generación de avatares e ilustraciones neón mediante Google Imagen 3.
+
+* api-video-process.php / api-cloud-video.php:
+  Procesamiento acústico (-14 LUFS), aislamiento vocal (Demucs) y orquestación
+  en Google Cloud Run.
+
+* api-video-clips.php:
+  Detector de momentos clave y extractor de clips verticales para redes.
+
+* api-blog-ai.php / upload-blog.php:
+  Creación y publicación de artículos de blog optimizados para SEO basados en transcripciones.
+
+* api-auth.php:
+  Control de acceso seguro al Dashboard PRO mediante sesiones y contraseñas hasheadas.
+
+* config/config.php / api/_gemini.js:
+  Capa de configuración centralizada con balanceador y rotación de claves Gemini API,
+  y conexión de base de datos relacional (PostgreSQL / MySQL).
+
+================================================================================
+6. EVALUACIÓN Y AUDITORÍA DE UI / UX
+================================================================================
+
+A. Landing Page (index.html):
+   - Fortaleza: Estética Neón Cyberpunk de alto impacto, motor de partículas a 60 FPS,
+     avatares con animación secuencial coordinada y muro social integrado.
+   - Oportunidad: Optimizar el tiempo de carga inicial (FCP y LCP) en dispositivos
+     móviles con conexiones 3G/4G mediante carga diferida de assets multimedia.
+
+B. Dashboard PRO (dashboard/index.html & index.php):
+   - Fortaleza: Consola multipestaña unificada para administración de episodios,
+     escaletas, cue cards, generador de blog y editor canva.
+   - Oportunidad: Implementar confirmaciones visuales no bloqueantes (toasts reactivos)
+     y selector de temas de alto contraste para visualización en cabina.
+
+C. Portal de Tracking del Invitado (tracking/index.html):
+   - Fortaleza: Barra de progreso interactiva de 5 fases, recuperación de código
+     por nombre/email y botón directo para compartir enlace por WhatsApp.
+   - Oportunidad: Añadir notificaciones push o SMS/WhatsApp automáticas cuando el
+     episodio cambie de fase.
+
+D. Editor Canva PRO (js/editor-canva.js & css/editor-canva.css):
+   - Fortaleza: Flujo en el navegador sin dependencias de software externo,
+     soporte para capas, stickers neón y eliminación de fondo.
+   - Oportunidad: Añadir historial de deshacer/rehacer (Undo/Redo) multinivel y
+     plantillas preconfiguradas con proporciones de miniatura de YouTube (16:9).
+
+================================================================================
+7. ÁREAS DE OPORTUNIDAD POR SECCIÓN TÉCNICA
+================================================================================
+
+1. INFRAESTRUCTURA DE STREAMING:
+   - Implementar reconexión automática con exponential backoff en WebSockets y Pusher.
+   - Implementar cola FIFO para evitar solapamiento de alertas en vivo en OBS.
+   - Ajustar el intervalo de sondeo de YouTube Live Chat según volumen de mensajes.
+
+2. REDES SOCIALES:
+   - Deduplicación inteligente de notificaciones de stream si ocurre caída en los
+     primeros 10 minutos.
+   - Enriquecimiento dinámico de OpenGraph meta tags con miniatura del episodio actual.
+
+3. APIS Y SERVICIOS BACKEND:
+   - Cifrado AES-256 en reposo para credenciales y tokens OAuth en base de datos.
+   - Migración del RAG en memoria/texto plano a base de datos vectorial (pgvector).
+   - Implementación de endpoint /api/health con verificación de latencia de servicios.
+
+4. UI / UX Y OPERACIÓN EN CABINA:
+   - Modo de pantalla completa con bloqueo de suspensión de pantalla para Cue Cards
+     en tablets (WakeLock API).
+   - Botón de "Probar Alerta" en el panel web para calibración de OBS en vivo.
+
+================================================================================
+8. MATRIZ DE TAREAS PENDIENTES (KANBAN BACKLOG)
+================================================================================
+
+ESTADO ACTUALIZADO DEL TABLERO KANBAN:
+
+[BACKLOG - TAREAS PLANIFICADAS A FUTURO]
+- TSK-B1: Conexión del inicio de sesión (SSO) unificado con la Landing de TSolutions.
+- TSK-B2: Módulo de pagos y suscripción recurrente con Stripe para Club VIP de miembros.
+
+[READY / TO DO - LISTAS PARA EJECUCIÓN]
+- TSK-R1: Pruebas de carga y estrés concurrentes en el pipeline de video distribuido en Cloud Run.
+- TSK-R2: Integración directa con la API de publicación automática de Spotify for Podcasters.
+
+[IN PROGRESS - EN MONITOREO ACTIVO]
+- TSK-P1: Monitoreo de cuotas y rendimiento del balanceador de claves de Google Gemini API en producción.
+
+[VERIFICATION / HECHO RECIENTEMENTE]
+- TSK-D1: Portal interactivo de Tracking de Invitados en vivo con barra de 5 fases.
+- TSK-D2: Microservicio de gestión de tracking (api-guest-tracking.php).
+- TSK-D3: Prompt Maestro de Hooks con neuro-marketing y retención (api-hooks-ai.php).
+- TSK-D4: Extractor de Clips Virales con IA (api-video-clips.php).
+- TSK-D5: Migración 100% nativa de Guión, Escaleta y Cue Cards a Google Gemini.
+- TSK-D6: Motor de exportación PDF profesional (api-export-pdf.php).
+- TSK-D7: Paw Agent con RAG y personalidad norteña urbana restaurado.
+- TSK-D8: Generador de Avatares Neón con Google Imagen 3 (api-avatar-engine.php).
+- TSK-D9: Pipeline acústico (-14 LUFS, Demucs, FFmpeg) y editor basado en texto.
+
+================================================================================
+9. ARQUITECTURA DE SEGURIDAD Y DESPLIEGUE HÍBRIDO
+================================================================================
+
+A. BLINDAJE EN PROFUNDIDAD:
+   - Capa 1: Servidor Apache (.htaccess) con bloqueo de .env, .git, config.php y backups.
+   - Capa 2: Cabeceras HTTP de seguridad (CSP, HSTS, X-Frame-Options, X-Content-Type-Options).
+   - Capa 3: Backend con PDO Prepared Statements y sanitización contra inyecciones SQL.
+   - Capa 4: Rotación segura de llaves en config/config.php y _gemini.js.
+   - Capa 5: Restricción estricta de ejecución de scripts en la carpeta /uploads/.
+
+B. DESPLIEGUE HÍBRIDO:
+   - Hostinger (cPanel): Despliegue tradicional PHP con soporte Apache y MySQL.
+   - Vercel (Edge & Serverless): Rutas configuradas en vercel.json para Node.js v24,
+     subdominios s.lacuevadelguero.com y admin.lacuevadelguero.com.
+   - Google Cloud Run: Procesador pesado en contenedor Docker para tareas de video.
+
+================================================================================
+FIN DEL REPORTE TÉCNICO - LA CUEVA DEL GÜERO & EL GÜERO BOT (v2.5 PRO)
+================================================================================

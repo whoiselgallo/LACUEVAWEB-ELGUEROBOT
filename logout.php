@@ -1,8 +1,7 @@
 <?php
 /**
- * Logout Administrador - La Cueva del Güero Pro
- * Endpoint: /dashboard/logout.php
- * Compatible tanto con GET como POST para evitar HTTP 405
+ * Root Logout - La Cueva del Güero Pro
+ * Endpoint: /logout.php
  */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -21,6 +20,5 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 
-// Redirección limpia permanente a la raíz del sitio
 header("Location: /index.html", true, 303);
 exit();
