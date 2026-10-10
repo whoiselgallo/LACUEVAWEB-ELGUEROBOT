@@ -2239,6 +2239,7 @@ async function probarWebhookTest() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 action: "disparar",
+                webhook_url: url,
                 evento: "test_webhook",
                 origen: "dashboard_test",
                 datos: {

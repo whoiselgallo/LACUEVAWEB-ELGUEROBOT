@@ -29,6 +29,9 @@ $storageDir = __DIR__ . '/../images/formularios';
 if (!is_dir($storageDir)) {
     @mkdir($storageDir, 0777, true);
 }
+if (!is_writable($storageDir)) {
+    $storageDir = sys_get_temp_dir();
+}
 $eventosFile = $storageDir . '/eventos_webhook.json';
 $configFile = $storageDir . '/webhook_config.json';
 
@@ -74,7 +77,7 @@ function obtenerEventos($limit = 50) {
 }
 
 // Guardar un evento en el log local y disparar webhook
-function dispararWebhook($tipo, $datos = [], $origen = 'sistema') {
+function dispararWebhook($tipo, $datos = [], $origen = 'sistema', $customUrl = null) {
     global $eventosFile;
 
     $eventoId = 'EVT-' . date('YmdHis') . '-' . mt_rand(100, 999);
@@ -179,7 +182,11 @@ function dispararWebhook($tipo, $datos = [], $origen = 'sistema') {
 
     // 2. Disparar a webhook externo si está configurado
     $config = obtenerWebhookConfig();
-    $webhookUrl = !empty($config['webhook_url']) ? $config['webhook_url'] : (!empty($config['discord_webhook']) ? $config['discord_webhook'] : '');
+    $webhookUrl = !empty($customUrl) ? $customUrl : (!empty($config['webhook_url']) ? $config['webhook_url'] : (!empty($config['discord_webhook']) ? $config['discord_webhook'] : ''));
+
+    if (!empty($customUrl) && empty($config['webhook_url'])) {
+        guardarWebhookConfig(['webhook_url' => $customUrl]);
+    }
 
     $resultadoEnvio = 'no_configurado';
     if (!empty($webhookUrl) && !empty($config['activo'])) {
@@ -255,20 +262,45 @@ function enviarWebhookExterno($url, $evento, $meta) {
     }
 
     $startTime = microtime(true);
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_UNICODE));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        'User-Agent: LaCuevaDelGuero-Webhook/2.0'
-    ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 6);
-    $res = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    $latencyMs = round((microtime(true) - $startTime) * 1000);
-    $curlErr = curl_error($ch);
-    curl_close($ch);
+    $res = '';
+    $httpCode = 0;
+    $curlErr = '';
+
+    if (function_exists('curl_init')) {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_UNICODE));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'User-Agent: LaCuevaDelGuero-Webhook/2.0'
+        ]);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $latencyMs = round((microtime(true) - $startTime) * 1000);
+        $curlErr = curl_error($ch);
+        curl_close($ch);
+    } else {
+        $options = [
+            'http' => [
+                'header'  => "Content-type: application/json\r\nUser-Agent: LaCuevaDelGuero-Webhook/2.0\r\n",
+                'method'  => 'POST',
+                'content' => json_encode($payload, JSON_UNESCAPED_UNICODE),
+                'timeout' => 6,
+                'ignore_errors' => true
+            ]
+        ];
+        $context = stream_context_create($options);
+        $res = @file_get_contents($url, false, $context);
+        $latencyMs = round((microtime(true) - $startTime) * 1000);
+        if (isset($http_response_header) && count($http_response_header)) {
+            preg_match('{HTTP\/\S*\s(\d{3})}', $http_response_header[0], $m);
+            $httpCode = isset($m[1]) ? intval($m[1]) : 200;
+        } else {
+            $httpCode = ($res !== false) ? 200 : 0;
+        }
+    }
 
     $isOk = ($httpCode >= 200 && $httpCode < 300);
     return [
@@ -276,7 +308,7 @@ function enviarWebhookExterno($url, $evento, $meta) {
         'code' => $httpCode,
         'latency_ms' => $latencyMs,
         'status' => $isOk ? 'enviado_ok' : ($curlErr ? "error_curl_{$curlErr}" : "error_http_{$httpCode}"),
-        'response' => mb_substr($res ?: $curlErr, 0, 500),
+        'response' => mb_substr(strval($res ?: $curlErr), 0, 500),
         'payload' => $payload
     ];
 }
@@ -316,7 +348,8 @@ if ($isDirectWebhookCall) {
             $datos = $input['datos'] ?? [];
             $origen = $input['origen'] ?? 'cliente_web';
 
-            $resultado = dispararWebhook($tipo, $datos, $origen);
+            $targetUrl = $input['webhook_url'] ?? null;
+            $resultado = dispararWebhook($tipo, $datos, $origen, $targetUrl);
             echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
             exit;
         }
