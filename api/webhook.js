@@ -340,8 +340,18 @@ module.exports = async (req, res) => {
 
         let body = {};
         if (req.body) {
-            body = (typeof req.body === 'string') ? JSON.parse(req.body) : req.body;
+            body = (typeof req.body === 'string') ? (() => { try { return JSON.parse(req.body); } catch (_) { return {}; } })() : req.body;
+        } else if (req.method === 'POST') {
+            body = await new Promise((resolve) => {
+                let data = '';
+                req.on('data', chunk => { data += chunk; });
+                req.on('end', () => {
+                    try { resolve(JSON.parse(data)); } catch (_) { resolve({}); }
+                });
+                req.on('error', () => resolve({}));
+            });
         }
+        body = body || {};
 
         const action = actionParam || body.action || (req.method === 'GET' ? 'listar' : 'disparar');
 
