@@ -2168,30 +2168,72 @@ async function guardarConfigWebhook() {
     if (!input) return;
     const url = input.value.trim();
 
+    if (url) {
+        try {
+            const parsed = new URL(url);
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+                alert("Por favor ingresa una URL válida con protocolo https://");
+                return;
+            }
+        } catch (_) {
+            alert("La URL del webhook no es válida. Verifica que comience con https:// y no tenga espacios.");
+            return;
+        }
+    }
+
     try {
         const res = await fetch("/api/api-webhook.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ action: "guardar_config", webhook_url: url, activo: true })
         });
+
+        if (!res.ok) {
+            let errMsg = `Error del servidor (${res.status})`;
+            try {
+                const errJson = await res.json();
+                errMsg = errJson.error || errJson.message || errMsg;
+            } catch (_) {}
+            alert("No se pudo guardar: " + errMsg);
+            return;
+        }
+
         const data = await res.json();
         alert(data.message || "Webhook configurado con éxito.");
         toggleConfigWebhook();
     } catch (err) {
-        alert("Error al guardar: " + err.message);
+        alert("Error de comunicación: " + err.message);
     }
 }
 window.guardarConfigWebhook = guardarConfigWebhook;
 
 async function probarWebhookTest() {
     const input = document.getElementById("inputWebhookUrl");
+    const feedback = document.getElementById("boxWebhookTestFeedback");
     const url = input ? input.value.trim() : "";
     if (!url) {
-        alert("Ingresa primero la URL de tu webhook (Discord, Slack o Make).");
+        alert("Ingresa primero la URL de tu webhook (Discord, Slack, Make o TSolutions).");
         return;
     }
 
     try {
+        const parsed = new URL(url);
+        if (!['http:', 'https:'].includes(parsed.protocol)) {
+            alert("Por favor ingresa una URL válida con protocolo https://");
+            return;
+        }
+    } catch (_) {
+        alert("La URL del webhook no es válida. Verifica que comience con https:// y no tenga espacios.");
+        return;
+    }
+
+    if (feedback) {
+        feedback.style.display = "block";
+        feedback.innerHTML = `<span style="color:#00ffff;"><i class="fa-solid fa-spinner fa-spin"></i> Enviando paquete de telemetría a ${escapeHtml(url)}...</span>`;
+    }
+
+    try {
+        const startTime = Date.now();
         const res = await fetch("/api/api-webhook.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -2205,18 +2247,97 @@ async function probarWebhookTest() {
                 }
             })
         });
+
+        const totalClientMs = Date.now() - startTime;
+
+        if (!res.ok) {
+            let errMsg = `Error ${res.status}`;
+            try {
+                const errJson = await res.json();
+                errMsg = errJson.error || errJson.message || errMsg;
+            } catch (_) {}
+            if (feedback) {
+                feedback.innerHTML = `
+                    <div style="color:#ff4444; font-weight:bold; margin-bottom:4px;">
+                        <i class="fa-solid fa-circle-xmark"></i> Falla en el Servidor (${res.status})
+                    </div>
+                    <div style="color:#ccc; font-size:0.72rem;">${escapeHtml(errMsg)}</div>
+                `;
+            } else {
+                alert("Falla al enviar prueba: " + errMsg);
+            }
+            return;
+        }
+
         const data = await res.json();
-        alert("¡Aviso de prueba enviado! Revisa tu canal de Discord/Slack.");
+        const t = data.webhook_status || {};
+        const isOk = t.success || t.code >= 200 && t.code < 300;
+        const httpCode = t.code || 200;
+        const latency = t.latency_ms || totalClientMs;
+
+        if (feedback) {
+            feedback.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-weight:bold; color:${isOk ? '#39FF14' : '#ff4444'};">
+                        <i class="fa-solid ${isOk ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> 
+                        ${isOk ? 'Entrega Exitosa' : 'Respuesta con Error'}
+                    </span>
+                    <span style="background:rgba(255,255,255,0.1); padding:2px 8px; border-radius:4px; font-size:0.7rem; color:#fff;">
+                        HTTP ${httpCode} • ${latency} ms
+                    </span>
+                </div>
+                <div style="font-size:0.7rem; color:#aaa; word-break:break-all;">
+                    <strong>Destino:</strong> ${escapeHtml(url)}
+                </div>
+                ${t.response ? `<div style="margin-top:4px; font-size:0.68rem; color:#888; background:rgba(0,0,0,0.4); padding:4px 6px; border-radius:4px; max-height:60px; overflow-y:auto;"><strong>Respuesta:</strong> ${escapeHtml(String(t.response))}</div>` : ''}
+            `;
+        } else {
+            alert(`¡Aviso de prueba enviado! Código HTTP ${httpCode} (${latency} ms).`);
+        }
         cargarAvisosEnVivo(true);
     } catch (err) {
-        alert("Falla de envío: " + err.message);
+        if (feedback) {
+            feedback.innerHTML = `<span style="color:#ff4444;"><i class="fa-solid fa-triangle-exclamation"></i> Error de conexión: ${escapeHtml(err.message)}</span>`;
+        } else {
+            alert("Falla de red al enviar prueba: " + err.message);
+        }
     }
 }
 window.probarWebhookTest = probarWebhookTest;
 
+async function reenviarEventoWebhook(eventoId) {
+    if (!eventoId) return;
+    try {
+        const res = await fetch("/api/api-webhook.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "reenviar", evento_id: eventoId })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            alert("No se pudo reenviar: " + (data.error || "Error desconocido"));
+            return;
+        }
+        alert("✓ Evento reenviado con éxito al webhook.");
+        cargarAvisosEnVivo(true);
+    } catch (e) {
+        alert("Error de red al reenviar evento: " + e.message);
+    }
+}
+window.reenviarEventoWebhook = reenviarEventoWebhook;
+
+function togglePayloadInspector(eventoId) {
+    const el = document.getElementById(`payload-${eventoId}`);
+    if (el) {
+        el.style.display = (el.style.display === "none") ? "block" : "none";
+    }
+}
+window.togglePayloadInspector = togglePayloadInspector;
+
 async function cargarAvisosEnVivo(esManual = false) {
     try {
         const res = await fetch("/api/api-webhook.php?action=listar&limit=40");
+        if (!res.ok) return;
         const data = await res.json();
         if (!data.eventos) return;
 
@@ -2235,6 +2356,16 @@ async function cargarAvisosEnVivo(esManual = false) {
             const color = ev.color || '#00FFFF';
             const icono = ev.icono || 'fa-bell';
             const fecha = ev.timestamp || '';
+            const t = ev.webhook_telemetry || {};
+
+            let statusBadge = "";
+            if (t.success) {
+                statusBadge = `<span style="background:rgba(57,255,20,0.15); color:#39FF14; border:1px solid #39FF14; border-radius:4px; padding:2px 6px; font-size:0.65rem;" title="Entregado"><i class="fa-solid fa-check"></i> HTTP ${t.code || 200} (${t.latency_ms || 0}ms)</span>`;
+            } else if (t.code && t.code >= 400) {
+                statusBadge = `<span style="background:rgba(255,68,68,0.15); color:#ff4444; border:1px solid #ff4444; border-radius:4px; padding:2px 6px; font-size:0.65rem;" title="Error en webhook destino"><i class="fa-solid fa-triangle-exclamation"></i> HTTP ${t.code}</span>`;
+            } else {
+                statusBadge = `<span style="background:rgba(255,255,255,0.06); color:#aaa; border-radius:4px; padding:2px 6px; font-size:0.65rem;">Local</span>`;
+            }
 
             let datosHtml = "";
             if (ev.datos && typeof ev.datos === 'object') {
@@ -2251,12 +2382,25 @@ async function cargarAvisosEnVivo(esManual = false) {
                         <span style="font-size:0.85rem; font-weight:800; color:#fff; display:flex; align-items:center; gap:6px;">
                             <i class="fa-solid ${icono}" style="color:${color};"></i> ${escapeHtml(ev.titulo)}
                         </span>
-                        <span style="font-size:0.7rem; color:#888; white-space:nowrap;">${fecha.split(' ')[1] || fecha}</span>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            ${statusBadge}
+                            <span style="font-size:0.7rem; color:#888; white-space:nowrap;">${fecha.split(' ')[1] || fecha}</span>
+                        </div>
                     </div>
                     ${datosHtml ? `<div style="background:rgba(255,255,255,0.03); border-radius:6px; padding:6px 10px; display:flex; flex-direction:column; gap:2px;">${datosHtml}</div>` : ''}
-                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#777;">
+                    
+                    <!-- Acciones Rápidas: Inspector y Replay -->
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.7rem; color:#777; margin-top:2px;">
                         <span>Origen: ${escapeHtml(ev.origen || 'sistema')}</span>
-                        <span>${fecha.split(' ')[0] || ''}</span>
+                        <div style="display:flex; gap:6px;">
+                            <button type="button" class="btn-neon" style="font-size:0.65rem; padding:2px 6px; border-color:#888; color:#bbb;" onclick="togglePayloadInspector('${escapeHtml(ev.id)}')"><i class="fa-solid fa-code"></i> Payload</button>
+                            <button type="button" class="btn-neon" style="font-size:0.65rem; padding:2px 6px; border-color:var(--neon-cyan); color:var(--neon-cyan);" onclick="reenviarEventoWebhook('${escapeHtml(ev.id)}')"><i class="fa-solid fa-rotate-right"></i> Reenviar</button>
+                        </div>
+                    </div>
+
+                    <!-- Inspector de Payload (Colapsable) -->
+                    <div id="payload-${escapeHtml(ev.id)}" style="display:none; background:#080810; border:1px solid rgba(0,255,255,0.2); border-radius:6px; padding:8px; margin-top:6px; overflow-x:auto;">
+                        <pre style="margin:0; font-size:0.68rem; color:#00ffcc; font-family:monospace; white-space:pre-wrap;">${escapeHtml(JSON.stringify(ev, null, 2))}</pre>
                     </div>
                 </div>
             `;

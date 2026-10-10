@@ -16,7 +16,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-require_once __DIR__ . '/../config/config.php';
+try {
+    if (file_exists(__DIR__ . '/../config/config.php')) {
+        @include_once __DIR__ . '/../config/config.php';
+    }
+} catch (\Throwable $e) {
+    // Si config.php arroja RuntimeException por variables de Dify, no bloquear el servicio de webhooks
+    error_log("[api-webhook] Config notice: " . $e->getMessage());
+}
 
 $storageDir = __DIR__ . '/../images/formularios';
 if (!is_dir($storageDir)) {
@@ -247,6 +254,7 @@ function enviarWebhookExterno($url, $evento, $meta) {
         ];
     }
 
+    $startTime = microtime(true);
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload, JSON_UNESCAPED_UNICODE));
@@ -258,9 +266,19 @@ function enviarWebhookExterno($url, $evento, $meta) {
     curl_setopt($ch, CURLOPT_TIMEOUT, 6);
     $res = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $latencyMs = round((microtime(true) - $startTime) * 1000);
+    $curlErr = curl_error($ch);
     curl_close($ch);
 
-    return ($httpCode >= 200 && $httpCode < 300) ? 'enviado_ok' : "error_http_{$httpCode}";
+    $isOk = ($httpCode >= 200 && $httpCode < 300);
+    return [
+        'success' => $isOk,
+        'code' => $httpCode,
+        'latency_ms' => $latencyMs,
+        'status' => $isOk ? 'enviado_ok' : ($curlErr ? "error_curl_{$curlErr}" : "error_http_{$httpCode}"),
+        'response' => mb_substr($res ?: $curlErr, 0, 500),
+        'payload' => $payload
+    ];
 }
 
 // ═════════════════════════════════════════════════════════════════════════════════
@@ -270,103 +288,148 @@ $isDirectWebhookCall = (isset($_SERVER['SCRIPT_FILENAME']) && realpath(__FILE__)
     || (isset($_SERVER['REQUEST_URI']) && stripos($_SERVER['REQUEST_URI'], 'api-webhook.php') !== false);
 
 if ($isDirectWebhookCall) {
-    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-    $action = $_GET['action'] ?? '';
+    try {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $action = $_GET['action'] ?? '';
 
-    $rawInput = file_get_contents('php://input');
-    $input = json_decode($rawInput, true) ?: $_POST;
-    if (empty($action) && isset($input['action'])) {
-        $action = $input['action'];
-    }
-
-// 1. LISTAR EVENTOS
-if ($action === 'listar' || ($method === 'GET' && empty($action))) {
-    $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
-    $eventos = obtenerEventos($limit);
-    echo json_encode([
-        'status' => 'success',
-        'total' => count($eventos),
-        'eventos' => $eventos
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-// 2. DISPARAR EVENTO (POST)
-if ($action === 'disparar' || $action === 'trigger') {
-    $tipo = $input['tipo'] ?? ($input['evento'] ?? 'aviso_general');
-    $datos = $input['datos'] ?? [];
-    $origen = $input['origen'] ?? 'cliente_web';
-
-    $resultado = dispararWebhook($tipo, $datos, $origen);
-    echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-// 3. OBTENER CONFIGURACIÓN DEL WEBHOOK
-if ($action === 'obtener_config') {
-    $config = obtenerWebhookConfig();
-    // Ocultar caracteres sensibles si no es admin estricto
-    echo json_encode([
-        'status' => 'success',
-        'config' => $config
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-// 4. GUARDAR CONFIGURACIÓN DEL WEBHOOK
-if ($action === 'guardar_config') {
-    $webhookUrl = trim($input['webhook_url'] ?? '');
-    $activo = isset($input['activo']) ? boolval($input['activo']) : true;
-
-    $updated = guardarWebhookConfig([
-        'webhook_url' => $webhookUrl,
-        'activo' => $activo
-    ]);
-
-    // Probar envío de test si se ingresó una URL
-    $testResult = 'no_probado';
-    if (!empty($webhookUrl)) {
-        $meta = [
-            'titulo' => '🧪 Webhook de Prueba - La Cueva del Güero',
-            'discord_color' => 65535
-        ];
-        $testResult = enviarWebhookExterno($webhookUrl, [
-            'id' => 'TEST-' . time(),
-            'tipo' => 'test_webhook',
-            'titulo' => '🧪 Webhook de Prueba - La Cueva del Güero',
-            'origen' => 'dashboard_admin',
-            'datos' => [
-                'mensaje' => 'Conexión verificada exitosamente entre La Cueva del Güero y tu canal de avisos en tiempo real.',
-                'fecha' => date('Y-m-d H:i:s')
-            ]
-        ], $meta);
-    }
-
-    echo json_encode([
-        'status' => 'success',
-        'message' => 'Configuración de webhook actualizada correctamente.',
-        'config' => $updated,
-        'test_result' => $testResult
-    ], JSON_UNESCAPED_UNICODE);
-    exit;
-}
-
-// 5. MARCAR EVENTOS COMO LEÍDOS
-if ($action === 'marcar_leidos') {
-    global $eventosFile;
-    if (file_exists($eventosFile)) {
-        $eventos = json_decode(file_get_contents($eventosFile), true);
-        if (is_array($eventos)) {
-            foreach ($eventos as &$ev) {
-                $ev['leido'] = true;
-            }
-            @file_put_contents($eventosFile, json_encode($eventos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $rawInput = file_get_contents('php://input');
+        $input = json_decode($rawInput, true) ?: $_POST;
+        if (empty($action) && isset($input['action'])) {
+            $action = $input['action'];
         }
-    }
-    echo json_encode(['status' => 'success', 'message' => 'Eventos marcados como leídos'], JSON_UNESCAPED_UNICODE);
-    exit;
-}
 
-    echo json_encode(['status' => 'error', 'error' => 'Acción no válida'], JSON_UNESCAPED_UNICODE);
-    exit;
+        // 1. LISTAR EVENTOS
+        if ($action === 'listar' || ($method === 'GET' && empty($action))) {
+            $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 50;
+            $eventos = obtenerEventos($limit);
+            echo json_encode([
+                'status' => 'success',
+                'total' => count($eventos),
+                'eventos' => $eventos
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // 2. DISPARAR EVENTO (POST)
+        if ($action === 'disparar' || $action === 'trigger') {
+            $tipo = $input['tipo'] ?? ($input['evento'] ?? 'aviso_general');
+            $datos = $input['datos'] ?? [];
+            $origen = $input['origen'] ?? 'cliente_web';
+
+            $resultado = dispararWebhook($tipo, $datos, $origen);
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // 3. OBTENER CONFIGURACIÓN DEL WEBHOOK
+        if ($action === 'obtener_config') {
+            $config = obtenerWebhookConfig();
+            // Ocultar caracteres sensibles si no es admin estricto
+            echo json_encode([
+                'status' => 'success',
+                'config' => $config
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // 4. GUARDAR CONFIGURACIÓN DEL WEBHOOK
+        if ($action === 'guardar_config') {
+            $webhookUrl = trim($input['webhook_url'] ?? '');
+            $activo = isset($input['activo']) ? boolval($input['activo']) : true;
+
+            $updated = guardarWebhookConfig([
+                'webhook_url' => $webhookUrl,
+                'activo' => $activo
+            ]);
+
+            // Probar envío de test si se ingresó una URL
+            $testResult = 'no_probado';
+            if (!empty($webhookUrl)) {
+                $meta = [
+                    'titulo' => '🧪 Webhook de Prueba - La Cueva del Güero',
+                    'discord_color' => 65535
+                ];
+                $testResult = enviarWebhookExterno($webhookUrl, [
+                    'id' => 'TEST-' . time(),
+                    'tipo' => 'test_webhook',
+                    'titulo' => '🧪 Webhook de Prueba - La Cueva del Güero',
+                    'origen' => 'dashboard_admin',
+                    'datos' => [
+                        'mensaje' => 'Conexión verificada exitosamente entre La Cueva del Güero y tu canal de avisos en tiempo real.',
+                        'fecha' => date('Y-m-d H:i:s')
+                    ]
+                ], $meta);
+            }
+
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Configuración de webhook actualizada correctamente.',
+                'config' => $updated,
+                'test_result' => $testResult
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // 5. MARCAR EVENTOS COMO LEÍDOS
+        if ($action === 'marcar_leidos') {
+            global $eventosFile;
+            if (file_exists($eventosFile)) {
+                $eventos = json_decode(file_get_contents($eventosFile), true);
+                if (is_array($eventos)) {
+                    foreach ($eventos as &$ev) {
+                        $ev['leido'] = true;
+                    }
+                    @file_put_contents($eventosFile, json_encode($eventos, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+                }
+            }
+            echo json_encode(['status' => 'success', 'message' => 'Eventos marcados como leídos'], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        // 6. REENVIAR EVENTO ESPECÍFICO (1-CLICK REPLAY)
+        if ($action === 'reenviar') {
+            $eventoId = $input['evento_id'] ?? '';
+            $eventos = obtenerEventos(150);
+            $encontrado = null;
+            foreach ($eventos as $ev) {
+                if ($ev['id'] === $eventoId) {
+                    $encontrado = $ev;
+                    break;
+                }
+            }
+            if (!$encontrado) {
+                http_response_code(404);
+                echo json_encode(['status' => 'error', 'error' => 'Evento no encontrado'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            $config = obtenerWebhookConfig();
+            $webhookUrl = !empty($config['webhook_url']) ? $config['webhook_url'] : (!empty($config['discord_webhook']) ? $config['discord_webhook'] : '');
+            if (empty($webhookUrl)) {
+                http_response_code(400);
+                echo json_encode(['status' => 'error', 'error' => 'No hay webhook configurado actualmente'], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
+            $meta = [
+                'titulo' => $encontrado['titulo'] . ' [Reenviado]',
+                'discord_color' => 65535
+            ];
+            $envio = enviarWebhookExterno($webhookUrl, $encontrado, $meta);
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Evento reenviado al webhook.',
+                'telemetry' => $envio
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
+        echo json_encode(['status' => 'error', 'error' => 'Acción no válida'], JSON_UNESCAPED_UNICODE);
+        exit;
+    } catch (\Throwable $e) {
+        http_response_code(500);
+        echo json_encode([
+            'status' => 'error',
+            'error' => $e->getMessage()
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
 }
