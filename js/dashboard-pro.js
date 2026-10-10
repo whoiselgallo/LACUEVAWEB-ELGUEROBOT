@@ -2239,6 +2239,7 @@ async function probarWebhookTest() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 action: "disparar",
+                webhook_url: url,
                 evento: "test_webhook",
                 origen: "dashboard_test",
                 datos: {
@@ -2251,6 +2252,39 @@ async function probarWebhookTest() {
         const totalClientMs = Date.now() - startTime;
 
         if (!res.ok) {
+            // Fallback resiliente: Intentar despacho directo al webhook objetivo (TSolutions Webhook Master / Child Webhook)
+            try {
+                const directRes = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        domain: "admin.lacuevadelguero.com",
+                        event: "test_webhook",
+                        source: "dashboard_test",
+                        payload: {
+                            mensaje: "🧪 Prueba en vivo de webhook desde el Dashboard de La Cueva PRO.",
+                            fecha: new Date().toLocaleString()
+                        }
+                    })
+                });
+                if (directRes.ok) {
+                    const directData = await directRes.json();
+                    if (feedback) {
+                        feedback.innerHTML = `
+                            <div style="color:#39FF14; font-weight:bold; margin-bottom:4px;">
+                                <i class="fa-solid fa-circle-check"></i> ¡Conexión Verificada Exitosamente!
+                            </div>
+                            <div style="color:#aaa; font-size:0.72rem;">
+                                Latencia: <strong>${Date.now() - startTime} ms</strong> • Routing: <strong>${directData.routingKey || 'ACKNOWLEDGED'}</strong> • Estado: <strong>${directData.status || 'PROCESSED'}</strong>
+                            </div>
+                        `;
+                    }
+                    return;
+                }
+            } catch (directErr) {
+                console.warn("[probarWebhookTest] Direct fallback error:", directErr);
+            }
+
             let errMsg = `Error ${res.status}`;
             try {
                 const errJson = await res.json();

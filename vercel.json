@@ -71,6 +71,14 @@
       "dest": "/api/oauth-google.js"
     },
     {
+      "src": "/api/api-webhook(\\.php)?",
+      "dest": "/api/webhook.js"
+    },
+    {
+      "src": "/api/webhook(\\.php)?",
+      "dest": "/api/webhook.js"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/index.php"
     },
