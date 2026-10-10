@@ -30,6 +30,8 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Architects+Daughter&family=Montserrat+Alternates:wght@400;700&family=Luckiest+Guy&family=Permanent+Marker&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/mobile-first-duo.css">
+    <link rel="stylesheet" href="/css/dashboard-pro.css">
     <script>window.activeEventSource = null; window.activePollingInterval = null;</script>
     <style>
         :root {
@@ -657,6 +659,275 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 justify-content: space-between;
             }
         }
+
+        /* ==========================================================================
+           DESKTOP WORKSTATION & LARGE DISPLAY PROPORTION HARMONIZATION (>= 1200px)
+           admin.lacuevadelguero.com - Preservando 100% Mobile-First
+           ========================================================================== */
+        @media (min-width: 1200px) {
+            /* 1. Header & Navbar */
+            header, .dashboard-header {
+                padding: 14px 36px !important;
+                background: rgba(8, 8, 16, 0.94) !important;
+                border-bottom: 1px solid rgba(0, 255, 255, 0.2) !important;
+                backdrop-filter: blur(14px) !important;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+                min-height: 68px;
+            }
+            .header-brand-wrap {
+                display: flex !important;
+                align-items: center !important;
+                gap: 16px !important;
+            }
+            #view-header-title {
+                font-size: clamp(1.2rem, 1.35vw, 1.55rem) !important;
+                font-weight: 800 !important;
+                letter-spacing: 0.5px !important;
+                margin: 0 !important;
+                white-space: nowrap !important;
+            }
+            .desktop-workstation-badge {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 6px !important;
+                padding: 4px 12px !important;
+                font-size: 0.72rem !important;
+                font-weight: 800 !important;
+                letter-spacing: 1px !important;
+                color: var(--neon-cyan) !important;
+                background: rgba(0, 255, 255, 0.08) !important;
+                border: 1px solid rgba(0, 255, 255, 0.35) !important;
+                border-radius: 20px !important;
+                text-shadow: 0 0 8px rgba(0, 255, 255, 0.4) !important;
+                box-shadow: 0 0 10px rgba(0, 255, 255, 0.1) !important;
+                text-transform: uppercase;
+            }
+            .header-actions-bar {
+                display: flex !important;
+                gap: 10px !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+            }
+            .header-actions-bar .btn-neon {
+                padding: 7px 15px !important;
+                font-size: 0.8rem !important;
+                font-weight: 700 !important;
+                border-radius: 8px !important;
+                white-space: nowrap !important;
+                transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                background: rgba(10, 10, 18, 0.6) !important;
+                backdrop-filter: blur(8px) !important;
+            }
+            .header-actions-bar .btn-neon:hover {
+                transform: translateY(-2px) !important;
+            }
+            .admin-badge {
+                display: inline-flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                padding: 6px 14px !important;
+                font-size: 0.8rem !important;
+                font-weight: 700 !important;
+                background: rgba(0, 255, 255, 0.08) !important;
+                border: 1px solid var(--neon-cyan) !important;
+                border-radius: 20px !important;
+                white-space: nowrap !important;
+                letter-spacing: 0.5px;
+            }
+            .admin-badge::before {
+                content: '';
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #39FF14;
+                box-shadow: 0 0 8px #39FF14, 0 0 15px rgba(57, 255, 20, 0.6);
+                display: inline-block;
+                animation: pulseLiveDot 2s infinite ease-in-out;
+            }
+            @keyframes pulseLiveDot {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.6; transform: scale(0.85); }
+            }
+
+            /* 2. Área de vistas */
+            .view-section {
+                padding: 24px 36px !important;
+                height: calc(100vh - 68px) !important;
+            }
+
+            /* 3. Episodios y Fichas: proporción fija para lista (360px) y flexible para detalle */
+            .episodios-layout {
+                display: flex !important;
+                gap: 24px !important;
+                height: 100% !important;
+                align-items: stretch !important;
+            }
+            .subpanel-lista {
+                width: 360px !important;
+                min-width: 340px !important;
+                max-width: 380px !important;
+                flex-shrink: 0 !important;
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                border: 1px solid rgba(0, 255, 255, 0.2) !important;
+                background: rgba(12, 12, 22, 0.8) !important;
+            }
+            .subpanel-detalle {
+                flex: 1 !important;
+                width: auto !important;
+                max-width: calc(100% - 384px) !important;
+                height: 100% !important;
+                padding: 26px 32px !important;
+                border: 1px solid rgba(255, 0, 255, 0.2) !important;
+                background: rgba(12, 12, 22, 0.8) !important;
+            }
+            #ponderacion-criterios {
+                grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)) !important;
+                gap: 12px !important;
+                max-height: 480px !important;
+            }
+
+            /* 4. Canva Editor PRO: panel de controles estilizado y viewport amplio */
+            .canva-editor-workspace {
+                display: grid !important;
+                grid-template-columns: 390px minmax(520px, 1fr) !important;
+                gap: 24px !important;
+                align-items: stretch !important;
+                height: calc(100vh - 165px) !important;
+                min-height: 580px !important;
+            }
+            .canva-controls-card {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow-y: auto !important;
+                background: rgba(12, 12, 22, 0.85) !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                border-radius: 16px !important;
+                padding: 20px !important;
+                box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5) !important;
+            }
+            .canva-viewport-card {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                background: radial-gradient(circle at center, rgba(16, 16, 30, 0.9) 0%, rgba(6, 6, 12, 0.98) 100%) !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                border-radius: 16px !important;
+                padding: 24px !important;
+                box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 255, 255, 0.08) !important;
+                position: relative !important;
+                overflow: hidden !important;
+            }
+            #canvaCanvas {
+                max-width: 100% !important;
+                max-height: calc(100vh - 240px) !important;
+                object-fit: contain !important;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 255, 255, 0.2) !important;
+                border: 1px solid rgba(0, 255, 255, 0.3) !important;
+            }
+
+            /* 5. Editor de Video: proporción 280px / 1fr / 340px y altura profesional */
+            .video-editor-workspace {
+                display: grid !important;
+                grid-template-columns: 280px minmax(460px, 1fr) 340px !important;
+                gap: 20px !important;
+                height: min(530px, calc(100vh - 380px)) !important;
+                min-height: 460px !important;
+                margin-bottom: 20px !important;
+                align-items: stretch !important;
+            }
+            .video-panel-assets, .video-panel-inspector {
+                height: 100% !important;
+                overflow-y: auto !important;
+                background: rgba(12, 12, 22, 0.85) !important;
+                border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            }
+            .video-panel-preview {
+                height: 100% !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                background: #030308 !important;
+                border: 1px solid rgba(0, 255, 255, 0.25) !important;
+                box-shadow: 0 0 35px rgba(0, 0, 0, 0.8) !important;
+                border-radius: 14px !important;
+            }
+            #preview-wrapper-box {
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+            }
+            #editor-preview-video {
+                max-height: 100% !important;
+                max-width: 100% !important;
+                border-radius: 8px !important;
+            }
+            .video-timeline-card {
+                background: #0d0d16 !important;
+                border: 1px solid rgba(0, 255, 255, 0.2) !important;
+                border-radius: 14px !important;
+                padding: 16px 20px !important;
+            }
+            #timeline-tracks-wrapper {
+                min-height: 155px !important;
+                gap: 10px !important;
+            }
+
+            /* 6. Hooks y Blog */
+            .hooks-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important;
+                gap: 24px !important;
+            }
+            .blog-content-view {
+                max-width: 1300px !important;
+                margin: 0 auto !important;
+            }
+            #blog-content {
+                min-height: 380px !important;
+                font-size: 0.98rem !important;
+                line-height: 1.7 !important;
+            }
+        }
+
+        @media (min-width: 1600px) {
+            .sidebar {
+                width: 275px !important;
+            }
+            .main-content {
+                margin-left: 275px !important;
+                width: calc(100% - 275px) !important;
+            }
+            .subpanel-lista {
+                width: 380px !important;
+                max-width: 400px !important;
+            }
+            .subpanel-detalle {
+                max-width: calc(100% - 404px) !important;
+                padding: 30px 42px !important;
+            }
+            .canva-editor-workspace {
+                grid-template-columns: 420px minmax(650px, 1fr) !important;
+                gap: 28px !important;
+            }
+            #canvaCanvas {
+                max-height: calc(100vh - 220px) !important;
+            }
+            .video-editor-workspace {
+                grid-template-columns: 310px minmax(560px, 1fr) 370px !important;
+                height: min(600px, calc(100vh - 360px)) !important;
+                min-height: 520px !important;
+            }
+            .hooks-grid {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 28px !important;
+            }
+        }
         .hidden {
             display: none !important;
         }
@@ -704,12 +975,13 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
     <!-- ÁREA PRINCIPAL -->
     <div class="main-content">
-        <header>
-            <div style="display:flex; align-items:center;">
+        <header class="dashboard-header">
+            <div class="header-brand-wrap" style="display:flex; align-items:center;">
                 <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                 <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
+                <span class="desktop-workstation-badge"><i class="fa-solid fa-bolt"></i> STUDIO PRO</span>
             </div>
-            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <div class="header-actions-bar" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
                 <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
                 <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
@@ -1158,9 +1430,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             </div>
 
             <!-- WORKSPACE GRID (LEFT, CENTER, RIGHT PANELS) -->
-            <div style="display:grid; grid-template-columns: 240px 1fr 280px; gap:15px; height:380px; align-items:stretch; margin-bottom:15px;">
+            <div class="video-editor-workspace" style="display:grid; grid-template-columns: 240px 1fr 280px; gap:15px; height:380px; align-items:stretch; margin-bottom:15px;">
                 <!-- PANEL IZQUIERDO: BIBLIOTECA & MODELOS IA -->
-                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
+                <div class="video-panel-assets" style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;">
                     <h4 style="color:#00FFFF; margin:0 0 5px 0; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-folder"></i> Recursos e IA</h4>
                     <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
                         <span style="color:#aaa; font-weight:bold;">🚀 Modelos de IA Directa</span>
@@ -1178,7 +1450,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- PANEL CENTRAL: VISTA PREVIA -->
-                <div style="background:#050508; border:1px solid rgba(255,255,255,0.05); border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; padding:15px; position:relative; overflow:hidden;">
+                <div class="video-panel-preview" style="background:#050508; border:1px solid rgba(255,255,255,0.05); border-radius:12px; display:flex; flex-direction:column; justify-content:space-between; padding:15px; position:relative; overflow:hidden;">
                     <div id="preview-wrapper-box" style="flex-grow:1; display:flex; justify-content:center; align-items:center; overflow:hidden; transition: all 0.3s ease;">
                         <video id="editor-preview-video" style="max-height:100%; max-width:100%; border-radius:8px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></video>
                     </div>
@@ -1196,7 +1468,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- PANEL DERECHO: PROPIEDADES & AUDIO/VIDEO -->
-                <div style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; font-size:0.8rem;">
+                <div class="video-panel-inspector" style="background:rgba(15,15,15,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; font-size:0.8rem;">
                     <h4 style="color:#FF00FF; margin:0; border-bottom:1px solid rgba(255,0,255,0.2); padding-bottom:5px; font-size:0.85rem;"><i class="fa-solid fa-sliders"></i> Ajustes del Clip</h4>
                     <div>
                         <span style="color:#aaa; font-weight:bold;">Transformación</span>
@@ -1254,7 +1526,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             </div>
 
             <!-- TIMELINE (BOTTOM PANEL) -->
-            <div style="background:#0f0f15; border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; position:relative;">
+            <div class="video-timeline-card" style="background:#0f0f15; border:1px solid rgba(0,255,255,0.1); border-radius:12px; padding:15px; position:relative;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px;">
                     <div style="display:flex; gap:10px; align-items:center; font-size:0.8rem; color:#aaa;">
                         <button class="btn-neon" style="font-size:0.7rem; padding:2px 8px;" onclick="ejecutarIAVideo('Edición Rápida TikTok')"><i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Edición IA</button>
@@ -1432,9 +1704,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
         <section class="view-section" id="view-canva">
             <p style="color: var(--text-muted); margin-bottom: 20px;">Diseño y composición profesional (Photoshop & Canva). Sube imágenes locales o sincroniza tus archivos desde la nube, aplica capas, filtros cyberpunk y tipografía neón.</p>
 
-            <div style="display: grid; grid-template-columns: 360px 1fr; gap: 25px; align-items: start;">
+            <div class="canva-editor-workspace" style="display: grid; grid-template-columns: 360px 1fr; gap: 25px; align-items: start;">
                 <!-- CONTROLES TABULADOS -->
-                <div style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 15px; display:flex; flex-direction:column; gap:15px;">
+                <div class="canva-controls-card" style="background: rgba(15,15,15,0.7); border: 1px solid var(--neon-cyan); border-radius: 16px; padding: 15px; display:flex; flex-direction:column; gap:15px;">
                     <!-- HEADER TABS -->
                     <div style="display:flex; border-bottom:1px solid rgba(0,255,255,0.2); padding-bottom:10px; gap:5px;">
                         <button class="btn-neon active" id="canva-tab-cloud" onclick="switchCanvaTab('cloud')" style="flex:1; font-size:0.7rem; padding:6px 4px;"><i class="fa-solid fa-cloud"></i> Nube / Presets</button>
@@ -1553,7 +1825,7 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 </div>
 
                 <!-- LIENZO HTML5 -->
-                <div style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(0,255,255,0.3); border-radius: 16px; padding: 20px; text-align: center; min-height: 450px; display: flex; justify-content: center; align-items: center;">
+                <div class="canva-viewport-card" style="background: rgba(0,0,0,0.5); border: 1px dashed rgba(0,255,255,0.3); border-radius: 16px; padding: 20px; text-align: center; min-height: 450px; display: flex; justify-content: center; align-items: center;">
                     <canvas id="canvaCanvas" style="max-width:100%; max-height:550px; border-radius:10px; box-shadow:0 0 20px rgba(0,0,0,0.8);"></canvas>
                 </div>
             </div>

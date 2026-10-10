@@ -19,66 +19,152 @@ let activeTemaBlog = null;
    NAVEGACIÓN DE VISTAS (TAB SWITCHER)
    ============================================================ */
 
-function toggleSidebar() {
+let currentView = 'hub';
+let previousView = 'hub';
+
+function toggleSidebar(forceState) {
     const sidebar = document.querySelector(".sidebar");
-    if (sidebar) {
-        sidebar.classList.toggle("active");
+    const overlay = document.getElementById("sidebarOverlay");
+    if (!sidebar) return;
+    
+    const shouldOpen = (forceState !== undefined) ? forceState : !sidebar.classList.contains("active");
+    if (shouldOpen) {
+        sidebar.classList.add("active");
+        if (overlay) overlay.classList.add("active");
+    } else {
+        sidebar.classList.remove("active");
+        if (overlay) overlay.classList.remove("active");
     }
 }
 window.toggleSidebar = toggleSidebar;
 
 function switchView(view) {
+    if (view !== currentView) {
+        previousView = currentView;
+        currentView = view;
+    }
+
     // Quitar active de todos los menús
     document.querySelectorAll(".menu-item").forEach(item => item.classList.remove("active"));
-    // Añadir active al menú seleccionado
     const activeMenu = document.getElementById(`menu-${view}`);
     if (activeMenu) activeMenu.classList.add("active");
 
     // Ocultar todas las secciones
     document.querySelectorAll(".view-section").forEach(sec => sec.classList.remove("active"));
-    // Mostrar la sección seleccionada
     const activeSec = document.getElementById(`view-${view}`);
-    if (activeSec) activeSec.classList.add("active");
-
-    // Ocultar la barra lateral en celular después de elegir una sección
-    const sidebar = document.querySelector(".sidebar");
-    const backdrop = document.getElementById("sidebarBackdrop");
-    if (sidebar) {
-        sidebar.classList.remove("active");
-    }
-    if (backdrop) {
-        backdrop.classList.remove("active");
+    if (activeSec) {
+        activeSec.classList.add("active");
+        if (activeSec.scrollTo) activeSec.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Actualizar título del header
-    const titleEl = document.getElementById("view-header-title");
-    if (titleEl) {
-        switch(view) {
-            case 'episodios':
-                titleEl.innerHTML = `Episodios y <span>Fichas</span>`;
-                break;
-            case 'blog':
-                titleEl.innerHTML = `Gestor de <span>Blog</span>`;
-                break;
-            case 'hooks':
-                titleEl.innerHTML = `Generador de <span>Hooks</span>`;
-                break;
-            case 'video':
-                titleEl.innerHTML = `Editor de <span>Video</span>`;
-                break;
-            case 'canva':
-                titleEl.innerHTML = `Editor Canva <span>PRO</span>`;
-                break;
-            case 'avatar':
-                titleEl.innerHTML = `Avatar <span>Engine</span>`;
-                break;
-            case 'mesa':
-                titleEl.innerHTML = `Mesa de <span>Trabajo</span>`;
-                break;
+    // Cerrar el drawer hamburguesa
+    toggleSidebar(false);
+
+    // Controlar botón de volver en la cabecera
+    const btnBack = document.getElementById("btnHeaderBack");
+    const subTitleEl = document.getElementById("viewHeaderSubtitle");
+    
+    if (btnBack) {
+        if (view === 'hub') {
+            btnBack.classList.add("hidden");
+        } else {
+            btnBack.classList.remove("hidden");
+        }
+    }
+
+    const viewNames = {
+        hub: 'Centro de Mando',
+        episodios: 'Episodios y Fichas',
+        blog: 'Gestor de Blog',
+        hooks: 'Generador de Hooks',
+        video: 'Editor de Video',
+        canva: 'Editor Canva PRO',
+        avatar: 'Avatar Engine',
+        mesa: 'Mesa de Trabajo'
+    };
+
+    if (subTitleEl) {
+        subTitleEl.textContent = `/ ${viewNames[view] || view}`;
+    }
+
+    // Si entra a episodios por primera vez, asegurar carga de registros
+    if (view === 'episodios' && typeof cargarRegistros === 'function') {
+        const cont = document.getElementById("registrosContainer");
+        if (cont && cont.children.length <= 1) {
+            cargarRegistros();
         }
     }
 }
 window.switchView = switchView;
+
+function goBackOrHub() {
+    if (currentView !== 'hub') {
+        switchView('hub');
+    } else if (previousView && previousView !== 'hub') {
+        switchView(previousView);
+    } else {
+        window.location.href = '../index.html';
+    }
+}
+window.goBackOrHub = goBackOrHub;
+
+function cerrarSesionPro() {
+    if (confirm("¿Estás seguro de que deseas cerrar sesión en La Cueva del Güero Pro?")) {
+        try {
+            localStorage.removeItem("cueva_token");
+            localStorage.removeItem("auth_user");
+            sessionStorage.clear();
+            document.cookie.split(";").forEach(c => {
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+        } catch(e) {}
+        window.location.href = "../index.html";
+    }
+}
+window.cerrarSesionPro = cerrarSesionPro;
+
+// Inicializador de Tarjetas Flotantes Magnéticas con Sensibilidad de Luz Cyan
+function initMagneticCards() {
+    const cards = document.querySelectorAll(".magnetic-card");
+    cards.forEach(card => {
+        let bounds;
+        
+        function updateBounds() {
+            bounds = card.getBoundingClientRect();
+        }
+        
+        card.addEventListener("mouseenter", updateBounds);
+        
+        card.addEventListener("mousemove", (e) => {
+            if (!bounds) updateBounds();
+            const mouseX = e.clientX - bounds.left;
+            const mouseY = e.clientY - bounds.top;
+            
+            card.style.setProperty("--mouse-x", `${mouseX}px`);
+            card.style.setProperty("--mouse-y", `${mouseY}px`);
+            
+            const centerX = bounds.width / 2;
+            const centerY = bounds.height / 2;
+            const deltaX = (mouseX - centerX) / centerX;
+            const deltaY = (mouseY - centerY) / centerY;
+            
+            const rotateX = (-deltaY * 7).toFixed(2);
+            const rotateY = (deltaX * 7).toFixed(2);
+            
+            card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.025, 1.025, 1.025)`;
+        });
+        
+        card.addEventListener("mouseleave", () => {
+            card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+        });
+    });
+}
+window.initMagneticCards = initMagneticCards;
+
+document.addEventListener("DOMContentLoaded", () => {
+    initMagneticCards();
+});
+
 
 /* ============================================================
    SECCIÓN 1: CONTROLADOR DE EPISODIOS
