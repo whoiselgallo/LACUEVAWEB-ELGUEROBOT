@@ -60,20 +60,28 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
                 radial-gradient(at 100% 100%, rgba(0, 255, 255, 0.04) 0px, transparent 50%);
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Drawer Hamburguesa Desplegable) */
         .sidebar {
-            width: 260px;
+            width: 320px;
+            max-width: 88vw;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
-            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.6);
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(15px);
+            z-index: 2500;
+            transform: translateX(-105%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+            box-shadow: 15px 0 50px rgba(0, 255, 255, 0.2), 0 0 100px rgba(0, 0, 0, 0.9);
         }
 
         .sidebar-brand {
@@ -172,12 +180,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         /* MAIN CONTENT CONTAINER */
         .main-content {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            height: 100vh;
+            margin-left: 0 !important;
+            width: 100% !important;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         /* HEADER */
@@ -896,13 +904,6 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
         }
 
         @media (min-width: 1600px) {
-            .sidebar {
-                width: 275px !important;
-            }
-            .main-content {
-                margin-left: 275px !important;
-                width: calc(100% - 275px) !important;
-            }
             .subpanel-lista {
                 width: 380px !important;
                 max-width: 400px !important;
@@ -935,17 +936,26 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 </head>
 <body>
 
-    <!-- SIDEBAR DE NAVEGACIÓN -->
-    <nav class="sidebar">
+    <!-- OVERLAY DEL MENÚ HAMBURGUESA -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+
+    <!-- MENÚ HAMBURGUESA DESPLEGABLE AJUSTADO A LA PANTALLA (DRAWER OFFCANVAS) -->
+    <nav class="sidebar" id="sidebarDrawer" aria-label="Navegación de Secciones">
+        <button class="sidebar-close-btn" type="button" onclick="toggleSidebar(false)" title="Cerrar Menú" aria-label="Cerrar Menú">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
         <div class="sidebar-brand">
             <h2>LA CUEVA <span>PRO</span></h2>
+            <p style="margin: 6px 0 0 0; font-size: 0.76rem; color: #8e8e9f; letter-spacing: 0.5px;">Ecosistema Digital de Producción</p>
         </div>
+
         <ul class="sidebar-menu">
-            <li class="menu-item active" id="menu-episodios" onclick="switchView('episodios')">
-                <i class="fa-solid fa-microphone"></i> Episodios y Fichas
+            <li class="menu-item active" id="menu-hub" onclick="switchView('hub')">
+                <i class="fa-solid fa-grip"></i> Centro de Mando (Hub)
             </li>
-            <li class="menu-item" id="menu-blog" onclick="switchView('blog')">
-                <i class="fa-solid fa-pen-nib"></i> Gestor de Blog
+            <li class="menu-item" id="menu-episodios" onclick="switchView('episodios')">
+                <i class="fa-solid fa-microphone"></i> Episodios y Fichas
             </li>
             <li class="menu-item" id="menu-hooks" onclick="switchView('hooks')">
                 <i class="fa-solid fa-magnet"></i> Generador de Hooks
@@ -956,45 +966,341 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             <li class="menu-item" id="menu-canva" onclick="switchView('canva')">
                 <i class="fa-solid fa-palette"></i> Editor Canva PRO
             </li>
+            <li class="menu-item" id="menu-blog" onclick="switchView('blog')">
+                <i class="fa-solid fa-pen-nib"></i> Gestor de Blog
+            </li>
             <li class="menu-item" id="menu-avatar" onclick="switchView('avatar')">
                 <i class="fa-solid fa-masks-theater"></i> Avatar Engine
             </li>
             <li class="menu-item" id="menu-mesa" onclick="switchView('mesa')">
                 <i class="fa-solid fa-chalkboard-user"></i> Mesa de Trabajo
             </li>
+
+            <!-- SEPARADOR DE ACCESOS RÁPIDOS Y MODALES -->
+            <li style="padding: 16px 24px 6px 24px; font-size: 0.7rem; font-weight: 800; color: #55556a; text-transform: uppercase; letter-spacing: 1px;">
+                Herramientas en Vivo
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); if(window.location.hostname.includes('lacuevadelguero.com')){window.open('https://s.lacuevadelguero.com/', '_blank');}else{window.open('../tracking/index.html', '_blank');}">
+                <i class="fa-solid fa-satellite-dish" style="color: var(--neon-green);"></i> Radar de Tracking
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); window.open('../storytelling-invitado.html', '_blank');">
+                <i class="fa-solid fa-clipboard-user" style="color: var(--neon-cyan);"></i> Cuestionario Invitado
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); window.open('../cesion-derechos.html', '_blank');">
+                <i class="fa-solid fa-file-contract" style="color: var(--neon-magenta);"></i> Cesión de Derechos
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); document.getElementById('modalSubirFotoGaleria').style.display='flex';">
+                <i class="fa-solid fa-camera" style="color: #00FFFF;"></i> Subir Foto Galería
+            </li>
+            <li class="menu-item" onclick="toggleSidebar(false); toggleCentroAvisos();">
+                <i class="fa-solid fa-bell" style="color: #FFD700;"></i> Avisos & Webhook
+            </li>
         </ul>
+
         <div class="sidebar-footer">
             <a href="../index.html" class="btn-home" style="display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; margin-bottom: 10px; background: transparent; border: 1px solid var(--neon-cyan); color: var(--neon-cyan); border-radius: 8px; font-weight: 700; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; text-shadow: 0 0 5px rgba(0,255,255,0.4); box-shadow: 0 0 5px rgba(0,255,255,0.1); box-sizing: border-box; transition: all 0.2s ease;">
                 <i class="fa-solid fa-house"></i> Ir a Inicio
             </a>
-            <form action="logout.php" method="POST" style="margin: 0;">
-                <button type="submit" class="btn-logout"><i class="fa-solid fa-power-off"></i> Cerrar Sesión</button>
-            </form>
+            <button type="button" class="btn-logout" onclick="cerrarSesionPro()">
+                <i class="fa-solid fa-power-off"></i> Cerrar Sesión
+            </button>
         </div>
     </nav>
 
-    <!-- ÁREA PRINCIPAL -->
+    <!-- ÁREA PRINCIPAL FULL WIDTH -->
     <div class="main-content">
+        <!-- CABECERA ESTÁTICA Y FIJA -->
         <header class="dashboard-header">
-            <div class="header-brand-wrap" style="display:flex; align-items:center;">
-                <button class="btn-toggle-sidebar" id="mobileToggleBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-                <h1 id="view-header-title">Episodios y <span>Fichas</span></h1>
-                <span class="desktop-workstation-badge"><i class="fa-solid fa-bolt"></i> STUDIO PRO</span>
+            <div class="header-left-cluster">
+                <!-- BOTÓN HAMBURGUESA DESPLEGABLE -->
+                <button class="btn-hamburger" id="btnHamburger" type="button" onclick="toggleSidebar()" title="Abrir Menú de Secciones">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <!-- FLECHA PARA VOLVER EN TODO MOMENTO -->
+                <button class="btn-header-back hidden" id="btnHeaderBack" type="button" onclick="goBackOrHub()" title="Volver a la pantalla anterior">
+                    <i class="fa-solid fa-arrow-left"></i> <span>Volver</span>
+                </button>
+
+                <!-- TÍTULO ESTÁTICO DE LA CABECERA -->
+                <h1 class="header-static-title">
+                    La Cueva del Güero <span class="badge-pro">PRO</span>
+                    <span class="header-active-view-name" id="viewHeaderSubtitle">/ Centro de Mando</span>
+                </h1>
             </div>
+
+            <!-- CLUSTER DE ACCIONES RÁPIDAS -->
             <div class="header-actions-bar" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);"><i class="fa-solid fa-clipboard-user"></i> Cuestionario Invitado</a>
-                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);"><i class="fa-solid fa-satellite-dish"></i> Tracking</a>
-                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);"><i class="fa-solid fa-file-contract"></i> Cesión</a>
-                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'"><i class="fa-solid fa-camera"></i> Subir Foto</button>
+                <a href="../storytelling-invitado.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-cyan); color:var(--neon-cyan);" title="Abrir Cuestionario para Invitados en pestaña nueva">
+                    <i class="fa-solid fa-clipboard-user"></i> Cuestionario
+                </a>
+                <a href="../tracking/index.html" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){this.href='https://s.lacuevadelguero.com/';}" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-green); color:var(--neon-green);" title="Abrir Radar de Tracking de Invitados">
+                    <i class="fa-solid fa-satellite-dish"></i> Tracking
+                </a>
+                <a href="../cesion-derechos.html" target="_blank" class="btn-neon" style="font-size:0.8rem; padding:6px 12px; text-decoration:none; border-color:var(--neon-magenta); color:var(--neon-magenta);" title="Abrir Generador de Cesión Legal">
+                    <i class="fa-solid fa-file-contract"></i> Cesión
+                </a>
+                <button class="btn-neon" style="font-size:0.8rem; padding:6px 12px;" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'" title="Subir imagen a la galería de producción">
+                    <i class="fa-solid fa-camera"></i> Subir Foto
+                </button>
                 <button class="btn-neon" id="btn-centro-avisos" type="button" style="font-size:0.8rem; padding:6px 14px; border-color:#FFD700; color:#FFD700; background:rgba(255,215,0,0.1); display:inline-flex; align-items:center; gap:6px; cursor:pointer;" onclick="toggleCentroAvisos()" title="Centro de Monitoreo y Avisos en Vivo (Webhook)">
                     <i class="fa-solid fa-bell"></i> Avisos <span id="badge-avisos-count" style="background:#ff0055; color:#fff; font-size:0.7rem; font-weight:900; padding:1px 6px; border-radius:10px;">0</span>
                 </button>
-                <div class="admin-badge">Admin: <?php echo htmlspecialchars(ADMIN_USER); ?></div>
+                <button class="btn-neon" type="button" onclick="cerrarSesionPro()" style="border-color:#ff4d4d; color:#ff4d4d; font-size:0.8rem; padding:6px 12px;" title="Cerrar Sesión de Forma Segura">
+                    <i class="fa-solid fa-power-off"></i> Salir
+                </button>
             </div>
         </header>
 
+        <!-- VIEW 0: HUB DE FUNCIONES PRO (TARJETAS FLOTANTES MAGNÉTICAS CON LUZ CYAN) -->
+        <section class="view-section active" id="view-hub">
+            <div class="hub-container">
+                <div class="hub-hero">
+                    <h2>Centro de Mando & <span>Automatización PRO</span></h2>
+                    <p>Selecciona una sección en las tarjetas interactivas o accede al menú hamburguesa en la cabecera. Todas las áreas cuentan con retorno inmediato.</p>
+                </div>
+
+                <!-- GRID DE TARJETAS FLOTANTES MAGNÉTICAS -->
+                <div class="magnetic-grid" id="magneticGrid">
+                    <!-- TARJETA 1: EPISODIOS Y FICHAS -->
+                    <div class="magnetic-card" onclick="switchView('episodios')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </div>
+                                <span class="card-tag">PostgreSQL Neon</span>
+                            </div>
+                            <h3 class="card-title">Episodios y Fichas</h3>
+                            <p class="card-description">Curaduría de 33 criterios de storytelling, expedientes en vivo, generación de escaleta técnica, guiones y cue cards para set.</p>
+                            <div class="card-footer-action">
+                                <span>Abrir Expedientes</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 2: GENERADOR DE HOOKS -->
+                    <div class="magnetic-card" onclick="switchView('hooks')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-magnet"></i>
+                                </div>
+                                <span class="card-tag">Gemini AI</span>
+                            </div>
+                            <h3 class="card-title">Generador de Hooks</h3>
+                            <p class="card-description">Algoritmos de alta retención viral con IA para TikTok, Instagram Reels, YouTube Shorts y Spotify con copys adaptados.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Generar Ganchos</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 3: EDITOR DE VIDEO -->
+                    <div class="magnetic-card" onclick="switchView('video')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(57, 255, 20, 0.4); color: var(--neon-green);">
+                                    <i class="fa-solid fa-video"></i>
+                                </div>
+                                <span class="card-tag">FFmpeg & NLE</span>
+                            </div>
+                            <h3 class="card-title">Editor de Video Multi-Pista</h3>
+                            <p class="card-description">Postproducción en cabina, timeline interactivo, nivelación de audio a -14 LUFS, cortes rápidos y presets de exportación.</p>
+                            <div class="card-footer-action" style="color: var(--neon-green);">
+                                <span>Abrir Timeline</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 4: EDITOR CANVA PRO -->
+                    <div class="magnetic-card" onclick="switchView('canva')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-palette"></i>
+                                </div>
+                                <span class="card-tag">Fabric Canvas</span>
+                            </div>
+                            <h3 class="card-title">Editor Canva PRO</h3>
+                            <p class="card-description">Compositor gráfico cyberpunk para miniaturas de YouTube, portadas de podcast, corte inteligente y activos de branding.</p>
+                            <div class="card-footer-action">
+                                <span>Diseñar Miniaturas</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 5: GESTOR DE BLOG -->
+                    <div class="magnetic-card" onclick="switchView('blog')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-pen-nib"></i>
+                                </div>
+                                <span class="card-tag">CMS Transmedia</span>
+                            </div>
+                            <h3 class="card-title">Gestor de Blog</h3>
+                            <p class="card-description">Conversión de fichas PDF a notas de prensa y redacción asistida por Gemini para la comunidad y posicionamiento SEO.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Redactar Artículos</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 6: AVATAR ENGINE -->
+                    <div class="magnetic-card" onclick="switchView('avatar')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-masks-theater"></i>
+                                </div>
+                                <span class="card-tag">Interactive AI</span>
+                            </div>
+                            <h3 class="card-title">Avatar Engine</h3>
+                            <p class="card-description">Personalización y control del comportamiento visual y gestual de El Güero Bot para streaming y respuestas interactivas.</p>
+                            <div class="card-footer-action">
+                                <span>Configurar Avatar</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 7: MESA DE TRABAJO -->
+                    <div class="magnetic-card" onclick="switchView('mesa')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 215, 0, 0.4); color: #FFD700;">
+                                    <i class="fa-solid fa-chalkboard-user"></i>
+                                </div>
+                                <span class="card-tag">Auditoría & Equipo</span>
+                            </div>
+                            <h3 class="card-title">Mesa de Trabajo</h3>
+                            <p class="card-description">Monitoreo de latencia de PostgreSQL, simulador de conversión de leads, pruebas de Stripe y votación de acuerdos en vivo.</p>
+                            <div class="card-footer-action" style="color: #FFD700;">
+                                <span>Abrir Mesa</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 8: RADAR DE TRACKING EN VIVO -->
+                    <div class="magnetic-card" onclick="if(window.location.hostname.includes('lacuevadelguero.com')){window.open('https://s.lacuevadelguero.com/', '_blank');}else{window.open('../tracking/index.html', '_blank');}">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(57, 255, 20, 0.4); color: var(--neon-green);">
+                                    <i class="fa-solid fa-satellite-dish"></i>
+                                </div>
+                                <span class="card-tag">S.LACUEVADELGUERO</span>
+                            </div>
+                            <h3 class="card-title">Radar de Tracking</h3>
+                            <p class="card-description">Monitoreo en 5 fases del avance de cuestionarios de invitados, códigos de seguimiento y enlaces directos de WhatsApp.</p>
+                            <div class="card-footer-action" style="color: var(--neon-green);">
+                                <span>Abrir Portal Tracking</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 9: CUESTIONARIO DE STORYTELLING -->
+                    <div class="magnetic-card" onclick="window.open('../storytelling-invitado.html', '_blank')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-clipboard-user"></i>
+                                </div>
+                                <span class="card-tag">33 Criterios</span>
+                            </div>
+                            <h3 class="card-title">Cuestionario Invitados</h3>
+                            <p class="card-description">Formulario público dinámico para captar vivencias, momentos difíciles, frases y anécdotas auténticas de los participantes.</p>
+                            <div class="card-footer-action">
+                                <span>Ver Cuestionario</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 10: CESIÓN DE DERECHOS -->
+                    <div class="magnetic-card" onclick="window.open('../cesion-derechos.html', '_blank')">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 0, 255, 0.4); color: var(--neon-magenta);">
+                                    <i class="fa-solid fa-file-contract"></i>
+                                </div>
+                                <span class="card-tag">Legal Tech</span>
+                            </div>
+                            <h3 class="card-title">Cesión de Derechos</h3>
+                            <p class="card-description">Contratos legales automatizados de imagen y voz con firma digitalizada listos para exportar a PDF antes de grabar.</p>
+                            <div class="card-footer-action" style="color: var(--neon-magenta);">
+                                <span>Generar Contrato</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 11: SUBIR FOTO A GALERÍA -->
+                    <div class="magnetic-card" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+                                <span class="card-tag">Modal Rápido</span>
+                            </div>
+                            <h3 class="card-title">Galería de Producción</h3>
+                            <p class="card-description">Sube y cataloga fotografías detrás de cámara, invitados y momentos cumbre directo al feed público.</p>
+                            <div class="card-footer-action">
+                                <span>Subir Imagen</span>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 12: CENTRO DE AVISOS Y WEBHOOK -->
+                    <div class="magnetic-card" onclick="toggleCentroAvisos()">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 215, 0, 0.4); color: #FFD700;">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <span class="card-tag">Webhooks en Vivo</span>
+                            </div>
+                            <h3 class="card-title">Centro de Avisos</h3>
+                            <p class="card-description">Monitoreo de eventos síncronos, notificaciones de captación de leads y alertas operativas en set.</p>
+                            <div class="card-footer-action" style="color: #FFD700;">
+                                <span>Ver Alertas</span>
+                                <i class="fa-solid fa-satellite-dish"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- VIEW 1: EPISODIOS Y FICHAS -->
-        <section class="view-section active" id="view-episodios">
+        <section class="view-section" id="view-episodios">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-folder-open"></i> Expedientes y Curaduría Neon PostgreSQL</span>
+            </div>
             <div class="episodios-layout">
                 <!-- LISTA DE REGISTROS -->
                 <div class="subpanel-lista">
@@ -1279,6 +1585,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 2: GESTOR DE BLOG -->
         <section class="view-section" id="view-blog">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-newspaper"></i> Publicaciones y Artículos Transmedia</span>
+            </div>
             <h2 class="section-title"><i class="fa-solid fa-newspaper"></i> Gestor de Artículos de Blog</h2>
             
             <div class="blog-tabs">
@@ -1337,6 +1649,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 3: GENERADOR DE HOOKS -->
         <section class="view-section" id="view-hooks">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-magnet"></i> Algoritmos Virales con Gemini AI</span>
+            </div>
             <h2 class="section-title"><i class="fa-solid fa-magnet"></i> Generador de Hooks (Redes Sociales)</h2>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Ingresa el tema o frase central de la plática para generar automáticamente ganchos y copys adaptados al flow de cada red social.</p>
             
@@ -1410,6 +1728,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 4: EDITOR DE VIDEO (LA CUEVA VIDEO EDITOR PRO) -->
         <section class="view-section" id="view-video" style="padding: 15px 25px;">
+            <div class="section-return-bar" style="margin-bottom: 15px;">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-video"></i> Postproducción NLE & Masterización -14 LUFS</span>
+            </div>
             <!-- TOP BAR -->
             <div style="display:flex; justify-content:space-between; align-items:center; background:#0f0f18; border:1px solid rgba(0,255,255,0.2); border-radius:12px; padding:10px 20px; margin-bottom:15px; box-shadow:0 0 15px rgba(0,255,255,0.1);">
                 <div style="display:flex; align-items:center; gap:15px;">
@@ -1702,6 +2026,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 5: EDITOR CANVA PRO (GIMP/CANVA/EXPRESS ALTERNATIVE) -->
         <section class="view-section" id="view-canva">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-palette"></i> Suite Gráfica Cyberpunk & Miniaturas YouTube</span>
+            </div>
             <p style="color: var(--text-muted); margin-bottom: 20px;">Diseño y composición profesional (Photoshop & Canva). Sube imágenes locales o sincroniza tus archivos desde la nube, aplica capas, filtros cyberpunk y tipografía neón.</p>
 
             <div class="canva-editor-workspace" style="display: grid; grid-template-columns: 360px 1fr; gap: 25px; align-items: start;">
@@ -1833,6 +2163,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 6: AVATAR ENGINE -->
         <section class="view-section" id="view-avatar">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-masks-theater"></i> Generador de Personajes & Comportamiento Visual</span>
+            </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <div>
                     <h2 class="section-title" style="margin:0;"><i class="fa-solid fa-masks-theater"></i> Avatar-Engine: Creador de Personajes</h2>
@@ -1933,6 +2269,12 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
 
         <!-- VIEW 7: MESA DE TRABAJO INTERACTIVA (AUDITORÍA & LEADS CONTROLLER) -->
         <section class="view-section" id="view-mesa" style="overflow-y:auto; padding: 25px;">
+            <div class="section-return-bar">
+                <button class="btn-section-back" type="button" onclick="switchView('hub')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Centro de Mando
+                </button>
+                <span style="font-size:0.85rem; color:#8e8e9f;"><i class="fa-solid fa-chalkboard-user"></i> Mesa de Trabajo, Auditoría & Toma de Decisiones</span>
+            </div>
             <p style="color: var(--text-muted); margin-bottom: 25px;">Mesa de control interactiva para auditoría del sistema, simulación de pagos Stripe, mapeo de flujos y colaboración del equipo.</p>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 25px; align-items: start;">
@@ -2179,11 +2521,16 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     </div>
 
     <!-- MODAL OCULTO: IMPORTAR AVATAR PRE-EXISTENTE -->
-    <div id="modalImportarAvatarExistente" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-magenta); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(255,0,255,0.4);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="margin:0; color:#FF00FF;"><i class="fa-solid fa-file-import"></i> Importar Avatar Existente</h3>
-                <button onclick="cerrarModalImportarExistente()" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+    <div id="modalImportarAvatarExistente" class="modal-translucent-overlay" style="display:none;">
+        <div class="modal-translucent-card" style="max-width:520px;">
+            <div class="modal-header-row">
+                <button type="button" class="btn-section-back" onclick="cerrarModalImportarExistente()">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
+                <h3 class="modal-header-title" style="margin:0; font-size:1.15rem; color:#FF00FF;">
+                    <i class="fa-solid fa-file-import"></i> Importar Avatar Existente
+                </h3>
+                <button class="btn-modal-close" onclick="cerrarModalImportarExistente()" title="Cerrar">&times;</button>
             </div>
             <form onsubmit="guardarAvatarPreExistente(event)">
                 <div class="form-group">
@@ -2208,11 +2555,16 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
     </div>
 
     <!-- MODAL: SUBIR FOTOS A LA GALERÍA -->
-    <div id="modalSubirFotoGaleria" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:9999; justify-content:center; align-items:center;">
-        <div style="background:rgba(15,15,15,0.95); border:2px solid var(--neon-cyan); border-radius:20px; padding:30px; width:90%; max-width:480px; box-shadow:0 0 40px rgba(0,255,255,0.4);">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="margin:0; color:#00FFFF;"><i class="fa-solid fa-camera"></i> Subir Foto a la Galería</h3>
-                <button onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
+    <div id="modalSubirFotoGaleria" class="modal-translucent-overlay" style="display:none;">
+        <div class="modal-translucent-card" style="max-width:520px;">
+            <div class="modal-header-row">
+                <button type="button" class="btn-section-back" onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
+                <h3 class="modal-header-title" style="margin:0; font-size:1.15rem; color:#00FFFF;">
+                    <i class="fa-solid fa-camera"></i> Subir Foto a la Galería
+                </h3>
+                <button class="btn-modal-close" onclick="document.getElementById('modalSubirFotoGaleria').style.display='none'" title="Cerrar">&times;</button>
             </div>
             <form onsubmit="guardarFotoGaleriaDashboard(event)">
                 <div class="form-group">
@@ -2375,6 +2727,9 @@ $_SESSION['admin_name'] = $_SESSION['admin_name'] ?? 'Equipo La Cueva';
             <!-- Header -->
             <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" class="btn-section-back" onclick="toggleCentroAvisos()" style="font-size:0.75rem; padding:4px 10px;" title="Volver al Hub">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </button>
                     <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
                         <i class="fa-solid fa-bell"></i>
                     </div>

@@ -43,20 +43,28 @@
                 radial-gradient(at 100% 100%, rgba(0, 255, 255, 0.04) 0px, transparent 50%);
         }
 
-        /* SIDEBAR */
+        /* SIDEBAR (Drawer Hamburguesa Desplegable) */
         .sidebar {
-            width: 260px;
+            width: 320px;
+            max-width: 88vw;
             background: var(--bg-sidebar);
             border-right: 1px solid var(--border-color);
-            box-shadow: 4px 0 25px rgba(0, 0, 0, 0.6);
+            box-shadow: none;
             display: flex;
             flex-direction: column;
             height: 100vh;
             position: fixed;
             left: 0;
             top: 0;
-            z-index: 100;
-            backdrop-filter: blur(15px);
+            z-index: 2500;
+            transform: translateX(-105%);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+            backdrop-filter: blur(20px);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+            box-shadow: 15px 0 50px rgba(0, 255, 255, 0.2), 0 0 100px rgba(0, 0, 0, 0.9);
         }
 
         .sidebar-brand {
@@ -155,12 +163,12 @@
 
         /* MAIN CONTENT CONTAINER */
         .main-content {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            height: 100vh;
+            margin-left: 0 !important;
+            width: 100% !important;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         /* HEADER */
@@ -879,13 +887,6 @@
         }
 
         @media (min-width: 1600px) {
-            .sidebar {
-                width: 275px !important;
-            }
-            .main-content {
-                margin-left: 275px !important;
-                width: calc(100% - 275px) !important;
-            }
             .subpanel-lista {
                 width: 380px !important;
                 max-width: 400px !important;
@@ -1230,6 +1231,44 @@
                             <div class="card-footer-action" style="color: var(--neon-magenta);">
                                 <span>Generar Contrato</span>
                                 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 11: SUBIR FOTO A GALERÍA -->
+                    <div class="magnetic-card" onclick="document.getElementById('modalSubirFotoGaleria').style.display='flex'">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box">
+                                    <i class="fa-solid fa-camera"></i>
+                                </div>
+                                <span class="card-tag">Modal Rápido</span>
+                            </div>
+                            <h3 class="card-title">Galería de Producción</h3>
+                            <p class="card-description">Sube y cataloga fotografías detrás de cámara, invitados y momentos cumbre directo al feed público.</p>
+                            <div class="card-footer-action">
+                                <span>Subir Imagen</span>
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TARJETA 12: CENTRO DE AVISOS Y WEBHOOK -->
+                    <div class="magnetic-card" onclick="toggleCentroAvisos()">
+                        <div class="card-spotlight"></div>
+                        <div class="card-content-wrap">
+                            <div class="card-header-row">
+                                <div class="card-icon-box" style="border-color: rgba(255, 215, 0, 0.4); color: #FFD700;">
+                                    <i class="fa-solid fa-bell"></i>
+                                </div>
+                                <span class="card-tag">Webhooks en Vivo</span>
+                            </div>
+                            <h3 class="card-title">Centro de Avisos</h3>
+                            <p class="card-description">Monitoreo de eventos síncronos, notificaciones de captación de leads y alertas operativas en set.</p>
+                            <div class="card-footer-action" style="color: #FFD700;">
+                                <span>Ver Alertas</span>
+                                <i class="fa-solid fa-satellite-dish"></i>
                             </div>
                         </div>
                     </div>
@@ -2675,6 +2714,9 @@
             <!-- Header -->
             <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center;">
                 <div style="display:flex; align-items:center; gap:10px;">
+                    <button type="button" class="btn-section-back" onclick="toggleCentroAvisos()" style="font-size:0.75rem; padding:4px 10px;" title="Volver al Hub">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </button>
                     <div style="width:36px; height:36px; border-radius:50%; background:rgba(255,215,0,0.15); border:1px solid #FFD700; display:flex; align-items:center; justify-content:center; color:#FFD700;">
                         <i class="fa-solid fa-bell"></i>
                     </div>
